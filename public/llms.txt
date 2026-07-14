@@ -1,0 +1,8 @@
+# Forma AI
+
+> An AI learning platform that helps middle and high school students genuinely understand their lessons.
+
+Forma AI reads a student's lesson, worksheet, screenshot, photo or PDF and teaches it back in a clear, structured way — explanation, why it matters, common mistakes, example, and analogy — with an AI chat that knows the uploaded document.
+
+## Pages
+- [Home](/): Upload a lesson and see how Forma AI works.
