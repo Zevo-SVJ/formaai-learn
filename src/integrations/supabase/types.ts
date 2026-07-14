@@ -14,7 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      documents: {
+        Row: {
+          chapter: string | null
+          concepts: Json | null
+          created_at: string
+          error: string | null
+          explanation: Json | null
+          extracted_text: string | null
+          id: string
+          level: string | null
+          mime: string
+          size: number | null
+          status: string
+          storage_path: string
+          subject: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter?: string | null
+          concepts?: Json | null
+          created_at?: string
+          error?: string | null
+          explanation?: Json | null
+          extracted_text?: string | null
+          id?: string
+          level?: string | null
+          mime: string
+          size?: number | null
+          status?: string
+          storage_path: string
+          subject?: string | null
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter?: string | null
+          concepts?: Json | null
+          created_at?: string
+          error?: string | null
+          explanation?: Json | null
+          extracted_text?: string | null
+          id?: string
+          level?: string | null
+          mime?: string
+          size?: number | null
+          status?: string
+          storage_path?: string
+          subject?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          document_id: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          document_id: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
