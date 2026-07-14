@@ -92,7 +92,7 @@ CURRENT STRUCTURED EXPLANATION
         const result = streamText({
           model,
           system: context,
-          messages: convertToModelMessages(messages),
+          messages: await convertToModelMessages(messages),
         });
 
         return result.toUIMessageStreamResponse({
