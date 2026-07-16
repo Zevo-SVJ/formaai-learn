@@ -22,6 +22,7 @@ export type Database = {
           error: string | null
           explanation: Json | null
           extracted_text: string | null
+          favorite: boolean
           id: string
           level: string | null
           mime: string
@@ -40,6 +41,7 @@ export type Database = {
           error?: string | null
           explanation?: Json | null
           extracted_text?: string | null
+          favorite?: boolean
           id?: string
           level?: string | null
           mime: string
@@ -58,6 +60,7 @@ export type Database = {
           error?: string | null
           explanation?: Json | null
           extracted_text?: string | null
+          favorite?: boolean
           id?: string
           level?: string | null
           mime?: string

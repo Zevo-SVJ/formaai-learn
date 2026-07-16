@@ -1,0 +1,1 @@
+ALTER TABLE public.documents ADD COLUMN IF NOT EXISTS favorite boolean NOT NULL DEFAULT false; CREATE INDEX IF NOT EXISTS documents_user_favorite_idx ON public.documents(user_id, favorite) WHERE favorite = true;
