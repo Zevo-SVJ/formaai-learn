@@ -100,15 +100,16 @@ export function parseAnswer(text: string, locale: string = "en"): ParsedAnswer {
       continue;
     }
     // Detect a choice row inside the current section (usually "answer")
-    const m = CHOICE_RE.exec(line);
-    if (m && current) {
-      current.choices ??= [];
-      current.choices.push({ label: m[1].toUpperCase(), value: stripStyleTokens(m[2]) });
-      continue;
-    }
     if (!current) {
-      // No header seen yet — treat leading content as the "Answer" section.
+      // No header seen yet, treat leading content as the "Answer" section.
       openSection("answer");
+    }
+    const active = current as AnswerSection;
+    const m = CHOICE_RE.exec(line);
+    if (m) {
+      active.choices ??= [];
+      active.choices.push({ label: m[1].toUpperCase(), value: stripStyleTokens(m[2]) });
+      continue;
     }
     buffer.push(line);
   }
