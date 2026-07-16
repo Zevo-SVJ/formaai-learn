@@ -43,29 +43,34 @@ export const analyzeDocument = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
-    // Compose multimodal content block based on file kind.
     const isImage = mime.startsWith("image/");
     const isPdf = mime === "application/pdf";
     const contentBlocks: Array<Record<string, unknown>> = [
       {
         type: "text",
-        text: `You are Forma AI, a tutor for middle- and high-school students. Analyze the attached document and reply with ONLY a compact JSON object matching this shape (no markdown fences):
+        text: `You are Forma AI, a tutor for middle- and high-school students.
+Analyze the attached document and reply with ONLY a compact JSON object matching this shape (no markdown fences, no commentary):
 {
-  "title": string (max 60 chars, human title of the lesson),
-  "subject": string (e.g. Math, Biology, History, French, Physics),
-  "level": string (e.g. Grade 8, Grade 10, High School),
-  "chapter": string (chapter / topic name),
-  "concepts": string[] (3-6 key concepts, short),
-  "extracted_text": string (clean plain text of the document; OCR if it is an image; keep formulas readable),
+  "title": string (max 60 chars, human title of the lesson, in the document's own language),
+  "subject": string (e.g. Mathematics, Biology, History, French, Physics, Philosophy, Economics),
+  "level": string (e.g. Grade 8, Grade 10, High School, Terminale),
+  "chapter": string (chapter or topic name, in the document's own language),
+  "concepts": string[] (3 to 6 key concepts, short),
+  "extracted_text": string (clean plain text of the document, OCR if it is an image, keep formulas readable),
   "explanation": {
-    "explanation": string (2-4 short paragraphs teaching the core idea, adapted to the level),
-    "why": string (why this matters, 1-2 sentences),
+    "explanation": string (2 to 4 short paragraphs teaching the core idea, adapted to the level, in the document's own language),
+    "why": string (why this matters, 1 or 2 sentences),
     "common_mistake": string (a mistake students commonly make),
     "example": string (one worked simple example),
-    "analogy": string (optional everyday analogy; empty string if none)
+    "analogy": string (optional everyday analogy, empty string if none)
   }
 }
-Never invent content that isn't present in the document. Never write italic text. If the document is unreadable, set fields to "" and put a short reason in extracted_text.`,
+Rules:
+- Never invent content that is not in the document.
+- Never use italic text. Never use bold syntax (no ** or __). Never use markdown headings or hashtags.
+- Never use the em dash character. Use a comma or a period instead.
+- Write in the same language as the document.
+- If the document is unreadable, set fields to "" and put a short reason in extracted_text.`,
       },
     ];
     if (isImage) {
@@ -76,7 +81,6 @@ Never invent content that isn't present in the document. Never write italic text
         file: { filename: doc.title || "document.pdf", file_data: dataUrl },
       });
     } else {
-      // treat as text
       const text = new TextDecoder().decode(buf).slice(0, 40000);
       contentBlocks[0] = {
         type: "text",
@@ -123,22 +127,30 @@ Never invent content that isn't present in the document. Never write italic text
       throw new Error("Could not parse AI response");
     }
 
+    const clean = (s: unknown) =>
+      String(s ?? "")
+        .replace(/\*\*/g, "")
+        .replace(/__/g, "")
+        .replace(/^#+\s*/gm, "")
+        .replace(/\s*—\s*/g, ", ")
+        .trim();
+
     const explanation = (parsed.explanation as Record<string, unknown>) ?? {};
     const { error: upErr } = await supabase
       .from("documents")
       .update({
-        title: (parsed.title as string) || doc.title || "Untitled lesson",
-        subject: (parsed.subject as string) || null,
-        level: (parsed.level as string) || null,
-        chapter: (parsed.chapter as string) || null,
+        title: clean(parsed.title) || doc.title || "Untitled lesson",
+        subject: clean(parsed.subject) || null,
+        level: clean(parsed.level) || null,
+        chapter: clean(parsed.chapter) || null,
         concepts: (parsed.concepts as string[] | null) ?? null,
         extracted_text: (parsed.extracted_text as string) || null,
         explanation: {
-          explanation: String(explanation.explanation ?? ""),
-          why: String(explanation.why ?? ""),
-          common_mistake: String(explanation.common_mistake ?? ""),
-          example: String(explanation.example ?? ""),
-          analogy: String(explanation.analogy ?? ""),
+          explanation: clean(explanation.explanation),
+          why: clean(explanation.why),
+          common_mistake: clean(explanation.common_mistake),
+          example: clean(explanation.example),
+          analogy: clean(explanation.analogy),
         },
         status: "ready",
         error: null,
@@ -170,7 +182,7 @@ export const listDocuments = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("documents")
-      .select("id,title,subject,level,chapter,status,created_at")
+      .select("id,title,subject,level,chapter,status,favorite,created_at")
       .eq("user_id", context.userId)
       .order("created_at", { ascending: false });
     if (error) throw error;
@@ -197,11 +209,25 @@ export const getSignedFileUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SignedUrlInput.parse(input))
   .handler(async ({ data, context }) => {
-    // Only allow paths inside the caller's own folder.
     if (!data.path.startsWith(context.userId + "/")) throw new Error("Forbidden");
     const { data: signed, error } = await context.supabase.storage
       .from("documents")
       .createSignedUrl(data.path, 60 * 60);
     if (error || !signed) throw error ?? new Error("Signing failed");
     return { url: signed.signedUrl };
+  });
+
+const FavInput = z.object({ id: z.string().uuid(), favorite: z.boolean() });
+
+export const toggleFavorite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => FavInput.parse(input))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase
+      .from("documents")
+      .update({ favorite: data.favorite })
+      .eq("id", data.id)
+      .eq("user_id", context.userId);
+    if (error) throw error;
+    return { ok: true, favorite: data.favorite };
   });

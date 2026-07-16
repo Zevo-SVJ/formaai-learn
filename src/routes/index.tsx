@@ -1,19 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import {
+  Sparkles,
+  ShieldCheck,
   BookOpen,
   Camera,
   FileText,
-  Image as ImageIcon,
-  FileSpreadsheet,
-  ScrollText,
-  Sparkles,
   Zap,
-  ShieldCheck,
   ArrowRight,
+  CheckCircle2,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { UploadArea } from "@/components/UploadArea";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { LiveCounters } from "@/components/LiveCounters";
+import { ReviewsMarquee } from "@/components/ReviewsMarquee";
+import { SiteFooter } from "@/components/SiteFooter";
+import { useI18n } from "@/hooks/useI18n";
 import {
   Accordion,
   AccordionContent,
@@ -22,6 +26,23 @@ import {
 } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Forma AI — Understand every lesson, not just the answer" },
+      {
+        name: "description",
+        content:
+          "Forma AI reads your lessons, worksheets and photos of notes, then explains them clearly. Built for middle and high school students who actually want to learn.",
+      },
+      { property: "og:title", content: "Forma AI — Understand every lesson" },
+      {
+        property: "og:description",
+        content:
+          "Upload a lesson, worksheet or photo. Forma AI explains it clearly. Never just answers.",
+      },
+      { property: "og:type", content: "website" },
+    ],
+  }),
   component: Landing,
 });
 
@@ -33,67 +54,90 @@ function Landing() {
       <Problem />
       <Solution />
       <HowItWorks />
-      <SupportedTypes />
-      <Testimonials />
-      <FAQ />
+      <SubjectsSection />
+      <ReviewsSection />
+      <FAQSection />
       <FinalCTA />
-      <Footer />
+      <SiteFooter />
     </div>
   );
 }
 
 function Header() {
+  const { t } = useI18n();
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   return (
-    <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur-md">
+    <header
+      className={[
+        "sticky top-0 z-30 border-b transition-colors",
+        scrolled
+          ? "border-border/60 bg-background/85 backdrop-blur-md"
+          : "border-transparent bg-transparent",
+      ].join(" ")}
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5">
         <Link to="/">
           <Logo />
         </Link>
-        <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
-          <a href="#how" className="hover:text-foreground">How it works</a>
-          <a href="#faq" className="hover:text-foreground">FAQ</a>
+        <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
+          <a href="#how" className="hover:text-foreground">
+            {t((d) => d.nav.how)}
+          </a>
+          <a href="#reviews" className="hover:text-foreground">
+            {t((d) => d.nav.reviews)}
+          </a>
+          <a href="#faq" className="hover:text-foreground">
+            {t((d) => d.nav.faq)}
+          </a>
         </nav>
-        <Link
-          to="/auth"
-          className="inline-flex items-center rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground hover:border-border-strong"
-        >
-          Sign in
-        </Link>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <Link
+            to="/auth"
+            className="inline-flex items-center rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground hover:border-border-strong"
+          >
+            {t((d) => d.common.signIn)}
+          </Link>
+        </div>
       </div>
     </header>
   );
 }
 
 function Hero() {
+  const { t } = useI18n();
   return (
-    <section className="relative overflow-hidden px-5 pt-10 pb-16 sm:pt-20 sm:pb-24">
+    <section className="relative overflow-hidden px-5 pt-8 pb-14 sm:pt-16 sm:pb-24">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[520px]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[620px]"
         style={{
           background:
-            "radial-gradient(60% 60% at 50% 0%, oklch(0.94 0.05 155 / 0.5) 0%, transparent 70%)",
+            "radial-gradient(60% 60% at 50% 0%, oklch(0.94 0.05 155 / 0.55) 0%, transparent 70%)",
         }}
       />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[70%] h-72 w-72 -translate-x-1/2 rounded-full opacity-40 blur-3xl"
+        style={{ background: "oklch(0.92 0.06 60 / 0.6)" }}
+      />
+
       <div className="relative mx-auto max-w-3xl text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-          Built for students, not for cheating
-        </motion.div>
         <motion.h1
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.05 }}
+          transition={{ duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
           className="text-[38px] font-bold leading-[1.03] tracking-[-0.04em] text-foreground sm:text-6xl"
         >
-          Understand every lesson.
+          {t((d) => d.hero.title1)}
           <br />
-          <span className="text-muted-foreground">Not just the answer.</span>
+          <span className="text-muted-foreground">{t((d) => d.hero.title2)}</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -101,12 +145,15 @@ function Hero() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-lg"
         >
-          Upload a lesson, worksheet or a photo of your notes. Forma AI reads it, understands it,
-          and teaches it back — in words that actually make sense.
+          {t((d) => d.hero.subtitle)}
         </motion.p>
 
         <div className="mt-10">
           <UploadArea />
+        </div>
+
+        <div className="mt-12">
+          <LiveCounters />
         </div>
       </div>
     </section>
@@ -119,15 +166,23 @@ function Section({
   subtitle,
   children,
   id,
+  bg,
 }: {
   eyebrow?: string;
   title: string;
   subtitle?: string;
   children?: React.ReactNode;
   id?: string;
+  bg?: "surface" | "default";
 }) {
   return (
-    <section id={id} className="px-5 py-20 sm:py-28">
+    <section
+      id={id}
+      className={[
+        "px-5 py-20 sm:py-28",
+        bg === "surface" ? "bg-surface-muted/50" : "",
+      ].join(" ")}
+    >
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
           {eyebrow && (
@@ -151,19 +206,16 @@ function Section({
 }
 
 function Problem() {
-  const items = [
-    "You stare at the lesson and none of it clicks.",
-    "You ask an AI. It gives you the answer, not the idea.",
-    "Next week the test comes — and you still don't understand.",
-  ];
+  const { t, raw } = useI18n();
+  const items = raw((d) => d.problem.items);
   return (
     <Section
-      eyebrow="The problem"
-      title="Answers aren't the same as understanding."
-      subtitle="Most AI tools solve your homework for you. Forma AI does the opposite — it helps you actually learn the thing."
+      eyebrow={t((d) => d.problem.eyebrow)}
+      title={t((d) => d.problem.title)}
+      subtitle={t((d) => d.problem.subtitle)}
     >
       <div className="mx-auto grid max-w-3xl gap-3">
-        {items.map((t, i) => (
+        {items.map((line, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 8 }}
@@ -172,8 +224,8 @@ function Problem() {
             transition={{ duration: 0.4, delay: i * 0.05 }}
             className="rounded-2xl border border-border bg-surface px-5 py-4 text-[15px] text-foreground shadow-[var(--shadow-soft)]"
           >
-            <span className="mr-3 text-muted-foreground">0{i + 1}</span>
-            {t}
+            <span className="mr-3 font-semibold text-emerald">0{i + 1}</span>
+            {line}
           </motion.div>
         ))}
       </div>
@@ -182,168 +234,138 @@ function Problem() {
 }
 
 function Solution() {
-  const items = [
-    { icon: BookOpen, title: "Reads your lesson", body: "OCR handles photos and handwriting. PDFs and worksheets too." },
-    { icon: Sparkles, title: "Teaches, not solves", body: "Structured explanations — with the why, common mistakes, and simple examples." },
-    { icon: ShieldCheck, title: "Grounded in your document", body: "Every answer is anchored in the lesson you uploaded. No made-up facts." },
-  ];
+  const { t, raw } = useI18n();
+  const items = raw((d) => d.solution.items);
+  const icons = [BookOpen, Sparkles, ShieldCheck];
   return (
     <Section
-      eyebrow="The solution"
-      title="A tutor that actually reads your lesson."
+      eyebrow={t((d) => d.solution.eyebrow)}
+      title={t((d) => d.solution.title)}
+      bg="surface"
     >
       <div className="grid gap-4 sm:grid-cols-3">
-        {items.map(({ icon: Icon, title, body }, i) => (
-          <motion.div
-            key={title}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.4, delay: i * 0.05 }}
-            className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]"
-          >
-            <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-soft">
-              <Icon className="h-5 w-5 text-emerald" strokeWidth={2.25} />
-            </div>
-            <h3 className="text-lg font-bold text-foreground">{title}</h3>
-            <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">{body}</p>
-          </motion.div>
-        ))}
+        {items.map((it, i) => {
+          const Icon = icons[i] ?? Sparkles;
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]"
+            >
+              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-soft">
+                <Icon className="h-5 w-5 text-emerald" strokeWidth={2.25} />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">{it.title}</h3>
+              <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
+                {it.body}
+              </p>
+            </motion.div>
+          );
+        })}
       </div>
     </Section>
   );
 }
 
 function HowItWorks() {
-  const steps = [
-    { n: "01", t: "Upload anything", d: "A photo, PDF, or a screenshot of your worksheet." },
-    { n: "02", t: "Forma reads it", d: "Detects the subject, level, chapter and key concepts." },
-    { n: "03", t: "You understand it", d: "A clear explanation with examples — plus a chat that already knows the lesson." },
-  ];
+  const { t, raw } = useI18n();
+  const steps = raw((d) => d.how.steps);
+  const icons = [Camera, FileText, Zap];
   return (
-    <Section id="how" eyebrow="How it works" title="Three steps. No busywork.">
+    <Section id="how" eyebrow={t((d) => d.how.eyebrow)} title={t((d) => d.how.title)}>
       <div className="grid gap-3 sm:grid-cols-3">
-        {steps.map((s, i) => (
-          <motion.div
-            key={s.n}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.4, delay: i * 0.05 }}
-            className="rounded-3xl border border-border bg-surface p-6"
-          >
-            <div className="text-xs font-semibold tracking-[0.2em] text-emerald">{s.n}</div>
-            <h3 className="mt-3 text-xl font-bold text-foreground">{s.t}</h3>
-            <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{s.d}</p>
-          </motion.div>
-        ))}
+        {steps.map((s, i) => {
+          const Icon = icons[i] ?? Zap;
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.4, delay: i * 0.05 }}
+              className="relative overflow-hidden rounded-3xl border border-border bg-surface p-6"
+            >
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-40 blur-2xl"
+                style={{ background: "var(--color-emerald-soft)" }}
+              />
+              <div className="relative flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald">
+                <span>0{i + 1}</span>
+                <span className="h-px w-8 bg-emerald/40" />
+                <Icon className="h-3.5 w-3.5" />
+              </div>
+              <h3 className="relative mt-4 text-xl font-bold text-foreground">{s.t}</h3>
+              <p className="relative mt-2 text-[14px] leading-relaxed text-muted-foreground">
+                {s.d}
+              </p>
+            </motion.div>
+          );
+        })}
       </div>
     </Section>
   );
 }
 
-function SupportedTypes() {
-  const types = [
-    { icon: BookOpen, label: "Lesson" },
-    { icon: ScrollText, label: "Homework" },
-    { icon: ImageIcon, label: "Screenshot" },
-    { icon: Camera, label: "Photo" },
-    { icon: FileText, label: "PDF" },
-    { icon: FileSpreadsheet, label: "Worksheet" },
-    { icon: Zap, label: "Notes" },
-  ];
+function SubjectsSection() {
+  const { t, raw } = useI18n();
+  const list = raw((d) => d.subjects.list);
   return (
     <Section
-      eyebrow="Supported"
-      title="Bring anything from class."
-      subtitle="Snap it, drop it, forget the format."
+      eyebrow={t((d) => d.subjects.eyebrow)}
+      title={t((d) => d.subjects.title)}
+      subtitle={t((d) => d.subjects.subtitle)}
+      bg="surface"
     >
-      <div className="-mx-5 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        <div className="flex snap-x snap-mandatory gap-3 px-5">
-          {types.map(({ icon: Icon, label }) => (
-            <div
-              key={label}
-              className="flex min-w-[160px] snap-start flex-col items-start justify-between rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:min-w-[200px]"
-            >
-              <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-xl bg-surface-muted">
-                <Icon className="h-5 w-5 text-foreground" strokeWidth={2.25} />
-              </div>
-              <div className="text-[15px] font-semibold text-foreground">{label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Section>
-  );
-}
-
-function Testimonials() {
-  const items = [
-    {
-      quote:
-        "I finally understood how to factor polynomials. Not because it gave me the answer — because it walked me through it.",
-      name: "Lucas",
-      role: "Grade 10",
-    },
-    {
-      quote:
-        "I take a picture of my biology notes and it explains the parts I skipped in class. It's the calmest study tool I've used.",
-      name: "Sofia",
-      role: "Grade 9",
-    },
-    {
-      quote:
-        "It doesn't feel like homework help. It feels like someone actually explaining the chapter.",
-      name: "Amir",
-      role: "Grade 11",
-    },
-  ];
-  return (
-    <Section eyebrow="Students" title="Built for how you actually study.">
-      <div className="grid gap-4 sm:grid-cols-3">
-        {items.map((t) => (
-          <div
-            key={t.name}
-            className="rounded-3xl border border-border bg-surface p-6 shadow-[var(--shadow-soft)]"
+      <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2">
+        {list.map((s, i) => (
+          <motion.span
+            key={s}
+            initial={{ opacity: 0, y: 4 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.25, delay: (i % 12) * 0.02 }}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] font-semibold text-foreground shadow-[var(--shadow-soft)]"
           >
-            <p className="text-[15px] leading-relaxed text-foreground">&ldquo;{t.quote}&rdquo;</p>
-            <div className="mt-5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-soft text-sm font-bold text-emerald">
-                {t.name[0]}
-              </div>
-              <div>
-                <div className="text-sm font-semibold text-foreground">{t.name}</div>
-                <div className="text-xs text-muted-foreground">{t.role}</div>
-              </div>
-            </div>
-          </div>
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald" />
+            {s}
+          </motion.span>
         ))}
       </div>
     </Section>
   );
 }
 
-function FAQ() {
-  const items = [
-    {
-      q: "Does Forma AI just give me the answer?",
-      a: "No. Forma is designed to teach — it breaks down the concept, shows why it matters, points out common mistakes and gives a simple example. You can always ask it to go deeper.",
-    },
-    {
-      q: "What can I upload?",
-      a: "Photos of your notes, screenshots, PDFs, worksheets and handwritten pages. If it's a document, Forma reads it.",
-    },
-    {
-      q: "Is my work private?",
-      a: "Yes. Your documents are stored privately in your account and only visible to you.",
-    },
-    {
-      q: "What subjects does it support?",
-      a: "Any subject a middle or high school student studies — math, science, history, languages and more.",
-    },
-  ];
+function ReviewsSection() {
+  const { t } = useI18n();
   return (
-    <Section id="faq" eyebrow="FAQ" title="Everything, answered.">
+    <section id="reviews" className="px-0 py-20 sm:py-28">
+      <div className="mx-auto max-w-2xl px-5 text-center">
+        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-emerald">
+          {t((d) => d.reviews.eyebrow)}
+        </div>
+        <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
+          {t((d) => d.reviews.title)}
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-lg">
+          {t((d) => d.reviews.subtitle)}
+        </p>
+      </div>
+      <div className="mt-12">
+        <ReviewsMarquee />
+      </div>
+    </section>
+  );
+}
+
+function FAQSection() {
+  const { t, raw } = useI18n();
+  const items = raw((d) => d.faq.items);
+  return (
+    <Section id="faq" eyebrow={t((d) => d.faq.eyebrow)} title={t((d) => d.faq.title)} bg="surface">
       <div className="mx-auto max-w-2xl">
         <Accordion type="single" collapsible className="w-full">
           {items.map((it, i) => (
@@ -363,38 +385,26 @@ function FAQ() {
 }
 
 function FinalCTA() {
+  const { t } = useI18n();
   return (
-    <section className="px-5 pb-24">
+    <section className="px-5 pb-24 pt-4">
       <div className="mx-auto max-w-4xl overflow-hidden rounded-[2.5rem] border border-border bg-foreground p-10 text-center text-background sm:p-16">
         <h2 className="text-3xl font-bold tracking-tight sm:text-5xl">
-          Start understanding today.
+          {t((d) => d.finalCta.title)}
         </h2>
         <p className="mx-auto mt-3 max-w-md text-[15px] leading-relaxed text-background/70">
-          Upload your first lesson. No forms, no fluff.
+          {t((d) => d.finalCta.subtitle)}
         </p>
         <div className="mt-8 flex justify-center">
           <Link
             to="/auth"
             className="inline-flex items-center gap-2 rounded-full bg-background px-6 py-3 text-sm font-semibold text-foreground transition-transform hover:-translate-y-0.5"
           >
-            Get started
+            {t((d) => d.finalCta.cta)}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
     </section>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="border-t border-border bg-background">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-5 py-8 sm:flex-row">
-        <Logo size={22} />
-        <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Forma AI. Made for students.
-        </p>
-      </div>
-    </footer>
   );
 }
