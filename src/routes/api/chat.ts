@@ -4,7 +4,7 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
-type Body = { messages?: UIMessage[]; documentId?: string };
+type Body = { messages?: UIMessage[]; documentId?: string; locale?: string };
 
 function makeUserClient(token: string) {
   const url = process.env.SUPABASE_URL!;
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/api/chat")({
         const token = auth.replace(/^Bearer\s+/i, "");
         if (!token) return new Response("Unauthorized", { status: 401 });
 
-        const { messages, documentId } = (await request.json()) as Body;
+        const { messages, documentId, locale } = (await request.json()) as Body;
         if (!Array.isArray(messages) || !documentId) {
           return new Response("Bad request", { status: 400 });
         }
@@ -48,26 +48,68 @@ export const Route = createFileRoute("/api/chat")({
 
         const userId = doc.user_id;
         const explanation = (doc.explanation as Record<string, string>) || {};
-        const context = `You are Forma AI, a warm, precise tutor for a student.
-You must ONLY teach from the uploaded lesson. Never help the student cheat: no
-direct answers to homework unless the student demonstrates understanding.
-Prefer short paragraphs, plain language, and no italic text.
+        const isFr = (locale || "en").startsWith("fr");
+        const langLine = isFr
+          ? "Réponds toujours en français, quel que soit la langue de la question."
+          : "Always answer in English unless the student writes in another language.";
+
+        const formatRules = isFr
+          ? `RÈGLES DE FORMAT (obligatoires) :
+- Aucun markdown, aucun # ni ##, aucune syntaxe de gras (** ou __), aucune italique.
+- N'utilise jamais le tiret cadratin (—). Utilise une virgule ou un point.
+- Aucune longue introduction. La réponse arrive tout de suite.
+- Utilise EXACTEMENT ces titres de sections, sur leur propre ligne, sans ponctuation :
+Réponse
+Explication
+Méthode
+Erreurs fréquentes
+Pour aller plus loin
+- Toutes les sections ne sont pas obligatoires. Utilise seulement celles qui aident.
+- Si l'exercice est à choix multiples, place les items directement dans "Réponse", un par ligne :
+A) ...
+B) ...
+C) ...
+D) ...
+- Utilise des paragraphes courts. Va droit au but. Une idée par paragraphe.`
+          : `FORMAT RULES (mandatory):
+- No markdown. No # or ##. No bold syntax (** or __). No italics.
+- Never use the em dash character. Use a comma or a period.
+- No unnecessary introduction. The answer comes first.
+- Use EXACTLY these section titles, each on its own line, no punctuation:
+Answer
+Explanation
+Method
+Common mistakes
+Additional details
+- Not all sections are required. Use only the ones that help.
+- If the exercise is multiple choice, put items directly in "Answer", one per line:
+A) ...
+B) ...
+C) ...
+D) ...
+- Short paragraphs. One idea per paragraph. Get to the point.`;
+
+        const context = `You are Forma AI, a warm and precise tutor for a middle- or high-school student.
+Only teach from the uploaded lesson. Never help the student cheat. When they ask for a homework answer directly, guide them through the method rather than dropping the raw solution.
+${langLine}
+
+${formatRules}
 
 LESSON METADATA
-- Title: ${doc.title}
-- Subject: ${doc.subject ?? "unknown"}
-- Level: ${doc.level ?? "unknown"}
-- Chapter: ${doc.chapter ?? "unknown"}
+Title: ${doc.title}
+Subject: ${doc.subject ?? "unknown"}
+Level: ${doc.level ?? "unknown"}
+Chapter: ${doc.chapter ?? "unknown"}
 
 LESSON CONTENT (verbatim from the document, may include OCR)
 ${(doc.extracted_text || "").slice(0, 12000)}
 
 CURRENT STRUCTURED EXPLANATION
-- Explanation: ${explanation.explanation ?? ""}
-- Why it matters: ${explanation.why ?? ""}
-- Common mistake: ${explanation.common_mistake ?? ""}
-- Example: ${explanation.example ?? ""}
-- Analogy: ${explanation.analogy ?? ""}`;
+Explanation: ${explanation.explanation ?? ""}
+Why it matters: ${explanation.why ?? ""}
+Common mistake: ${explanation.common_mistake ?? ""}
+Example: ${explanation.example ?? ""}
+Analogy: ${explanation.analogy ?? ""}`;
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3-flash-preview");

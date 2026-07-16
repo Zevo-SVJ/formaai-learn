@@ -1,118 +1,178 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { listDocuments } from "@/lib/documents.functions";
-import { Logo } from "@/components/Logo";
-import { UploadArea } from "@/components/UploadArea";
-import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { BookOpen, LogOut, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
+import { AppHeader } from "@/components/AppHeader";
+import { UploadArea } from "@/components/UploadArea";
+import { useI18n } from "@/hooks/useI18n";
+import { BookOpen, Loader2, Star, CheckCircle2, AlertCircle, ArrowRight, Home } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/library")({
   component: Library,
 });
 
-function statusBadge(status: string) {
-  if (status === "ready")
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-soft px-2 py-0.5 text-[11px] font-semibold text-emerald">
-        <CheckCircle2 className="h-3 w-3" /> Ready
-      </span>
-    );
-  if (status === "failed")
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-semibold text-destructive">
-        <AlertCircle className="h-3 w-3" /> Failed
-      </span>
-    );
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">
-      <Loader2 className="h-3 w-3 animate-spin" /> Analyzing
-    </span>
-  );
-}
+type Doc = {
+  id: string;
+  title: string;
+  subject: string | null;
+  level: string | null;
+  chapter: string | null;
+  status: string;
+  favorite: boolean;
+  created_at: string;
+};
 
 function Library() {
-  const navigate = useNavigate();
+  const { t, locale } = useI18n();
   const list = useServerFn(listDocuments);
+  const fav = useServerFn(toggleFavorite);
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+
   const { data, isLoading } = useQuery({
     queryKey: ["documents"],
-    queryFn: () => list(),
+    queryFn: () => list() as Promise<Doc[]>,
     refetchInterval: (q) => {
-      const rows = (q.state.data as Array<{ status: string }> | undefined) ?? [];
+      const rows = (q.state.data as Doc[] | undefined) ?? [];
       return rows.some((r) => r.status !== "ready" && r.status !== "failed") ? 2500 : false;
     },
   });
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 border-b border-border/60 bg-background/80 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
-          <Link to="/library"><Logo /></Link>
+      <AppHeader
+        back={
           <button
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate({ to: "/" });
-            }}
-            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-2 text-xs font-semibold text-muted-foreground hover:text-foreground"
+            onClick={() => navigate({ to: "/home" })}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface hover:border-border-strong"
+            aria-label={t((d) => d.common.home)}
           >
-            <LogOut className="h-3.5 w-3.5" /> Sign out
+            <Home className="h-4 w-4" />
           </button>
-        </div>
-      </header>
+        }
+      />
 
-      <main className="mx-auto max-w-5xl px-5 py-8 sm:py-14">
+      <main className="mx-auto max-w-5xl px-5 py-8 sm:py-12">
         <div className="mb-8 flex flex-col gap-1">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Your library</h1>
-          <p className="text-sm text-muted-foreground">Upload a lesson to start learning.</p>
+          <h1 className="text-[30px] font-bold leading-tight tracking-tight text-foreground sm:text-[38px]">
+            {t((d) => d.common.library)}
+          </h1>
+          <p className="text-[15px] text-muted-foreground">
+            {t((d) => d.home.recentEmpty)}
+          </p>
         </div>
 
         <div className="mb-10">
           <UploadArea />
         </div>
 
+        {isLoading && (
+          <div className="flex items-center justify-center py-14 text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+          </div>
+        )}
+
         <div className="grid gap-3 sm:grid-cols-2">
-          {isLoading && (
-            <div className="col-span-full flex items-center justify-center py-16 text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-            </div>
-          )}
-          {!isLoading && (data ?? []).length === 0 && (
-            <div className="col-span-full rounded-3xl border border-dashed border-border bg-surface p-10 text-center text-sm text-muted-foreground">
-              Nothing here yet. Upload your first lesson above.
-            </div>
-          )}
           {(data ?? []).map((d, i) => (
             <motion.div
               key={d.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: i * 0.03 }}
+              transition={{ duration: 0.3, delay: i * 0.02 }}
+              className="group relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:border-border-strong"
             >
               <Link
                 to="/doc/$docId"
                 params={{ docId: d.id }}
-                className="group block rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:border-border-strong"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-soft">
-                    <BookOpen className="h-5 w-5 text-emerald" />
-                  </div>
-                  {statusBadge(d.status)}
+                className="absolute inset-0"
+                aria-label={d.title}
+              />
+              <div className="relative flex items-start justify-between gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-soft">
+                  <BookOpen className="h-5 w-5 text-emerald" />
                 </div>
-                <h3 className="mt-4 line-clamp-2 text-[16px] font-bold text-foreground">
-                  {d.title}
-                </h3>
-                <div className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
-                  {d.subject && <span>{d.subject}</span>}
-                  {d.level && <span>· {d.level}</span>}
-                  {d.chapter && <span>· {d.chapter}</span>}
+                <div className="flex items-center gap-1.5">
+                  <StatusBadge status={d.status} />
+                  <button
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      await fav({ data: { id: d.id, favorite: !d.favorite } });
+                      qc.invalidateQueries({ queryKey: ["documents"] });
+                    }}
+                    className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface transition hover:border-border-strong"
+                  >
+                    <Star
+                      className={`h-3.5 w-3.5 ${
+                        d.favorite ? "fill-amber-500 text-amber-500" : "text-muted-foreground"
+                      }`}
+                    />
+                  </button>
                 </div>
-              </Link>
+              </div>
+              <h3 className="relative mt-4 line-clamp-2 text-[16px] font-bold text-foreground">
+                {d.title}
+              </h3>
+              <div className="relative mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+                {d.subject && <span>{d.subject}</span>}
+                {d.subject && (d.level || d.chapter) && <span>·</span>}
+                {d.level && <span>{d.level}</span>}
+                {d.level && d.chapter && <span>·</span>}
+                {d.chapter && <span>{d.chapter}</span>}
+              </div>
+              <div className="relative mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                <span>{relativeTime(d.created_at, locale)}</span>
+                <span className="inline-flex items-center gap-1 font-semibold text-foreground opacity-0 transition-opacity group-hover:opacity-100">
+                  {t((d2) => d2.common.continue)}
+                  <ArrowRight className="h-3 w-3" />
+                </span>
+              </div>
             </motion.div>
           ))}
         </div>
+
+        {!isLoading && (data ?? []).length === 0 && (
+          <div className="rounded-3xl border border-dashed border-border bg-surface p-10 text-center text-sm text-muted-foreground">
+            {t((d) => d.home.recentEmpty)}
+          </div>
+        )}
       </main>
     </div>
   );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  if (status === "ready") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-soft px-2 py-0.5 text-[10px] font-semibold text-emerald">
+        <CheckCircle2 className="h-3 w-3" />
+      </span>
+    );
+  }
+  if (status === "failed") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-[10px] font-semibold text-destructive">
+        <AlertCircle className="h-3 w-3" />
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">
+      <Loader2 className="h-3 w-3 animate-spin" />
+    </span>
+  );
+}
+
+function relativeTime(iso: string, locale: string): string {
+  const isFr = locale.startsWith("fr");
+  const then = new Date(iso).getTime();
+  const now = Date.now();
+  const diffMin = Math.max(0, Math.floor((now - then) / 60000));
+  if (diffMin < 1) return isFr ? "à l'instant" : "just now";
+  if (diffMin < 60) return `${diffMin} ${isFr ? "min" : "min ago"}`;
+  const h = Math.floor(diffMin / 60);
+  if (h < 24) return `${h} ${isFr ? "h" : "h ago"}`;
+  const d = Math.floor(h / 24);
+  return `${d} ${isFr ? "j" : "d ago"}`;
 }

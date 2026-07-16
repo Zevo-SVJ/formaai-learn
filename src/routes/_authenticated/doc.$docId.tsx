@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useChat } from "@ai-sdk/react";
@@ -10,10 +10,14 @@ import {
   getMessages,
   getSignedFileUrl,
   analyzeDocument,
+  toggleFavorite,
 } from "@/lib/documents.functions";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
-import ReactMarkdown from "react-markdown";
+import { AnswerRenderer } from "@/components/AnswerRenderer";
+import { QuickActionsBar, useQuickActions } from "@/components/QuickActionsBar";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useI18n } from "@/hooks/useI18n";
 import {
   ArrowLeft,
   Loader2,
@@ -24,6 +28,7 @@ import {
   AlertTriangle,
   Wand2,
   RefreshCw,
+  Star,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -42,6 +47,7 @@ type Doc = {
   chapter: string | null;
   concepts: string[] | null;
   extracted_text: string | null;
+  favorite: boolean;
   explanation: {
     explanation?: string;
     why?: string;
@@ -52,21 +58,16 @@ type Doc = {
   error: string | null;
 };
 
-const stageLabel: Record<string, string> = {
-  uploading: "Uploading document",
-  extracting: "Reading the document",
-  analyzing: "Understanding the lesson",
-  ready: "Ready",
-  failed: "Something went wrong",
-};
-
 function DocPage() {
   const { docId } = Route.useParams();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const getDoc = useServerFn(getDocument);
   const getMsgs = useServerFn(getMessages);
   const signFile = useServerFn(getSignedFileUrl);
   const retry = useServerFn(analyzeDocument);
+  const fav = useServerFn(toggleFavorite);
+  const qc = useQueryClient();
 
   const { data: doc, refetch } = useQuery({
     queryKey: ["document", docId],
@@ -91,21 +92,32 @@ function DocPage() {
       .catch(() => setFileUrl(null));
   }, [doc?.storage_path, signFile]);
 
+  const onFavToggle = async () => {
+    if (!doc) return;
+    const next = !doc.favorite;
+    await fav({ data: { id: doc.id, favorite: next } });
+    toast.success(
+      next ? t((d) => d.doc.favoriteToast) : t((d) => d.doc.unfavoriteToast),
+    );
+    qc.invalidateQueries({ queryKey: ["document", docId] });
+    qc.invalidateQueries({ queryKey: ["documents"] });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
           <div className="flex min-w-0 items-center gap-3">
             <button
-              onClick={() => navigate({ to: "/library" })}
+              onClick={() => navigate({ to: "/home" })}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface hover:border-border-strong"
-              aria-label="Back"
+              aria-label={t((d) => d.common.back)}
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
             <div className="min-w-0">
               <div className="truncate text-[15px] font-bold leading-tight text-foreground">
-                {doc?.title ?? "Loading..."}
+                {doc?.title ?? t((d) => d.common.loading)}
               </div>
               {doc && (doc.subject || doc.level) && (
                 <div className="truncate text-[11px] text-muted-foreground">
@@ -114,7 +126,30 @@ function DocPage() {
               )}
             </div>
           </div>
-          <Link to="/library" className="hidden sm:block"><Logo /></Link>
+          <div className="flex items-center gap-2">
+            {doc?.status === "ready" && (
+              <button
+                onClick={onFavToggle}
+                className={[
+                  "hidden items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold transition sm:inline-flex",
+                  doc.favorite
+                    ? "border-amber-500/30 bg-amber-500/10 text-amber-600"
+                    : "border-border bg-surface text-muted-foreground hover:text-foreground",
+                ].join(" ")}
+              >
+                <Star
+                  className={`h-3.5 w-3.5 ${doc.favorite ? "fill-current" : ""}`}
+                />
+                {doc.favorite
+                  ? t((d) => d.doc.favoriteRemove)
+                  : t((d) => d.doc.favoriteAdd)}
+              </button>
+            )}
+            <LanguageSwitcher />
+            <Link to="/home" className="hidden sm:block">
+              <Logo />
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -132,8 +167,10 @@ function DocPage() {
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10">
                   <AlertTriangle className="h-6 w-6 text-destructive" />
                 </div>
-                <h2 className="mt-5 text-xl font-bold">Analysis failed</h2>
-                <p className="mt-2 text-sm text-muted-foreground">{doc.error ?? "Please try again."}</p>
+                <h2 className="mt-5 text-xl font-bold">{t((d) => d.doc.failed)}</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {doc.error ?? t((d) => d.doc.retry)}
+                </p>
                 <button
                   onClick={async () => {
                     try {
@@ -145,7 +182,7 @@ function DocPage() {
                   }}
                   className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background"
                 >
-                  <RefreshCw className="h-4 w-4" /> Try again
+                  <RefreshCw className="h-4 w-4" /> {t((d) => d.doc.retry)}
                 </button>
               </>
             ) : (
@@ -153,10 +190,13 @@ function DocPage() {
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-soft">
                   <Loader2 className="h-6 w-6 animate-spin text-emerald" />
                 </div>
-                <h2 className="mt-5 text-xl font-bold">{stageLabel[doc.status] ?? "Working"}</h2>
+                <h2 className="mt-5 text-xl font-bold">
+                  {doc.status === "analyzing"
+                    ? t((d) => d.doc.understanding)
+                    : t((d) => d.doc.reading)}
+                </h2>
                 <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-                  Forma AI is really reading your document — not faking it. This usually takes 5–15
-                  seconds.
+                  {t((d) => d.doc.workingHint)}
                 </p>
               </>
             )}
@@ -166,7 +206,11 @@ function DocPage() {
         {doc && doc.status === "ready" && (
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
             <DocumentViewer doc={doc} fileUrl={fileUrl} />
-            <ExplanationPanel doc={doc} initialMessages={initialMessages ?? []} />
+            <ExplanationPanel
+              doc={doc}
+              initialMessages={initialMessages ?? []}
+              onFavToggle={onFavToggle}
+            />
           </div>
         )}
       </main>
@@ -198,7 +242,7 @@ function DocumentViewer({ doc, fileUrl }: { doc: Doc; fileUrl: string | null }) 
   );
 }
 
-function Section({
+function ExplanationCard({
   icon: Icon,
   title,
   children,
@@ -225,38 +269,31 @@ function Section({
       className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
     >
       <div className="mb-3 flex items-center gap-2.5">
-        <div className={`flex h-8 w-8 items-center justify-center rounded-xl ${bg}`}>
-          <Icon className={`h-4 w-4 ${color}`} />
+        <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${bg}`}>
+          <Icon className={`h-3.5 w-3.5 ${color}`} />
         </div>
-        <h3 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           {title}
         </h3>
       </div>
-      <div className="prose prose-sm max-w-none text-[15px] leading-relaxed text-foreground [&>p]:my-2 [&>ul]:my-2">
-        {children}
-      </div>
+      <div className="space-y-2 text-[15px] leading-relaxed text-foreground">{children}</div>
     </motion.div>
   );
 }
 
-const QUICK_ACTIONS = [
-  { label: "Explain differently", prompt: "Explain this in a different way." },
-  { label: "Explain like I'm 10", prompt: "Explain this like I'm 10 years old." },
-  { label: "Another example", prompt: "Give me another simple worked example." },
-  { label: "Summarize", prompt: "Summarize the lesson in 5 short bullet points." },
-  { label: "Flashcards", prompt: "Create 5 flashcards (Q on one line, A on next) from this lesson." },
-  { label: "Quiz me", prompt: "Give me a 3-question quiz on this lesson. Ask one at a time and wait for my answer." },
-];
-
 function ExplanationPanel({
   doc,
   initialMessages,
+  onFavToggle,
 }: {
   doc: Doc;
   initialMessages: Array<{ id: string; role: string; content: string }>;
+  onFavToggle: () => void;
 }) {
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { t, locale } = useI18n();
+  const quickActions = useQuickActions();
 
   const seedMessages: UIMessage[] = useMemo(
     () =>
@@ -272,7 +309,7 @@ function ExplanationPanel({
     () =>
       new DefaultChatTransport({
         api: "/api/chat",
-        body: { documentId: doc.id },
+        body: { documentId: doc.id, locale },
         fetch: async (input, init) => {
           const { data } = await supabase.auth.getSession();
           const headers = new Headers(init?.headers);
@@ -281,7 +318,7 @@ function ExplanationPanel({
           return fetch(input, { ...init, headers });
         },
       }),
-    [doc.id],
+    [doc.id, locale],
   );
 
   const { messages, sendMessage, status } = useChat({
@@ -308,71 +345,99 @@ function ExplanationPanel({
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Mobile favorite bar */}
+      <div className="flex items-center gap-2 sm:hidden">
+        <button
+          onClick={onFavToggle}
+          className={[
+            "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+            doc.favorite
+              ? "border-amber-500/30 bg-amber-500/10 text-amber-600"
+              : "border-border bg-surface text-muted-foreground",
+          ].join(" ")}
+        >
+          <Star className={`h-3.5 w-3.5 ${doc.favorite ? "fill-current" : ""}`} />
+          {doc.favorite ? t((d) => d.doc.favoriteRemove) : t((d) => d.doc.favoriteAdd)}
+        </button>
+      </div>
+
       {exp.explanation && (
-        <Section icon={Sparkles} title="Explanation" tone="emerald">
-          <ReactMarkdown>{exp.explanation}</ReactMarkdown>
-        </Section>
+        <ExplanationCard icon={Sparkles} title={t((d) => d.doc.sections.explanation)} tone="emerald">
+          {splitParagraphs(exp.explanation).map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </ExplanationCard>
       )}
       {exp.why && (
-        <Section icon={Lightbulb} title="Why this matters">
-          <ReactMarkdown>{exp.why}</ReactMarkdown>
-        </Section>
+        <ExplanationCard icon={Lightbulb} title={t((d) => d.doc.sections.why)}>
+          <p>{exp.why}</p>
+        </ExplanationCard>
       )}
       {exp.common_mistake && (
-        <Section icon={AlertTriangle} title="Common mistake" tone="warn">
-          <ReactMarkdown>{exp.common_mistake}</ReactMarkdown>
-        </Section>
+        <ExplanationCard
+          icon={AlertTriangle}
+          title={t((d) => d.doc.sections.commonMistakes)}
+          tone="warn"
+        >
+          <p>{exp.common_mistake}</p>
+        </ExplanationCard>
       )}
       {exp.example && (
-        <Section icon={BookOpen} title="Simple example">
-          <ReactMarkdown>{exp.example}</ReactMarkdown>
-        </Section>
+        <ExplanationCard icon={BookOpen} title={t((d) => d.doc.sections.example)}>
+          {splitParagraphs(exp.example).map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </ExplanationCard>
       )}
       {exp.analogy && (
-        <Section icon={Wand2} title="Analogy">
-          <ReactMarkdown>{exp.analogy}</ReactMarkdown>
-        </Section>
+        <ExplanationCard icon={Wand2} title={t((d) => d.doc.sections.analogy)}>
+          <p>{exp.analogy}</p>
+        </ExplanationCard>
       )}
 
       {/* Chat */}
       <div className="rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)]">
         <div className="border-b border-border px-5 py-3">
-          <div className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Ask Forma about this lesson
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+            {t((d) => d.doc.askTitle)}
           </div>
         </div>
 
-        <div ref={scrollRef} className="max-h-[420px] overflow-y-auto px-5 py-4">
+        <div ref={scrollRef} className="max-h-[520px] overflow-y-auto px-4 py-4 sm:px-5">
           {messages.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              Ask anything about the lesson. Forma already read it.
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              {t((d) => d.doc.empty)}
             </p>
           )}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <AnimatePresence initial={false}>
-              {messages.map((m) => {
+              {messages.map((m, idx) => {
                 const text = m.parts
                   .map((p) => (p.type === "text" ? p.text : ""))
                   .join("");
+                const isUser = m.role === "user";
+                const isLastAssistant =
+                  !isUser &&
+                  messages.slice(idx + 1).every((mm) => mm.role !== "assistant");
                 return (
                   <motion.div
                     key={m.id}
-                    initial={{ opacity: 0, y: 4 }}
+                    initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                    className={isUser ? "flex justify-end" : ""}
                   >
-                    <div
-                      className={[
-                        "max-w-[85%] rounded-2xl px-4 py-2.5 text-[14.5px] leading-relaxed",
-                        m.role === "user"
-                          ? "bg-foreground text-background"
-                          : "bg-surface-muted text-foreground",
-                      ].join(" ")}
-                    >
-                      <div className="prose prose-sm max-w-none [&>p]:my-1.5 [&>ul]:my-1.5">
-                        <ReactMarkdown>{text}</ReactMarkdown>
+                    {isUser ? (
+                      <div className="max-w-[85%] rounded-2xl bg-foreground px-4 py-2.5 text-[14.5px] leading-relaxed text-background">
+                        {text}
                       </div>
-                    </div>
+                    ) : (
+                      <div>
+                        <AnswerRenderer text={text} compact />
+                        {isLastAssistant && !isBusy && (
+                          <QuickActionsBar onPick={submit} disabled={isBusy} />
+                        )}
+                      </div>
+                    )}
                   </motion.div>
                 );
               })}
@@ -392,18 +457,21 @@ function ExplanationPanel({
         </div>
 
         <div className="border-t border-border px-3 py-3">
-          <div className="mb-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {QUICK_ACTIONS.map((a) => (
-              <button
-                key={a.label}
-                onClick={() => submit(a.prompt)}
-                disabled={isBusy}
-                className="shrink-0 rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-foreground hover:border-border-strong disabled:opacity-50"
-              >
-                {a.label}
-              </button>
-            ))}
-          </div>
+          {messages.length === 0 && (
+            <div className="mb-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {quickActions.map((a) => (
+                <button
+                  key={a.id}
+                  onClick={() => submit(a.prompt)}
+                  disabled={isBusy}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-[12px] font-semibold text-foreground hover:border-border-strong disabled:opacity-50"
+                >
+                  <a.icon className="h-3 w-3 text-emerald" />
+                  {a.label}
+                </button>
+              ))}
+            </div>
+          )}
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -421,7 +489,7 @@ function ExplanationPanel({
                 }
               }}
               rows={1}
-              placeholder="Ask about anything in the lesson..."
+              placeholder={t((d) => d.doc.askPlaceholder)}
               className="min-h-[36px] max-h-32 flex-1 resize-none border-0 bg-transparent px-2 py-2 text-[15px] outline-none placeholder:text-muted-foreground"
             />
             <button
@@ -437,4 +505,12 @@ function ExplanationPanel({
       </div>
     </div>
   );
+}
+
+function splitParagraphs(text: string): string[] {
+  return text
+    .replace(/\r\n/g, "\n")
+    .split(/\n{2,}/)
+    .map((p) => p.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
 }
