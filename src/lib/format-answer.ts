@@ -104,7 +104,7 @@ export function parseAnswer(text: string, locale: string = "en"): ParsedAnswer {
       // No header seen yet, treat leading content as the "Answer" section.
       openSection("answer");
     }
-    const active = current as AnswerSection;
+    const active = current as unknown as AnswerSection;
     const m = CHOICE_RE.exec(line);
     if (m) {
       active.choices ??= [];
