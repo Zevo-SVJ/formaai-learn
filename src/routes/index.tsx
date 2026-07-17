@@ -12,10 +12,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { UploadArea } from "@/components/UploadArea";
+import { CompactActions } from "@/components/CompactActions";
+import { SocialProof } from "@/components/SocialProof";
+import { CompareSection } from "@/components/CompareSection";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { LiveCounters } from "@/components/LiveCounters";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
+
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/hooks/useI18n";
 import {
@@ -54,14 +56,18 @@ function Landing() {
       <Problem />
       <Solution />
       <HowItWorks />
+      <MidCTA />
+      <CompareSection />
       <SubjectsSection />
       <ReviewsSection />
       <FAQSection />
+      <PreFooterCTA />
       <FinalCTA />
       <SiteFooter />
     </div>
   );
 }
+
 
 function Header() {
   const { t } = useI18n();
