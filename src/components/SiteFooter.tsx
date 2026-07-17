@@ -24,9 +24,10 @@ export function SiteFooter() {
           <Link to="/terms" className="hover:text-foreground">
             {t((d) => d.footer.terms)}
           </Link>
-          <Link to="/cookies" className="hover:text-foreground">
+          <a href="/privacy" className="hover:text-foreground" aria-label="Cookies">
             {t((d) => d.footer.cookies)}
-          </Link>
+          </a>
+
           <a
             href={INSTAGRAM_URL}
             target="_blank"

@@ -42,7 +42,21 @@ export const fr: Dict = {
       "Dépose une leçon, un exercice ou une photo de tes notes. Forma AI lit, comprend et te réexplique le cours avec des mots qui parlent vraiment.",
     cta: "Essayer gratuitement",
     ctaHint: "Sans carte. Sans mur d'inscription.",
+    menu: {
+      upload: "Déposer une leçon",
+      see: "Voir comment ça marche",
+      eyebrow: "Ajouter une leçon",
+      title: "Comment veux-tu l'ajouter ?",
+      image: "Choisir une image",
+      pdf: "Choisir un PDF",
+      photo: "Prendre une photo",
+      scan: "Scanner un document",
+    },
   },
+  progress: {
+    nav: "Progrès",
+  },
+
   social: {
     count: "Utilisé par 300 000+",
     label: "élèves",
@@ -227,9 +241,11 @@ export const fr: Dict = {
     tagline: "Fait pour les élèves qui veulent vraiment apprendre.",
     terms: "Conditions",
     privacy: "Confidentialité",
+    cookies: "Cookies",
     contact: "Contact",
     rights: "Tous droits réservés.",
   },
+
   auth: {
     welcome: "Bienvenue sur Forma AI",
     tagline: "Connecte-toi pour commencer à comprendre tes leçons.",
