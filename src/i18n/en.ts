@@ -41,6 +41,36 @@ export const en = {
     cta: "Try it free",
     ctaHint: "No card. No signup wall.",
   },
+  social: {
+    count: "Trusted by 300,000+",
+    label: "students",
+  },
+  compact: {
+    upload: "Upload a lesson",
+    scan: "Take a photo",
+  },
+  compare: {
+    eyebrow: "The difference",
+    title: "How Forma compares to other tools.",
+    subtitle: "Most tools give you the answer and leave. Forma stays until you actually understand.",
+    recommended: "Recommended",
+    otherTitle: "Other AI tools",
+    typical: "Typical",
+    forma: [
+      "Explains every answer step by step",
+      "Adapts to your grade and level",
+      "Creates revision material for you",
+      "Helps you understand, not just solve",
+      "Keeps your learning history in one place",
+    ],
+    other: [
+      "Only gives you the final answer",
+      "Same reply for everyone, no adaptation",
+      "No revision sheets or memory aids",
+      "Built to solve, not to teach",
+      "Forgets your work as soon as you close the tab",
+    ],
+  },
   liveCounters: {
     lessons: "lessons analyzed",
     exercises: "exercises solved",
@@ -48,6 +78,7 @@ export const en = {
     live: "Live",
     updated: "Updated a moment ago",
   },
+
   problem: {
     eyebrow: "The problem",
     title: "Answers are not the same as understanding.",
