@@ -43,6 +43,36 @@ export const fr: Dict = {
     cta: "Essayer gratuitement",
     ctaHint: "Sans carte. Sans mur d'inscription.",
   },
+  social: {
+    count: "Utilisé par 300 000+",
+    label: "élèves",
+  },
+  compact: {
+    upload: "Déposer une leçon",
+    scan: "Prendre en photo",
+  },
+  compare: {
+    eyebrow: "La différence",
+    title: "Forma face aux autres outils.",
+    subtitle: "La plupart des outils donnent la réponse et s'en vont. Forma reste jusqu'à ce que tu comprennes vraiment.",
+    recommended: "Recommandé",
+    otherTitle: "Autres outils d'IA",
+    typical: "Habituel",
+    forma: [
+      "Explique chaque réponse étape par étape",
+      "S'adapte à ton niveau et à ta classe",
+      "Crée tes fiches de révision",
+      "Aide à comprendre, pas seulement à résoudre",
+      "Garde tout ton historique d'apprentissage",
+    ],
+    other: [
+      "Donne uniquement la réponse finale",
+      "Même réponse pour tout le monde, sans adaptation",
+      "Aucune fiche de révision ni aide mémoire",
+      "Fait pour résoudre, pas pour enseigner",
+      "Oublie ton travail dès que tu fermes l'onglet",
+    ],
+  },
   liveCounters: {
     lessons: "leçons analysées",
     exercises: "exercices résolus",
@@ -50,6 +80,7 @@ export const fr: Dict = {
     live: "En direct",
     updated: "Mis à jour à l'instant",
   },
+
   problem: {
     eyebrow: "Le problème",
     title: "Avoir la réponse ne veut pas dire comprendre.",

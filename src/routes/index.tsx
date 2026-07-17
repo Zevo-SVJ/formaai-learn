@@ -12,10 +12,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { UploadArea } from "@/components/UploadArea";
+import { CompactActions } from "@/components/CompactActions";
+import { SocialProof } from "@/components/SocialProof";
+import { CompareSection } from "@/components/CompareSection";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { LiveCounters } from "@/components/LiveCounters";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
+
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/hooks/useI18n";
 import {
@@ -54,14 +56,18 @@ function Landing() {
       <Problem />
       <Solution />
       <HowItWorks />
+      <MidCTA />
+      <CompareSection />
       <SubjectsSection />
       <ReviewsSection />
       <FAQSection />
+      <PreFooterCTA />
       <FinalCTA />
       <SiteFooter />
     </div>
   );
 }
+
 
 function Header() {
   const { t } = useI18n();
@@ -129,6 +135,9 @@ function Hero() {
       />
 
       <div className="relative mx-auto max-w-3xl text-center">
+        <div className="mb-6 flex justify-center">
+          <SocialProof />
+        </div>
         <motion.h1
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -148,17 +157,35 @@ function Hero() {
           {t((d) => d.hero.subtitle)}
         </motion.p>
 
-        <div className="mt-10">
-          <UploadArea />
+        <div className="mt-9">
+          <CompactActions />
         </div>
-
-        <div className="mt-12">
-          <LiveCounters />
-        </div>
+        <p className="mt-3 text-[12px] text-muted-foreground">{t((d) => d.hero.ctaHint)}</p>
       </div>
     </section>
   );
 }
+
+function MidCTA() {
+  return (
+    <section className="px-5 pb-4 pt-2">
+      <div className="mx-auto max-w-3xl">
+        <CompactActions size="sm" />
+      </div>
+    </section>
+  );
+}
+
+function PreFooterCTA() {
+  return (
+    <section className="px-5 pb-4 pt-2">
+      <div className="mx-auto max-w-3xl">
+        <CompactActions size="sm" />
+      </div>
+    </section>
+  );
+}
+
 
 function Section({
   eyebrow,
