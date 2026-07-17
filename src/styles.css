@@ -156,3 +156,46 @@
   border-radius: var(--radius-2xl);
   box-shadow: var(--shadow-soft);
 }
+
+/* Slow, continuous, premium shine that sweeps across primary buttons. */
+.forma-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.forma-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  transform: translateX(-120%);
+  animation: forma-shine 6.5s ease-in-out infinite;
+  mix-blend-mode: overlay;
+}
+
+@keyframes forma-shine {
+  0% { transform: translateX(-120%); }
+  55% { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
+}
+
+/* Marquee tracks that scroll horizontally without pausing. */
+@keyframes forma-marquee-l {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes forma-marquee-r {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+.forma-marquee-l { animation: forma-marquee-l 60s linear infinite; }
+.forma-marquee-r { animation: forma-marquee-r 60s linear infinite; }
+
