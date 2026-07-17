@@ -40,7 +40,21 @@ export const en = {
       "Upload a lesson, worksheet or a photo of your notes. Forma AI reads it, understands it, and teaches it back in words that actually make sense.",
     cta: "Try it free",
     ctaHint: "No card. No signup wall.",
+    menu: {
+      upload: "Upload a lesson",
+      see: "See how it works",
+      eyebrow: "Add a lesson",
+      title: "How do you want to add it?",
+      image: "Choose an image",
+      pdf: "Choose a PDF",
+      photo: "Take a photo",
+      scan: "Scan a document",
+    },
   },
+  progress: {
+    nav: "Progress",
+  },
+
   social: {
     count: "Trusted by 300,000+",
     label: "students",
@@ -225,8 +239,10 @@ export const en = {
     tagline: "Made for students who actually want to learn.",
     terms: "Terms",
     privacy: "Privacy",
+    cookies: "Cookies",
     contact: "Contact",
     rights: "All rights reserved.",
+
   },
   auth: {
     welcome: "Welcome to Forma AI",
