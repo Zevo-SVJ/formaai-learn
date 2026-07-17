@@ -74,6 +74,51 @@ export type Database = {
         }
         Relationships: []
       }
+      grades: {
+        Row: {
+          assignment: string | null
+          coefficient: number
+          created_at: string
+          date: string
+          grade: number
+          id: string
+          max_grade: number
+          meta: Json
+          note: string | null
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assignment?: string | null
+          coefficient?: number
+          created_at?: string
+          date?: string
+          grade: number
+          id?: string
+          max_grade?: number
+          meta?: Json
+          note?: string | null
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assignment?: string | null
+          coefficient?: number
+          created_at?: string
+          date?: string
+          grade?: number
+          id?: string
+          max_grade?: number
+          meta?: Json
+          note?: string | null
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -109,12 +154,40 @@ export type Database = {
           },
         ]
       }
+      referral_profiles: {
+        Row: {
+          code: string
+          created_at: string
+          premium_unlocked: boolean
+          referred_by: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          premium_unlocked?: boolean
+          referred_by?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          premium_unlocked?: boolean
+          referred_by?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_referrer_by_code: { Args: { _code: string }; Returns: string }
+      my_referral_count: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
