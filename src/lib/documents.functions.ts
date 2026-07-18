@@ -148,6 +148,18 @@ Rules:
         .trim();
 
     const explanation = (parsed.explanation as Record<string, unknown>) ?? {};
+    const rawAnswers = Array.isArray(parsed.answers) ? (parsed.answers as unknown[]) : [];
+    const answers = rawAnswers
+      .map((a) => {
+        const o = (a ?? {}) as Record<string, unknown>;
+        return {
+          label: clean(o.label),
+          question: clean(o.question),
+          answer: clean(o.answer),
+        };
+      })
+      .filter((a) => a.answer || a.label);
+
     const { error: upErr } = await supabase
       .from("documents")
       .update({
@@ -158,7 +170,10 @@ Rules:
         concepts: (parsed.concepts as string[] | null) ?? null,
         extracted_text: (parsed.extracted_text as string) || null,
         explanation: {
+          is_exercise: Boolean(parsed.is_exercise) || answers.length > 0,
+          answers,
           explanation: clean(explanation.explanation),
+          method: clean(explanation.method),
           why: clean(explanation.why),
           common_mistake: clean(explanation.common_mistake),
           example: clean(explanation.example),
