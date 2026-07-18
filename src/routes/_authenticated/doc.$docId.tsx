@@ -164,56 +164,29 @@ function DocPage() {
         )}
 
         {doc && doc.status !== "ready" && (
-          <div className="mx-auto flex max-w-md flex-col items-center py-16 text-center">
-            {doc.status === "failed" ? (
-              <>
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10">
-                  <AlertTriangle className="h-6 w-6 text-destructive" />
-                </div>
-                <h2 className="mt-5 text-xl font-bold">{t((d) => d.doc.failed)}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {doc.error ?? t((d) => d.doc.retry)}
-                </p>
-                <button
-                  onClick={async () => {
-                    try {
-                      await retry({ data: { documentId: doc.id } });
-                      refetch();
-                    } catch (e) {
-                      toast.error(e instanceof Error ? e.message : "Retry failed");
-                    }
-                  }}
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background"
-                >
-                  <RefreshCw className="h-4 w-4" /> {t((d) => d.doc.retry)}
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-soft">
-                  <Loader2 className="h-6 w-6 animate-spin text-emerald" />
-                </div>
-                <h2 className="mt-5 text-xl font-bold">
-                  {doc.status === "analyzing"
-                    ? t((d) => d.doc.understanding)
-                    : t((d) => d.doc.reading)}
-                </h2>
-                <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-                  {t((d) => d.doc.workingHint)}
-                </p>
-              </>
-            )}
-          </div>
+          <ScanningView doc={doc} fileUrl={fileUrl} onRetry={async () => {
+            try {
+              await retry({ data: { documentId: doc.id } });
+              refetch();
+            } catch (e) {
+              toast.error(e instanceof Error ? e.message : "Retry failed");
+            }
+          }} />
         )}
 
         {doc && doc.status === "ready" && (
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-            <DocumentViewer doc={doc} fileUrl={fileUrl} />
-            <ExplanationPanel
-              doc={doc}
-              initialMessages={initialMessages ?? []}
-              onFavToggle={onFavToggle}
-            />
+          <div className="space-y-5">
+            {doc.explanation?.answers && doc.explanation.answers.length > 0 && (
+              <AnswersPanel answers={doc.explanation.answers} />
+            )}
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+              <DocumentViewer doc={doc} fileUrl={fileUrl} />
+              <ExplanationPanel
+                doc={doc}
+                initialMessages={initialMessages ?? []}
+                onFavToggle={onFavToggle}
+              />
+            </div>
           </div>
         )}
       </main>
