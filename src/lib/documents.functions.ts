@@ -56,9 +56,19 @@ Analyze the attached document and reply with ONLY a compact JSON object matching
   "level": string (e.g. Grade 8, Grade 10, High School, Terminale),
   "chapter": string (chapter or topic name, in the document's own language),
   "concepts": string[] (3 to 6 key concepts, short),
+  "is_exercise": boolean (true if the document contains one or more questions to answer, false for a pure lesson),
   "extracted_text": string (clean plain text of the document, OCR if it is an image, keep formulas readable),
+  "answers": [
+    { "label": string, "question": string, "answer": string }
+  ]  (REQUIRED whenever is_exercise is true. One entry per question found in the document.
+      "label" is the question identifier as written in the document (e.g. "A", "B", "1", "2", "Q1"). If none, use "1", "2", ...
+      "question" is a very short restatement of the question (max ~90 chars). Empty string if the label is enough.
+      "answer" is the FINAL answer only, one short line. No reasoning, no method, no explanation, no introduction.
+      For open-ended questions, "answer" is the correct final response as concisely as possible.
+      Return [] if the document is a pure lesson with no questions.),
   "explanation": {
     "explanation": string (2 to 4 short paragraphs teaching the core idea, adapted to the level, in the document's own language),
+    "method": string (step-by-step method the student should follow to solve this type of exercise, or empty string for pure lessons),
     "why": string (why this matters, 1 or 2 sentences),
     "common_mistake": string (a mistake students commonly make),
     "example": string (one worked simple example),
@@ -69,8 +79,10 @@ Rules:
 - Never invent content that is not in the document.
 - Never use italic text. Never use bold syntax (no ** or __). Never use markdown headings or hashtags.
 - Never use the em dash character. Use a comma or a period instead.
-- Write in the same language as the document.
-- If the document is unreadable, set fields to "" and put a short reason in extracted_text.`,
+- Write EVERY field in the same language as the document. Never mix languages.
+- If the document is an exercise or worksheet, "answers" MUST list every final answer, one per question, and each answer must be as short as possible.
+- No introductions, no summaries in "answer" fields. Just the final result.
+- If the document is unreadable, set fields to "" or [] and put a short reason in extracted_text.`,
       },
     ];
     if (isImage) {
