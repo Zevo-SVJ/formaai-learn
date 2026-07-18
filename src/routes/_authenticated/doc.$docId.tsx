@@ -639,7 +639,7 @@ function ScanningView({
 
         <div className="relative mt-6 min-h-[160px]">
           <AnimatePresence mode="wait">
-            {steps.map((s, i) =>
+            {steps.map((s: string, i: number) =>
               i === done ? (
                 <motion.div
                   key={i}
