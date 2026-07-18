@@ -84,7 +84,7 @@ function ProgressPage() {
       map.set(k, list);
     }
     return Array.from(map.entries())
-      .map(([subject, arr]) => ({ subject, avg: weighted(arr), count: arr.length }))
+      .map(([subject, arr]) => ({ subject, avg: weighted(arr) ?? 0, count: arr.length }))
       .sort((a, b) => b.avg - a.avg);
   }, [inRange]);
 
