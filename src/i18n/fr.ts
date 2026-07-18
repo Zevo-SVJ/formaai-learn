@@ -372,6 +372,18 @@ export const fr: Dict = {
     favoriteRemove: "Enregistré",
     favoriteToast: "Ajouté à tes favoris",
     unfavoriteToast: "Retiré des favoris",
+    answersHint: "Les réponses finales, droit au but.",
+    scan: {
+      title: "Analyse de ton document",
+      caption: "Lecture de chaque question et préparation des réponses finales.",
+      steps: [
+        "Scan du document",
+        "Détection de la matière et du niveau",
+        "Extraction de chaque question",
+        "Préparation des réponses finales",
+        "Rédaction des explications",
+      ],
+    },
     empty: "Pose-lui n'importe quelle question sur la leçon. Forma l'a déjà lue.",
   },
   legal: {
