@@ -49,7 +49,10 @@ type Doc = {
   extracted_text: string | null;
   favorite: boolean;
   explanation: {
+    is_exercise?: boolean;
+    answers?: Array<{ label: string; question: string; answer: string }>;
     explanation?: string;
+    method?: string;
     why?: string;
     common_mistake?: string;
     example?: string;
@@ -161,56 +164,29 @@ function DocPage() {
         )}
 
         {doc && doc.status !== "ready" && (
-          <div className="mx-auto flex max-w-md flex-col items-center py-16 text-center">
-            {doc.status === "failed" ? (
-              <>
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10">
-                  <AlertTriangle className="h-6 w-6 text-destructive" />
-                </div>
-                <h2 className="mt-5 text-xl font-bold">{t((d) => d.doc.failed)}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {doc.error ?? t((d) => d.doc.retry)}
-                </p>
-                <button
-                  onClick={async () => {
-                    try {
-                      await retry({ data: { documentId: doc.id } });
-                      refetch();
-                    } catch (e) {
-                      toast.error(e instanceof Error ? e.message : "Retry failed");
-                    }
-                  }}
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background"
-                >
-                  <RefreshCw className="h-4 w-4" /> {t((d) => d.doc.retry)}
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-soft">
-                  <Loader2 className="h-6 w-6 animate-spin text-emerald" />
-                </div>
-                <h2 className="mt-5 text-xl font-bold">
-                  {doc.status === "analyzing"
-                    ? t((d) => d.doc.understanding)
-                    : t((d) => d.doc.reading)}
-                </h2>
-                <p className="mt-2 max-w-xs text-sm text-muted-foreground">
-                  {t((d) => d.doc.workingHint)}
-                </p>
-              </>
-            )}
-          </div>
+          <ScanningView doc={doc} fileUrl={fileUrl} onRetry={async () => {
+            try {
+              await retry({ data: { documentId: doc.id } });
+              refetch();
+            } catch (e) {
+              toast.error(e instanceof Error ? e.message : "Retry failed");
+            }
+          }} />
         )}
 
         {doc && doc.status === "ready" && (
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-            <DocumentViewer doc={doc} fileUrl={fileUrl} />
-            <ExplanationPanel
-              doc={doc}
-              initialMessages={initialMessages ?? []}
-              onFavToggle={onFavToggle}
-            />
+          <div className="space-y-5">
+            {doc.explanation?.answers && doc.explanation.answers.length > 0 && (
+              <AnswersPanel answers={doc.explanation.answers} />
+            )}
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+              <DocumentViewer doc={doc} fileUrl={fileUrl} />
+              <ExplanationPanel
+                doc={doc}
+                initialMessages={initialMessages ?? []}
+                onFavToggle={onFavToggle}
+              />
+            </div>
           </div>
         )}
       </main>
@@ -513,4 +489,197 @@ function splitParagraphs(text: string): string[] {
     .split(/\n{2,}/)
     .map((p) => p.replace(/\s+/g, " ").trim())
     .filter(Boolean);
+}
+
+function AnswersPanel({
+  answers,
+}: {
+  answers: Array<{ label: string; question: string; answer: string }>;
+}) {
+  const { t } = useI18n();
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="rounded-3xl border border-emerald/25 bg-gradient-to-br from-emerald-soft/70 to-card p-5 shadow-[var(--shadow-soft)] sm:p-6"
+    >
+      <div className="mb-4 flex items-center gap-2.5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald text-white">
+          <Sparkles className="h-4 w-4" />
+        </div>
+        <div>
+          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald">
+            {t((d) => d.doc.sections.answer)}
+          </div>
+          <div className="text-[13px] text-muted-foreground">
+            {t((d) => d.doc.answersHint)}
+          </div>
+        </div>
+      </div>
+      <ul className="grid gap-2.5 sm:grid-cols-2">
+        {answers.map((a, i) => (
+          <motion.li
+            key={i}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, delay: i * 0.04 }}
+            className="rounded-2xl border border-border bg-card p-4"
+          >
+            <div className="flex items-start gap-3">
+              <span className="flex h-8 min-w-8 shrink-0 items-center justify-center rounded-lg bg-foreground px-2 text-[13px] font-bold text-background">
+                {a.label || String(i + 1)}
+              </span>
+              <div className="min-w-0 flex-1">
+                {a.question && (
+                  <div className="mb-1 truncate text-[12px] font-medium text-muted-foreground">
+                    {a.question}
+                  </div>
+                )}
+                <div className="text-[16px] font-semibold leading-snug text-foreground">
+                  {a.answer}
+                </div>
+              </div>
+            </div>
+          </motion.li>
+        ))}
+      </ul>
+    </motion.section>
+  );
+}
+
+function ScanningView({
+  doc,
+  fileUrl,
+  onRetry,
+}: {
+  doc: Doc;
+  fileUrl: string | null;
+  onRetry: () => void;
+}) {
+  const { t, raw } = useI18n();
+  const steps = raw((d) => d.doc.scan.steps);
+  const [done, setDone] = useState(0);
+
+  useEffect(() => {
+    if (doc.status === "failed" || doc.status === "ready") return;
+    if (done >= steps.length - 1) return;
+    const id = window.setTimeout(() => setDone((n) => n + 1), 1400);
+    return () => window.clearTimeout(id);
+  }, [done, steps.length, doc.status]);
+
+  if (doc.status === "failed") {
+    return (
+      <div className="mx-auto flex max-w-md flex-col items-center py-16 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10">
+          <AlertTriangle className="h-6 w-6 text-destructive" />
+        </div>
+        <h2 className="mt-5 text-xl font-bold">{t((d) => d.doc.failed)}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">{doc.error ?? t((d) => d.doc.retry)}</p>
+        <button
+          onClick={onRetry}
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background"
+        >
+          <RefreshCw className="h-4 w-4" /> {t((d) => d.doc.retry)}
+        </button>
+      </div>
+    );
+  }
+
+  const isImage = doc.mime.startsWith("image/");
+  const isPdf = doc.mime === "application/pdf";
+  const progress = Math.min(100, Math.round(((done + 1) / steps.length) * 100));
+
+  return (
+    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-3 shadow-[var(--shadow-soft)]">
+        <div className="relative flex h-[420px] items-center justify-center overflow-hidden rounded-2xl bg-surface-muted sm:h-[520px]">
+          {!fileUrl ? (
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          ) : isImage ? (
+            <img src={fileUrl} alt={doc.title} className="max-h-full max-w-full object-contain" />
+          ) : isPdf ? (
+            <iframe src={fileUrl} title={doc.title} className="h-full w-full" />
+          ) : (
+            <pre className="max-h-full overflow-auto whitespace-pre-wrap p-6 text-left text-[13px] text-foreground">
+              {doc.extracted_text ?? ""}
+            </pre>
+          )}
+          {/* scanning laser */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-full">
+            <div className="forma-scan absolute inset-x-0 h-16 bg-gradient-to-b from-emerald/0 via-emerald/40 to-emerald/0" />
+          </div>
+          <div className="pointer-events-none absolute inset-0 rounded-2xl border-2 border-emerald/30" />
+        </div>
+      </div>
+
+      <div className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:p-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-soft">
+            <Sparkles className="h-4.5 w-4.5 text-emerald" />
+          </div>
+          <div>
+            <h2 className="text-[18px] font-bold text-foreground">
+              {t((d) => d.doc.scan.title)}
+            </h2>
+            <p className="text-[13px] text-muted-foreground">
+              {t((d) => d.doc.scan.caption)}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="h-full rounded-full bg-emerald"
+          />
+        </div>
+
+        <div className="relative mt-6 min-h-[160px]">
+          <AnimatePresence mode="wait">
+            {steps.map((s: string, i: number) =>
+              i === done ? (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-4 py-3.5"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-soft">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-emerald" />
+                  </span>
+                  <span className="text-[15px] font-semibold text-foreground">{s}</span>
+                </motion.div>
+              ) : i < done ? (
+                <motion.div
+                  key={`d-${i}`}
+                  initial={{ opacity: 1 }}
+                  animate={{ opacity: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className="pointer-events-none absolute inset-0 flex items-center gap-3 rounded-2xl border border-border bg-surface px-4 py-3.5"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald text-white">
+                    <CheckCircle2Icon />
+                  </span>
+                  <span className="text-[15px] font-semibold text-muted-foreground line-through">
+                    {s}
+                  </span>
+                </motion.div>
+              ) : null,
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CheckCircle2Icon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+  );
 }

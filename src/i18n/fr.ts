@@ -56,6 +56,34 @@ export const fr: Dict = {
   progress: {
     nav: "Progrès",
   },
+  progressPage: {
+    title: "Tes progrès",
+    subtitle: "Suis chaque note et regarde tes moyennes évoluer.",
+    add: "Ajouter une note",
+    overall: "Moyenne générale",
+    trend: "Tendance",
+    bySubject: "Par matière",
+    recent: "Toutes les notes",
+    entries: "notes",
+    noData: "Aucune note sur cette période.",
+    empty: "Ajoute ta première note pour voir tes progrès.",
+    editGrade: "Modifier la note",
+    newGrade: "Nouvelle note",
+    deleted: "Note supprimée",
+    saved: "Note enregistrée",
+    invalid: "Vérifie les valeurs.",
+    ranges: { week: "Semaine", month: "Mois", year: "Année", all: "Tout" },
+    fields: {
+      subject: "Matière",
+      assignment: "Devoir",
+      grade: "Note",
+      scale: "Barème",
+      custom: "Perso",
+      coef: "Coefficient",
+      date: "Date",
+      note: "Remarque",
+    },
+  },
 
   social: {
     count: "Utilisé par 300 000+",
@@ -372,6 +400,18 @@ export const fr: Dict = {
     favoriteRemove: "Enregistré",
     favoriteToast: "Ajouté à tes favoris",
     unfavoriteToast: "Retiré des favoris",
+    answersHint: "Les réponses finales, droit au but.",
+    scan: {
+      title: "Analyse de ton document",
+      caption: "Lecture de chaque question et préparation des réponses finales.",
+      steps: [
+        "Scan du document",
+        "Détection de la matière et du niveau",
+        "Extraction de chaque question",
+        "Préparation des réponses finales",
+        "Rédaction des explications",
+      ],
+    },
     empty: "Pose-lui n'importe quelle question sur la leçon. Forma l'a déjà lue.",
   },
   legal: {

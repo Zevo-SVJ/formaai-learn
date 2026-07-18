@@ -54,6 +54,34 @@ export const en = {
   progress: {
     nav: "Progress",
   },
+  progressPage: {
+    title: "Your progress",
+    subtitle: "Track every grade and watch your averages grow.",
+    add: "Add a grade",
+    overall: "Overall average",
+    trend: "Trend",
+    bySubject: "By subject",
+    recent: "All grades",
+    entries: "entries",
+    noData: "No grades in this range yet.",
+    empty: "Add your first grade to see your progress.",
+    editGrade: "Edit grade",
+    newGrade: "New grade",
+    deleted: "Grade removed",
+    saved: "Grade saved",
+    invalid: "Please check the values.",
+    ranges: { week: "Week", month: "Month", year: "Year", all: "All" },
+    fields: {
+      subject: "Subject",
+      assignment: "Assignment",
+      grade: "Grade",
+      scale: "Scale",
+      custom: "Custom",
+      coef: "Coefficient",
+      date: "Date",
+      note: "Note",
+    },
+  },
 
   social: {
     count: "Trusted by 300,000+",
@@ -370,6 +398,18 @@ export const en = {
     favoriteRemove: "Saved",
     favoriteToast: "Saved to your favorites",
     unfavoriteToast: "Removed from favorites",
+    answersHint: "Final answers, straight to the point.",
+    scan: {
+      title: "Analyzing your document",
+      caption: "Reading every question and preparing the final answers.",
+      steps: [
+        "Scanning the document",
+        "Detecting subject and level",
+        "Extracting every question",
+        "Preparing the final answers",
+        "Writing the explanations",
+      ],
+    },
     empty: "Ask anything about the lesson. Forma already read it.",
   },
   legal: {
