@@ -174,7 +174,7 @@ function ProgressPage() {
                         borderRadius: 12,
                         fontSize: 12,
                       }}
-                      formatter={(v: number) => [formatNum(v, locale) + " / 20", ""]}
+                      formatter={(v) => [formatNum(Number(v), locale) + " / 20", ""]}
                     />
                     <Line
                       type="monotone"
