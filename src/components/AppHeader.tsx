@@ -3,7 +3,7 @@ import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/useI18n";
-import { LogOut, Home as HomeIcon, BookOpen } from "lucide-react";
+import { LogOut, Home as HomeIcon, BookOpen, LineChart } from "lucide-react";
 
 export function AppHeader({ back }: { back?: React.ReactNode }) {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
     icon: Icon,
     label,
   }: {
-    to: "/home" | "/library";
+    to: "/home" | "/library" | "/progress";
     icon: typeof HomeIcon;
     label: string;
   }) => {
@@ -36,7 +36,6 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
     );
   };
 
-
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:py-3.5">
@@ -49,7 +48,7 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
         <nav className="flex items-center gap-1">
           <NavLink to="/home" icon={HomeIcon} label={t((d) => d.common.home)} />
           <NavLink to="/library" icon={BookOpen} label={t((d) => d.common.library)} />
-
+          <NavLink to="/progress" icon={LineChart} label={t((d) => d.progress.nav)} />
         </nav>
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
