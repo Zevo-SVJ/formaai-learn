@@ -49,7 +49,10 @@ type Doc = {
   extracted_text: string | null;
   favorite: boolean;
   explanation: {
+    is_exercise?: boolean;
+    answers?: Array<{ label: string; question: string; answer: string }>;
     explanation?: string;
+    method?: string;
     why?: string;
     common_mistake?: string;
     example?: string;
