@@ -370,6 +370,18 @@ export const en = {
     favoriteRemove: "Saved",
     favoriteToast: "Saved to your favorites",
     unfavoriteToast: "Removed from favorites",
+    answersHint: "Final answers, straight to the point.",
+    scan: {
+      title: "Analyzing your document",
+      caption: "Reading every question and preparing the final answers.",
+      steps: [
+        "Scanning the document",
+        "Detecting subject and level",
+        "Extracting every question",
+        "Preparing the final answers",
+        "Writing the explanations",
+      ],
+    },
     empty: "Ask anything about the lesson. Forma already read it.",
   },
   legal: {
