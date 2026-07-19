@@ -9,10 +9,10 @@ import {
   FileText,
   Zap,
   ArrowRight,
-  CheckCircle2,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { CompactActions } from "@/components/CompactActions";
+import { HeroActions } from "@/components/HeroActions";
+import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -56,7 +56,6 @@ function Landing() {
       <Problem />
       <Solution />
       <HowItWorks />
-      <MidCTA />
       <CompareSection />
       <SubjectsSection />
       <ReviewsSection />
@@ -67,6 +66,7 @@ function Landing() {
     </div>
   );
 }
+
 
 
 function Header() {
