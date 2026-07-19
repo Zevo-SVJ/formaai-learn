@@ -5,13 +5,13 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ResponsiveContainer,
-  LineChart as ReLineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid,
 } from "recharts";
+
 import { AppHeader } from "@/components/AppHeader";
 import { addGrade, deleteGrade, listGrades, updateGrade } from "@/lib/grades.functions";
 import { useI18n } from "@/hooks/useI18n";
@@ -156,39 +156,67 @@ function ProgressPage() {
                 ))}
               </div>
             </div>
-            <div className="h-[220px]">
+            <div className="h-[240px]">
               {chartData.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-[13px] text-muted-foreground">
                   {t((d) => d.progressPage.noData)}
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <ReLineChart data={chartData} margin={{ top: 10, right: 12, bottom: 0, left: -14 }}>
-                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                    <YAxis domain={[0, 20]} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                <ResponsiveContainer key={range} width="100%" height="100%">
+                  <AreaChart data={chartData} margin={{ top: 12, right: 8, bottom: 4, left: -20 }}>
+                    <defs>
+                      <linearGradient id="formaArea" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="var(--emerald)" stopOpacity={0.32} />
+                        <stop offset="100%" stopColor="var(--emerald)" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
+                      axisLine={false}
+                      tickLine={false}
+                      tickMargin={8}
+                      minTickGap={24}
+                    />
+                    <YAxis
+                      domain={[0, 20]}
+                      tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
+                      axisLine={false}
+                      tickLine={false}
+                      width={28}
+                      tickCount={5}
+                    />
                     <Tooltip
+                      cursor={{ stroke: "var(--border-strong)", strokeWidth: 1 }}
                       contentStyle={{
-                        background: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: 12,
+                        background: "var(--card)",
+                        border: "1px solid var(--border)",
+                        borderRadius: 14,
                         fontSize: 12,
+                        boxShadow: "var(--shadow-soft)",
+                        padding: "8px 12px",
                       }}
+                      labelStyle={{ color: "var(--muted-foreground)", marginBottom: 2 }}
                       formatter={(v) => [formatNum(Number(v), locale) + " / 20", ""]}
                     />
-                    <Line
+                    <Area
                       type="monotone"
                       dataKey="value"
-                      stroke="hsl(var(--emerald))"
+                      stroke="var(--emerald)"
                       strokeWidth={2.5}
-                      dot={{ r: 3, fill: "hsl(var(--emerald))" }}
-                      activeDot={{ r: 5 }}
-                      animationDuration={500}
+                      strokeLinecap="round"
+                      fill="url(#formaArea)"
+                      dot={false}
+                      activeDot={{ r: 4, fill: "var(--emerald)", stroke: "var(--card)", strokeWidth: 2 }}
+                      isAnimationActive
+                      animationDuration={1400}
+                      animationEasing="ease-out"
                     />
-                  </ReLineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               )}
             </div>
+
           </div>
         </section>
 

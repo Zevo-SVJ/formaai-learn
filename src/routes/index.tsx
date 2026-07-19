@@ -9,10 +9,10 @@ import {
   FileText,
   Zap,
   ArrowRight,
-  CheckCircle2,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { CompactActions } from "@/components/CompactActions";
+import { HeroActions } from "@/components/HeroActions";
+import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -56,7 +56,6 @@ function Landing() {
       <Problem />
       <Solution />
       <HowItWorks />
-      <MidCTA />
       <CompareSection />
       <SubjectsSection />
       <ReviewsSection />
@@ -67,6 +66,7 @@ function Landing() {
     </div>
   );
 }
+
 
 
 function Header() {
@@ -158,19 +158,9 @@ function Hero() {
         </motion.p>
 
         <div className="mt-9">
-          <CompactActions />
+          <HeroActions />
         </div>
         <p className="mt-3 text-[12px] text-muted-foreground">{t((d) => d.hero.ctaHint)}</p>
-      </div>
-    </section>
-  );
-}
-
-function MidCTA() {
-  return (
-    <section className="px-5 pb-4 pt-2">
-      <div className="mx-auto max-w-3xl">
-        <CompactActions size="sm" />
       </div>
     </section>
   );
@@ -179,12 +169,13 @@ function MidCTA() {
 function PreFooterCTA() {
   return (
     <section className="px-5 pb-4 pt-2">
-      <div className="mx-auto max-w-3xl">
-        <CompactActions size="sm" />
+      <div className="mx-auto max-w-md">
+        <HeroActions />
       </div>
     </section>
   );
 }
+
 
 
 function Section({
@@ -338,8 +329,7 @@ function HowItWorks() {
 }
 
 function SubjectsSection() {
-  const { t, raw } = useI18n();
-  const list = raw((d) => d.subjects.list);
+  const { t } = useI18n();
   return (
     <Section
       eyebrow={t((d) => d.subjects.eyebrow)}
@@ -347,24 +337,11 @@ function SubjectsSection() {
       subtitle={t((d) => d.subjects.subtitle)}
       bg="surface"
     >
-      <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-2">
-        {list.map((s, i) => (
-          <motion.span
-            key={s}
-            initial={{ opacity: 0, y: 4 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.25, delay: (i % 12) * 0.02 }}
-            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] font-semibold text-foreground shadow-[var(--shadow-soft)]"
-          >
-            <CheckCircle2 className="h-3.5 w-3.5 text-emerald" />
-            {s}
-          </motion.span>
-        ))}
-      </div>
+      <SubjectCarousels />
     </Section>
   );
 }
+
 
 function ReviewsSection() {
   const { t } = useI18n();

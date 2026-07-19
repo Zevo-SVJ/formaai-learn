@@ -1,10 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Mail, Loader2, ArrowLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Loader2, ArrowLeft, Eye, EyeOff, Ticket } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { redeemReferralCode } from "@/lib/referral.functions";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/useI18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -40,12 +42,29 @@ function AppleIcon() {
 function Auth() {
   const navigate = useNavigate();
   const { t } = useI18n();
+  const redeem = useServerFn(redeemReferralCode);
+
+  // If onboarding completed, default to signup; otherwise sign in.
+  const initialMode: "signup" | "signin" = (() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("mode") === "signup") return "signup";
+      if (params.get("mode") === "signin") return "signin";
+      return window.localStorage.getItem("forma:onboarded") === "1" ? "signup" : "signin";
+    } catch {
+      return "signin";
+    }
+  })();
+
+  const [mode, setMode] = useState<"signup" | "signin">(initialMode);
   const [email, setEmail] = useState("");
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [password, setPassword] = useState("");
+  const [referral, setReferral] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [loadingOAuth, setLoadingOAuth] = useState<string | null>(null);
 
-  // If already signed in, send to the right next-step.
+  // If already signed in, send to /home (onboarded) or /onboarding otherwise.
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) return;
@@ -71,21 +90,48 @@ function Auth() {
       return;
     }
     if (res.redirected) return;
-    // Session set — head to home (onboarding gate lives on /home).
+    // Try redemption if referral was typed.
+    if (mode === "signup" && referral.trim()) {
+      redeem({ data: { code: referral.trim() } }).catch(() => undefined);
+    }
     navigate({ to: "/home" });
   };
 
-  const sendMagic = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    setSending(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin + "/home" },
-    });
-    setSending(false);
-    if (error) toast.error(error.message);
-    else setSent(true);
+    if (!email || !password) return;
+    setSubmitting(true);
+    try {
+      if (mode === "signup") {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin + "/home" },
+        });
+        if (error) throw error;
+        if (referral.trim()) {
+          try {
+            await redeem({ data: { code: referral.trim() } });
+          } catch {
+            // silent — referral is optional
+          }
+        }
+        if (!data.session) {
+          toast.success(t((d) => d.auth.checkInboxConfirm));
+          setSubmitting(false);
+          return;
+        }
+        navigate({ to: "/home" });
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        navigate({ to: "/home" });
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t((d) => d.auth.signInFailed));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -109,22 +155,40 @@ function Auth() {
         >
           <Logo size={40} withWordmark={false} />
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {t((d) => d.auth.welcome)}
+            {mode === "signup"
+              ? t((d) => d.auth.createAccount)
+              : t((d) => d.auth.welcome)}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">{t((d) => d.auth.tagline)}</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {mode === "signup"
+              ? t((d) => d.auth.createTagline)
+              : t((d) => d.auth.tagline)}
+          </p>
         </motion.div>
 
-        <div className="mt-10 space-y-2.5">
+        {/* Mode switch */}
+        <div className="mx-auto mt-8 inline-flex rounded-full border border-border bg-surface p-0.5 self-center">
+          {(["signup", "signin"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => setMode(m)}
+              className={[
+                "rounded-full px-4 py-1.5 text-[13px] font-semibold transition-colors",
+                mode === m ? "bg-foreground text-background" : "text-muted-foreground",
+              ].join(" ")}
+            >
+              {m === "signup" ? t((d) => d.auth.tabSignup) : t((d) => d.auth.tabSignin)}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6 space-y-2.5">
           <button
             onClick={() => oauth("google")}
             disabled={!!loadingOAuth}
             className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border bg-surface py-3.5 text-[15px] font-semibold text-foreground transition hover:border-border-strong disabled:opacity-60"
           >
-            {loadingOAuth === "google" ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <GoogleIcon />
-            )}
+            {loadingOAuth === "google" ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
             {t((d) => d.auth.google)}
           </button>
           <button
@@ -132,11 +196,7 @@ function Auth() {
             disabled={!!loadingOAuth}
             className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border bg-foreground py-3.5 text-[15px] font-semibold text-background transition hover:opacity-90 disabled:opacity-60"
           >
-            {loadingOAuth === "apple" ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <AppleIcon />
-            )}
+            {loadingOAuth === "apple" ? <Loader2 className="h-4 w-4 animate-spin" /> : <AppleIcon />}
             {t((d) => d.auth.apple)}
           </button>
 
@@ -146,45 +206,75 @@ function Auth() {
             <div className="h-px flex-1 bg-border" />
           </div>
 
-          {sent ? (
-            <div className="rounded-2xl border border-border bg-emerald-soft/40 p-5 text-center">
-              <Mail className="mx-auto h-5 w-5 text-emerald" />
-              <p className="mt-2 text-sm font-semibold text-foreground">
-                {t((d) => d.auth.checkInbox)}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t((d) => d.auth.linkSent)} <span className="font-medium">{email}</span>
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={sendMagic} className="space-y-2.5">
+          <form onSubmit={submit} className="space-y-2.5">
+            <input
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t((d) => d.auth.emailPlaceholder)}
+              className="w-full rounded-2xl border border-border bg-surface px-4 py-3.5 text-[15px] outline-none placeholder:text-muted-foreground focus:border-emerald"
+            />
+            <div className="relative">
               <input
-                type="email"
+                type={showPw ? "text" : "password"}
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t((d) => d.auth.emailPlaceholder)}
-                className="w-full rounded-2xl border border-border bg-surface px-4 py-3.5 text-[15px] outline-none placeholder:text-muted-foreground focus:border-emerald"
+                minLength={8}
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t((d) => d.auth.passwordPlaceholder)}
+                className="w-full rounded-2xl border border-border bg-surface px-4 py-3.5 pr-11 text-[15px] outline-none placeholder:text-muted-foreground focus:border-emerald"
               />
               <button
-                type="submit"
-                disabled={sending}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background disabled:opacity-60"
+                type="button"
+                onClick={() => setShowPw((s) => !s)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-2 text-muted-foreground hover:text-foreground"
+                aria-label={showPw ? "Hide" : "Show"}
               >
-                {sending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Mail className="h-4 w-4" />
-                )}
-                {t((d) => d.auth.email)}
+                {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
-            </form>
-          )}
+            </div>
+
+            <AnimatePresence>
+              {mode === "signup" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="overflow-hidden"
+                >
+                  <div className="relative">
+                    <Ticket className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      value={referral}
+                      onChange={(e) => setReferral(e.target.value.toUpperCase())}
+                      placeholder={t((d) => d.auth.referralPlaceholder)}
+                      maxLength={12}
+                      className="w-full rounded-2xl border border-border bg-surface px-4 py-3 pl-11 text-[15px] tracking-widest outline-none placeholder:text-muted-foreground placeholder:tracking-normal focus:border-emerald"
+                    />
+                  </div>
+                  <p className="mt-1.5 px-1 text-[11.5px] text-muted-foreground">
+                    {t((d) => d.auth.referralHint)}
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background disabled:opacity-60"
+            >
+              {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+              {mode === "signup" ? t((d) => d.auth.createCta) : t((d) => d.auth.signinCta)}
+            </button>
+          </form>
         </div>
 
-        <p className="mt-8 text-center text-xs text-muted-foreground">
-          {t((d) => d.auth.terms)}
-        </p>
+        <p className="mt-8 text-center text-xs text-muted-foreground">{t((d) => d.auth.terms)}</p>
       </div>
     </div>
   );
