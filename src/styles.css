@@ -207,4 +207,25 @@
 }
 .forma-scan { animation: forma-scan 2.4s ease-in-out infinite; }
 
+/* Draw-in line animation for premium charts. */
+@keyframes forma-draw {
+  from { stroke-dashoffset: var(--forma-len, 2000); }
+  to   { stroke-dashoffset: 0; }
+}
+.forma-draw {
+  stroke-dasharray: var(--forma-len, 2000);
+  stroke-dashoffset: var(--forma-len, 2000);
+  animation: forma-draw 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Hide Lovable editor badge in all published contexts. */
+#lovable-badge,
+.lovable-badge,
+[data-lovable-badge],
+a[href*="lovable.dev"][class*="badge"] {
+  display: none !important;
+}
+
+
+
 
