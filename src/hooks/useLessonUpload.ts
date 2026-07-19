@@ -23,8 +23,16 @@ export function useLessonUpload() {
       }
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) {
+        // New flow: Landing → Onboarding → Auth → App.
         sessionStorage.setItem("forma:pendingUpload", "1");
-        navigate({ to: "/auth" });
+        const onboarded = (() => {
+          try {
+            return window.localStorage.getItem("forma:onboarded") === "1";
+          } catch {
+            return false;
+          }
+        })();
+        navigate({ to: onboarded ? "/auth" : "/onboarding" });
         return;
       }
       const userId = userData.user.id;
