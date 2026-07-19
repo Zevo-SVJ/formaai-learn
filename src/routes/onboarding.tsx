@@ -6,7 +6,7 @@ import { useI18n } from "@/hooks/useI18n";
 import { COUNTRIES, countryName } from "@/lib/countries";
 import { CheckCircle2, Search, ChevronRight, Loader2 } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/onboarding")({
+export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
@@ -49,8 +49,10 @@ function Onboarding() {
     } catch {
       // ignore
     }
-    navigate({ to: "/home" });
+    // Authentication happens at the very end of onboarding.
+    navigate({ to: "/auth", search: { mode: "signup" } as never });
   };
+
 
   const totalSteps = 7; // Q1, insight1, Q2, Q3, insight2, Q4, loading
   return (
