@@ -7,8 +7,15 @@ import { COUNTRIES, countryName } from "@/lib/countries";
 import { CheckCircle2, Search, ChevronRight, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
+  head: () => ({
+    meta: [
+      { title: "Get started — Forma AI" },
+      { name: "description", content: "Personalize Forma AI for how you study." },
+    ],
+  }),
   component: Onboarding,
 });
+
 
 type Answers = {
   goal?: string;
