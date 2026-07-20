@@ -36,10 +36,11 @@ export const getMyReferral = createServerFn({ method: "GET" })
       if (!data) throw new Error("Could not create referral code");
     }
 
-    const { count } = await supabase
-      .from("referral_profiles")
-      .select("*", { count: "exact", head: true })
-      .eq("referred_by", userId);
+    // Counted through my_referral_count() rather than a direct select: the
+    // referred friends' rows belong to them, so the "own referral profile read"
+    // policy hides them from this client and a plain count always returns 0.
+    const { data: count, error: countError } = await supabase.rpc("my_referral_count");
+    if (countError) throw countError;
     const referrals = count ?? 0;
 
     // Auto-unlock at 3
