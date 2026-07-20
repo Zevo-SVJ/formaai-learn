@@ -39,8 +39,10 @@ export const getMyReferral = createServerFn({ method: "GET" })
     // Counted through my_referral_count() rather than a direct select: the
     // referred friends' rows belong to them, so the "own referral profile read"
     // policy hides them from this client and a plain count always returns 0.
+    // A failing count should not take the whole referral card down with it, so
+    // fall back to the previous behaviour of showing no referrals yet.
     const { data: count, error: countError } = await supabase.rpc("my_referral_count");
-    if (countError) throw countError;
+    if (countError) console.error("[referral] count failed", countError);
     const referrals = count ?? 0;
 
     // Auto-unlock at 3
