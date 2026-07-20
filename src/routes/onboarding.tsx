@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { useI18n } from "@/hooks/useI18n";
 import { COUNTRIES, countryName } from "@/lib/countries";
-import { CheckCircle2, Search, ChevronRight, Loader2 } from "lucide-react";
+import { CheckCircle2, Search, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -406,67 +406,134 @@ function SubjectsStep({
   );
 }
 
+/** How long a task stays readable before it is checked off. */
+const TASK_READ_MS = 1050;
+/** How long its checkmark holds before the task steps aside. */
+const TASK_CHECK_MS = 450;
+const TASK_TOTAL_MS = TASK_READ_MS + TASK_CHECK_MS;
+
 function LoadingStep({ onDone }: { onDone: () => void }) {
   const { t, raw } = useI18n();
+  const reduceMotion = useReducedMotion();
   const steps = raw((d) => d.onboarding.loading.steps);
-  const [done, setDone] = useState<number>(0);
+  const [index, setIndex] = useState(0);
+  const [checked, setChecked] = useState(false);
+  const [leaving, setLeaving] = useState(false);
 
+  const isLast = index >= steps.length - 1;
+
+  // One task at a time: read it, check it off, let the next one take its place.
   useEffect(() => {
-    if (done >= steps.length) {
-      const id = window.setTimeout(onDone, 800);
+    if (leaving) return;
+    if (!checked) {
+      const id = window.setTimeout(() => setChecked(true), TASK_READ_MS);
       return () => window.clearTimeout(id);
     }
-    const id = window.setTimeout(() => setDone((n) => n + 1), 900);
+    const id = window.setTimeout(() => {
+      if (isLast) {
+        setLeaving(true);
+        return;
+      }
+      setIndex((n) => n + 1);
+      setChecked(false);
+    }, TASK_CHECK_MS);
     return () => window.clearTimeout(id);
-  }, [done, steps.length, onDone]);
+  }, [checked, isLast, leaving]);
+
+  // Settle for a beat, then hand over without a cut.
+  const doneRef = useRef(onDone);
+  doneRef.current = onDone;
+  useEffect(() => {
+    if (!leaving) return;
+    const id = window.setTimeout(() => doneRef.current(), 700);
+    return () => window.clearTimeout(id);
+  }, [leaving]);
+
+  const progress = Math.round(((index + (checked ? 1 : 0.45)) / steps.length) * 100);
 
   return (
-    <div className="mt-8 flex flex-col items-start">
-      <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+    <motion.div
+      animate={{ opacity: leaving ? 0 : 1 }}
+      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      className="flex flex-col items-center pt-10 text-center sm:pt-16"
+    >
+      {/* The logo, breathing. Nothing else. */}
+      <motion.div
+        animate={reduceMotion ? undefined : { scale: [1, 1.02, 1] }}
+        transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <Logo size={88} withWordmark={false} />
+      </motion.div>
+
+      <h1 className="mt-9 text-[26px] font-bold tracking-tight text-foreground sm:text-3xl">
         {t((d) => d.onboarding.loading.title)}
       </h1>
       <p className="mt-2 text-[15px] text-muted-foreground">
         {t((d) => d.onboarding.loading.caption)}
       </p>
-      <ul className="mt-10 w-full space-y-3">
-        {steps.map((s, i) => {
-          const isDone = i < done;
-          const isCurrent = i === done;
-          return (
-            <li
-              key={i}
-              className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3.5"
-            >
-              <div
-                className={[
-                  "flex h-7 w-7 items-center justify-center rounded-full",
-                  isDone
-                    ? "bg-emerald text-white"
-                    : isCurrent
-                      ? "bg-emerald-soft text-emerald"
-                      : "bg-surface-muted text-muted-foreground",
-                ].join(" ")}
-              >
-                {isDone ? (
-                  <CheckCircle2 className="h-4 w-4" />
-                ) : isCurrent ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <span className="text-[11px] font-bold">{i + 1}</span>
-                )}
-              </div>
-              <span
-                className={[
-                  "text-[15px] font-semibold",
-                  isDone ? "text-muted-foreground line-through decoration-1" : "text-foreground",
-                ].join(" ")}
-              >
-                {s}
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+
+      {/* Real progress, moving continuously rather than in jumps. */}
+      <div className="mt-9 h-1 w-full max-w-xs overflow-hidden rounded-full bg-border">
+        <motion.div
+          initial={{ width: "0%" }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: TASK_TOTAL_MS / 2000, ease: "linear" }}
+          className="h-full rounded-full bg-foreground"
+        />
+      </div>
+
+      {/* Exactly one task at a time. */}
+      <div className="relative mt-7 h-8 w-full max-w-sm">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.42, ease: [0.2, 0.8, 0.2, 1] }}
+            className="absolute inset-0 flex items-center justify-center gap-2.5"
+          >
+            <TaskCheck checked={checked} />
+            <span className="text-[15px] font-medium text-foreground">{steps[index]}</span>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+}
+
+/** A checkmark that draws itself once the task is complete. */
+function TaskCheck({ checked }: { checked: boolean }) {
+  return (
+    <span className="relative flex h-5 w-5 shrink-0 items-center justify-center">
+      <motion.span
+        className="absolute inset-0 rounded-full border border-border"
+        animate={{ opacity: checked ? 0 : 1, scale: checked ? 0.7 : 1 }}
+        transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+      />
+      <motion.span
+        className="absolute inset-0 flex items-center justify-center rounded-full bg-emerald text-white"
+        initial={false}
+        animate={{ opacity: checked ? 1 : 0, scale: checked ? 1 : 0.7 }}
+        transition={{ duration: 0.32, ease: [0.2, 0.8, 0.2, 1] }}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="h-3 w-3"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={3.2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <motion.path
+            d="M20 6 9 17l-5-5"
+            initial={false}
+            animate={{ pathLength: checked ? 1 : 0 }}
+            transition={{ duration: 0.34, delay: checked ? 0.08 : 0, ease: [0.2, 0.8, 0.2, 1] }}
+          />
+        </svg>
+      </motion.span>
+    </span>
   );
 }

@@ -2,17 +2,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { UploadArea } from "@/components/UploadArea";
+import { ReferralCard } from "@/components/ReferralCard";
 import { useI18n } from "@/hooks/useI18n";
 import {
   BookOpen,
-  Camera,
-  FileText,
-  MessageCircleQuestion,
   Star,
   Loader2,
   CheckCircle2,
@@ -100,9 +98,8 @@ function Home() {
           <UploadArea />
         </div>
 
-        {/* Quick actions */}
-        <SectionTitle>{t((d) => d.home.quickActions)}</SectionTitle>
-        <QuickActions />
+        {/* Referral — carries its own eyebrow and title. */}
+        <ReferralCard />
 
         {/* Favorites */}
         <SectionTitle
@@ -232,54 +229,6 @@ function EmptyRow({ message, tone }: { message: string; tone: "star" | "book" })
       </div>
       {message}
     </div>
-  );
-}
-
-function QuickActions() {
-  const { t } = useI18n();
-  const uploadRef = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
-
-  const items = [
-    { id: "photo", label: t((d) => d.home.quick.photo), icon: Camera, tone: "bg-emerald-soft text-emerald", action: () => uploadRef.current?.click() },
-    { id: "pdf", label: t((d) => d.home.quick.pdf), icon: FileText, tone: "bg-accent text-accent-foreground", action: () => uploadRef.current?.click() },
-    { id: "paste", label: t((d) => d.home.quick.paste), icon: BookOpen, tone: "bg-surface-muted text-foreground", action: () => uploadRef.current?.click() },
-    { id: "ask", label: t((d) => d.home.quick.askDirect), icon: MessageCircleQuestion, tone: "bg-emerald-soft text-emerald", action: () => navigate({ to: "/library" }) },
-  ];
-
-  return (
-    <>
-      <input
-        ref={uploadRef}
-        type="file"
-        accept="image/*,application/pdf,.txt,.md"
-        capture="environment"
-        className="hidden"
-        onChange={(e) => {
-          // Delegate to UploadArea's flow by triggering a custom event
-          const file = e.target.files?.[0];
-          if (!file) return;
-          window.dispatchEvent(new CustomEvent("forma:uploadFile", { detail: file }));
-        }}
-      />
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-        {items.map((it, i) => (
-          <motion.button
-            key={it.id}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.04 }}
-            onClick={it.action}
-            className="flex flex-col items-start gap-3 rounded-2xl border border-border bg-card p-4 text-left shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:border-border-strong"
-          >
-            <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${it.tone}`}>
-              <it.icon className="h-4 w-4" />
-            </div>
-            <span className="text-[13.5px] font-semibold text-foreground">{it.label}</span>
-          </motion.button>
-        ))}
-      </div>
-    </>
   );
 }
 

@@ -71,7 +71,7 @@ export function HeroActions() {
       >
         <button
           onClick={() => !busy && setOpen(true)}
-          className="forma-shine group inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-6 py-3.5 text-[15px] font-semibold text-background shadow-[var(--shadow-lift)] transition-transform hover:-translate-y-0.5 disabled:opacity-70"
+          className="forma-cta group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-semibold hover:-translate-y-0.5 disabled:opacity-70"
           disabled={!!busy}
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" strokeWidth={2.4} />}
@@ -79,7 +79,7 @@ export function HeroActions() {
         </button>
         <button
           onClick={scrollToHow}
-          className="forma-shine inline-flex items-center justify-center gap-2 rounded-full border border-border-strong bg-surface px-6 py-3.5 text-[15px] font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-foreground"
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-border-strong bg-surface px-6 py-3.5 text-[15px] font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-foreground"
         >
           {t((d) => d.hero.menu.see)}
           <ArrowDown className="h-4 w-4" strokeWidth={2.4} />

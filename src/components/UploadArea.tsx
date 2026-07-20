@@ -94,7 +94,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
     return (
       <button
         onClick={() => inputRef.current?.click()}
-        className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
+        className="forma-cta inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold hover:-translate-y-0.5"
       >
         <Upload className="h-4 w-4" />
         {isFr ? "Déposer une leçon" : "Upload a lesson"}
@@ -179,7 +179,8 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
         </div>
 
         <div className="mt-6 flex items-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background">
+          <span className="forma-cta inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
+            <Upload className="h-4 w-4" strokeWidth={2.4} />
             {isFr ? "Choisir un fichier" : "Choose a file"}
           </span>
           <span className="text-xs text-muted-foreground">

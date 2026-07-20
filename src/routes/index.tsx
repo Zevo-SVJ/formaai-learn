@@ -57,7 +57,6 @@ function Landing() {
       <Solution />
       <HowItWorks />
       <CompareSection />
-      <SubjectsSection />
       <ReviewsSection />
       <FAQSection />
       <PreFooterCTA />
@@ -119,7 +118,7 @@ function Header() {
 function Hero() {
   const { t } = useI18n();
   return (
-    <section className="relative overflow-hidden px-5 pt-8 pb-14 sm:pt-16 sm:pb-24">
+    <section className="relative overflow-hidden px-5 pt-8 pb-10 sm:pt-16 sm:pb-16">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-[620px]"
@@ -162,6 +161,16 @@ function Hero() {
         </div>
         <p className="mt-3 text-[12px] text-muted-foreground">{t((d) => d.hero.ctaHint)}</p>
       </div>
+
+      {/* Subject carousel sits directly under the hero buttons, edge to edge. */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
+        className="relative -mx-5 mt-12 sm:mt-16"
+      >
+        <SubjectCarousels />
+      </motion.div>
     </section>
   );
 }
@@ -327,21 +336,6 @@ function HowItWorks() {
     </Section>
   );
 }
-
-function SubjectsSection() {
-  const { t } = useI18n();
-  return (
-    <Section
-      eyebrow={t((d) => d.subjects.eyebrow)}
-      title={t((d) => d.subjects.title)}
-      subtitle={t((d) => d.subjects.subtitle)}
-      bg="surface"
-    >
-      <SubjectCarousels />
-    </Section>
-  );
-}
-
 
 function ReviewsSection() {
   const { t } = useI18n();
