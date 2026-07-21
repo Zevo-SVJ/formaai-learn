@@ -80,24 +80,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#f7f5ef" },
-      { title: "Forma AI — Understand every lesson" },
+      { title: "Forma AI — Learn Better with AI" },
       {
         name: "description",
         content:
-          "Forma AI helps middle and high school students genuinely understand their lessons. Upload a lesson, homework, or worksheet — get a clear, structured explanation.",
+          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
       },
-      { property: "og:title", content: "Forma AI — Understand every lesson" },
+      { property: "og:title", content: "Forma AI — Learn Better with AI" },
       {
         property: "og:description",
         content:
-          "Upload a lesson, worksheet or photo. Forma AI explains it clearly — never just answers.",
+          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Forma AI — Learn Better with AI" },
+      { name: "twitter:description", content: "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f3f813f2-97bb-4b5b-841e-23e5fcd7d875/id-preview-23442503--ff20e900-72ee-46ea-af34-54249137d40e.lovable.app-1784588761722.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f3f813f2-97bb-4b5b-841e-23e5fcd7d875/id-preview-23442503--ff20e900-72ee-46ea-af34-54249137d40e.lovable.app-1784588761722.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.jpg", type: "image/jpeg" },
+      { rel: "icon", href: "/favicon.jpg", type: "image/x-icon" },
       { rel: "apple-touch-icon", href: "/favicon.jpg" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
