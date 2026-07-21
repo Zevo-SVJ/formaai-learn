@@ -21,6 +21,7 @@ export const analyzeDocument = createServerFn({ method: "POST" })
       .single();
     if (docErr || !doc) throw new Error("Document not found");
 
+    try {
     await supabase.from("documents").update({ status: "extracting" }).eq("id", documentId);
 
     // Download the file bytes via signed URL (RLS-safe path).
@@ -114,11 +115,8 @@ Rules:
 
     if (!gwRes.ok) {
       const errText = await gwRes.text();
-      await supabase
-        .from("documents")
-        .update({ status: "failed", error: `AI ${gwRes.status}: ${errText.slice(0, 500)}` })
-        .eq("id", documentId);
-      throw new Error(`AI gateway error ${gwRes.status}`);
+      // The catch below records this on the row; keep the detail in the message.
+      throw new Error(`AI ${gwRes.status}: ${errText.slice(0, 500)}`);
     }
     const payload = (await gwRes.json()) as {
       choices?: Array<{ message?: { content?: string } }>;
@@ -132,10 +130,6 @@ Rules:
       parsed = null;
     }
     if (!parsed) {
-      await supabase
-        .from("documents")
-        .update({ status: "failed", error: "Could not parse AI response" })
-        .eq("id", documentId);
       throw new Error("Could not parse AI response");
     }
 
@@ -186,6 +180,18 @@ Rules:
     if (upErr) throw upErr;
 
     return { ok: true };
+    } catch (e) {
+      // Every failure has to leave the row in a terminal state. Otherwise it
+      // keeps its "extracting"/"analyzing" status, the document page polls it
+      // every two seconds forever, and the retry button never appears because
+      // it only renders for "failed".
+      const message = e instanceof Error ? e.message : String(e);
+      await supabase
+        .from("documents")
+        .update({ status: "failed", error: message.slice(0, 500) })
+        .eq("id", documentId);
+      throw e;
+    }
   });
 
 const IdInput = z.object({ id: z.string().uuid() });
