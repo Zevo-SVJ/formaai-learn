@@ -43,14 +43,12 @@ export function useLessonUpload() {
           // Losing this marker is acceptable; failing to send the visitor
           // onward is not, so it must not sit between here and navigate().
         }
-        const onboarded = (() => {
-          try {
-            return window.localStorage.getItem("forma:onboarded") === "1";
-          } catch {
-            return false;
-          }
-        })();
-        navigate({ to: onboarded ? "/auth" : "/onboarding" });
+        // Always onboarding, never straight to the sign-up wall. The
+        // forma:onboarded flag is written when onboarding ends, which is
+        // before the visitor has an account, so anyone who backed out of
+        // sign-up was being treated as onboarded and never saw it again.
+        // Onboarding still finishes at /auth, so this cannot skip sign-in.
+        navigate({ to: "/onboarding" });
         return;
       }
       const userId = user.id;
@@ -78,8 +76,18 @@ export function useLessonUpload() {
         if (insErr || !row) throw insErr ?? new Error("insert failed");
 
         setBusy(isFr ? "Lecture" : "Reading");
-        analyze({ data: { documentId: row.id } }).catch((e) => {
+        analyze({ data: { documentId: row.id } }).catch(async (e) => {
           console.error(e);
+          // If the request never reached the server - a dropped mobile
+          // connection is the usual reason - the server side cannot mark the
+          // row, so it would keep its "extracting" status and the document
+          // page would poll it forever with no retry button. Only touch rows
+          // still mid-flight, so a result that did land is never clobbered.
+          await supabase
+            .from("documents")
+            .update({ status: "failed", error: e instanceof Error ? e.message : String(e) })
+            .eq("id", row.id)
+            .in("status", ["uploading", "extracting", "analyzing"]);
           toast.error(
             isFr
               ? "L'analyse a échoué. Ouvre le document pour réessayer."

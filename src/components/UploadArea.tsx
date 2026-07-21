@@ -72,8 +72,16 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
         if (insErr || !row) throw insErr ?? new Error("insert failed");
 
         setBusy(isFr ? "Lecture du document" : "Reading your document");
-        analyze({ data: { documentId: row.id } }).catch((e) => {
+        analyze({ data: { documentId: row.id } }).catch(async (e) => {
           console.error(e);
+          // A request that never reached the server leaves the row mid-flight
+          // and the document page polling forever, so close it out here. The
+          // status filter keeps a result that did land from being clobbered.
+          await supabase
+            .from("documents")
+            .update({ status: "failed", error: e instanceof Error ? e.message : String(e) })
+            .eq("id", row.id)
+            .in("status", ["uploading", "extracting", "analyzing"]);
           toast.error(isFr ? "L'analyse a échoué. Ouvre le document pour réessayer." : "Analysis failed. Open the document to retry.");
         });
         navigate({ to: "/doc/$docId", params: { docId: row.id } });
