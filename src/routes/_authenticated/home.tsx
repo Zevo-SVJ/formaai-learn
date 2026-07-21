@@ -52,13 +52,17 @@ function Home() {
 
   const [greetName, setGreetName] = useState<string | null>(null);
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: u }) => {
-      const name =
-        (u.user?.user_metadata?.full_name as string | undefined) ||
-        (u.user?.user_metadata?.name as string | undefined) ||
-        (u.user?.email ? u.user.email.split("@")[0] : null);
-      setGreetName(name);
-    });
+    supabase.auth
+      .getUser()
+      .then(({ data: u }) => {
+        const name =
+          (u.user?.user_metadata?.full_name as string | undefined) ||
+          (u.user?.user_metadata?.name as string | undefined) ||
+          (u.user?.email ? u.user.email.split("@")[0] : null);
+        setGreetName(name);
+      })
+      // The greeting falls back to the anonymous wording; never break the page.
+      .catch((e) => console.error("[home] could not read the profile name", e));
     // If user hasn't done onboarding, take them through it once.
     try {
       const done = window.localStorage.getItem("forma:onboarded");

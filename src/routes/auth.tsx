@@ -64,17 +64,23 @@ function Auth() {
 
   // If already signed in, send to /home (onboarded) or /onboarding otherwise.
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) return;
-      const onboarded = (() => {
-        try {
-          return window.localStorage.getItem("forma:onboarded") === "1";
-        } catch {
-          return true;
-        }
-      })();
-      navigate({ to: onboarded ? "/home" : "/onboarding" });
-    });
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (!data.user) return;
+        const onboarded = (() => {
+          try {
+            return window.localStorage.getItem("forma:onboarded") === "1";
+          } catch {
+            return true;
+          }
+        })();
+        navigate({ to: onboarded ? "/home" : "/onboarding" });
+      })
+      // Leaving this rejection unhandled would strand the visitor on a sign-in
+      // form that never reacts. Staying put is the right fallback: the form
+      // below still works.
+      .catch((e) => console.error("[auth] session check failed", e));
   }, [navigate]);
 
   const oauth = async (p: "google" | "apple") => {
