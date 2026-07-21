@@ -5,8 +5,7 @@ import { Loader2, ArrowLeft, Eye, EyeOff, Ticket } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { redeemReferralCode } from "@/lib/referral.functions";
-import { useServerFn } from "@tanstack/react-start";
+import { storePendingReferral } from "@/lib/pending-referral";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/useI18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -42,7 +41,6 @@ function AppleIcon() {
 function Auth() {
   const navigate = useNavigate();
   const { t } = useI18n();
-  const redeem = useServerFn(redeemReferralCode);
 
   // If onboarding completed, default to signup; otherwise sign in.
   const initialMode: "signup" | "signin" = (() => {
@@ -81,6 +79,9 @@ function Auth() {
 
   const oauth = async (p: "google" | "apple") => {
     setLoadingOAuth(p);
+    // Park the code before leaving the page: on a published site OAuth is a
+    // full-page redirect, so nothing after this call runs.
+    if (mode === "signup" && referral.trim()) storePendingReferral(referral);
     const res = await lovable.auth.signInWithOAuth(p, {
       redirect_uri: window.location.origin + "/auth",
     });
@@ -90,10 +91,6 @@ function Auth() {
       return;
     }
     if (res.redirected) return;
-    // Try redemption if referral was typed.
-    if (mode === "signup" && referral.trim()) {
-      redeem({ data: { code: referral.trim() } }).catch(() => undefined);
-    }
     navigate({ to: "/home" });
   };
 
@@ -109,13 +106,10 @@ function Auth() {
           options: { emailRedirectTo: window.location.origin + "/home" },
         });
         if (error) throw error;
-        if (referral.trim()) {
-          try {
-            await redeem({ data: { code: referral.trim() } });
-          } catch {
-            // silent — referral is optional
-          }
-        }
+        // Redemption needs a session. With email confirmation enabled signUp
+        // returns none, so park the code and let the SIGNED_IN handler redeem
+        // it once the user comes back through the confirmation link.
+        if (referral.trim()) storePendingReferral(referral);
         if (!data.session) {
           toast.success(t((d) => d.auth.checkInboxConfirm));
           setSubmitting(false);

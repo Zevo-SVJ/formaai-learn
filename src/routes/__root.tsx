@@ -8,11 +8,14 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
+import { redeemReferralCode } from "@/lib/referral.functions";
+import { takePendingReferral } from "@/lib/pending-referral";
 import "@/i18n";
 
 function NotFoundComponent() {
@@ -130,15 +133,30 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const redeem = useServerFn(redeemReferralCode);
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+
+      // A referral code typed at sign-up can only be redeemed now: this is the
+      // first moment a session exists, whether the user arrived from an OAuth
+      // redirect or an email confirmation link. Redeeming is optional, so a
+      // failure must never interrupt the sign-in it follows.
+      if (event === "SIGNED_IN") {
+        const code = takePendingReferral();
+        if (code) {
+          Promise.resolve(redeem({ data: { code } }))
+            .then(() => queryClient.invalidateQueries({ queryKey: ["referral"] }))
+            .catch((e) => console.error("[referral] redemption failed", e));
+        }
+      }
+
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
     return () => data.subscription.unsubscribe();
-  }, [router, queryClient]);
+  }, [router, queryClient, redeem]);
 
   return (
     <QueryClientProvider client={queryClient}>
