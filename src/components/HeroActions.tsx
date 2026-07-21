@@ -28,30 +28,39 @@ export function HeroActions() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Open the picker, then dismiss the sheet. The click stays inside the user
+  // gesture, and the scrim and panel - both backdrop-filter surfaces - are
+  // unmounted before Android Chrome's camera UI has to composite over them.
+  // Coming back from the camera to a still-open sheet was wrong anyway.
+  const pick = (ref: React.RefObject<HTMLInputElement | null>) => {
+    ref.current?.click();
+    setOpen(false);
+  };
+
   const options = [
     {
       id: "image",
       label: t((d) => d.hero.menu.image),
       icon: ImageIcon,
-      onClick: () => imgRef.current?.click(),
+      onClick: () => pick(imgRef),
     },
     {
       id: "pdf",
       label: t((d) => d.hero.menu.pdf),
       icon: FileText,
-      onClick: () => pdfRef.current?.click(),
+      onClick: () => pick(pdfRef),
     },
     {
       id: "photo",
       label: t((d) => d.hero.menu.photo),
       icon: Camera,
-      onClick: () => photoRef.current?.click(),
+      onClick: () => pick(photoRef),
     },
     {
       id: "scan",
       label: t((d) => d.hero.menu.scan),
       icon: ScanLine,
-      onClick: () => scanRef.current?.click(),
+      onClick: () => pick(scanRef),
     },
   ];
 
@@ -91,9 +100,13 @@ export function HeroActions() {
              onChange={(e) => onPick(e.target.files?.[0] ?? undefined)} />
       <input ref={pdfRef} type="file" accept="application/pdf" className="hidden"
              onChange={(e) => onPick(e.target.files?.[0] ?? undefined)} />
-      <input ref={photoRef} type="file" accept="image/*" capture="environment" className="hidden"
+      {/* The capture inputs stay rendered rather than display:none. Chrome
+          builds that use an in-page capture surface instead of the system
+          camera activity need a layout box to draw into; sr-only keeps them
+          invisible without removing it. Gallery and PDF are left untouched. */}
+      <input ref={photoRef} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} aria-hidden="true"
              onChange={(e) => onPick(e.target.files?.[0] ?? undefined)} />
-      <input ref={scanRef} type="file" accept="image/*" capture="environment" className="hidden"
+      <input ref={scanRef} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} aria-hidden="true"
              onChange={(e) => onPick(e.target.files?.[0] ?? undefined)} />
 
       <AnimatePresence>
