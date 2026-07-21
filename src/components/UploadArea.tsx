@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import type { User } from "@supabase/supabase-js";
 import { motion } from "framer-motion";
 import { Upload, Camera, FileText, Image as ImageIcon, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,13 +28,26 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
         toast.error(isFr ? `Fichier trop lourd. Max ${MAX_MB} Mo.` : `File too large. Max ${MAX_MB} MB.`);
         return;
       }
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
-        sessionStorage.setItem("forma:pendingUpload", "1");
+      // Same reasoning as useLessonUpload: getUser() rejects for anything that
+      // is not an AuthError, and blocked storage makes both this call and the
+      // marker below throw. Neither may stop the visitor being sent to /auth.
+      let user: User | null = null;
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        user = userData.user;
+      } catch (e) {
+        console.error("[upload] could not resolve the session", e);
+      }
+      if (!user) {
+        try {
+          sessionStorage.setItem("forma:pendingUpload", "1");
+        } catch {
+          // Losing the marker is fine; failing to navigate is not.
+        }
         navigate({ to: "/auth" });
         return;
       }
-      const userId = userData.user.id;
+      const userId = user.id;
       try {
         setBusy(isFr ? "Envoi" : "Uploading");
         const ext = file.name.split(".").pop() || "bin";
