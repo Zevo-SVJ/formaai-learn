@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import type { User } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,10 +22,27 @@ export function useLessonUpload() {
         toast.error(isFr ? `Fichier trop lourd. Max ${MAX_MB} Mo.` : `File too large. Max ${MAX_MB} MB.`);
         return;
       }
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) {
+      // Resolving the session must never take the upload down with it.
+      // getUser() rejects instead of returning an error for anything that is
+      // not an AuthError, and on Android Chrome with site data blocked the
+      // localStorage read behind it throws SecurityError. Treat any failure as
+      // signed out - which is the truth when storage is unavailable anyway.
+      let user: User | null = null;
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        user = userData.user;
+      } catch (e) {
+        console.error("[upload] could not resolve the session", e);
+      }
+
+      if (!user) {
         // New flow: Landing → Onboarding → Auth → App.
-        sessionStorage.setItem("forma:pendingUpload", "1");
+        try {
+          sessionStorage.setItem("forma:pendingUpload", "1");
+        } catch {
+          // Losing this marker is acceptable; failing to send the visitor
+          // onward is not, so it must not sit between here and navigate().
+        }
         const onboarded = (() => {
           try {
             return window.localStorage.getItem("forma:onboarded") === "1";
@@ -35,7 +53,7 @@ export function useLessonUpload() {
         navigate({ to: onboarded ? "/auth" : "/onboarding" });
         return;
       }
-      const userId = userData.user.id;
+      const userId = user.id;
       try {
         setBusy(isFr ? "Envoi" : "Uploading");
         const ext = file.name.split(".").pop() || "bin";
