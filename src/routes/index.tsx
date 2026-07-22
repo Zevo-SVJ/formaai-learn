@@ -1,17 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import {
-  Sparkles,
-  ShieldCheck,
-  BookOpen,
-  Camera,
-  FileText,
-  Zap,
-  ArrowRight,
-} from "lucide-react";
+import { Sparkles, ShieldCheck, BookOpen, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { HeroActions } from "@/components/HeroActions";
+import { HowItWorksCarousel } from "@/components/HowItWorksCarousel";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
@@ -298,41 +291,10 @@ function Solution() {
 }
 
 function HowItWorks() {
-  const { t, raw } = useI18n();
-  const steps = raw((d) => d.how.steps);
-  const icons = [Camera, FileText, Zap];
+  const { t } = useI18n();
   return (
     <Section id="how" eyebrow={t((d) => d.how.eyebrow)} title={t((d) => d.how.title)}>
-      <div className="grid gap-3 sm:grid-cols-3">
-        {steps.map((s, i) => {
-          const Icon = icons[i] ?? Zap;
-          return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="relative overflow-hidden rounded-3xl border border-border bg-surface p-6"
-            >
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-40 blur-2xl"
-                style={{ background: "var(--color-emerald-soft)" }}
-              />
-              <div className="relative flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald">
-                <span>0{i + 1}</span>
-                <span className="h-px w-8 bg-emerald/40" />
-                <Icon className="h-3.5 w-3.5" />
-              </div>
-              <h3 className="relative mt-4 text-xl font-bold text-foreground">{s.t}</h3>
-              <p className="relative mt-2 text-[14px] leading-relaxed text-muted-foreground">
-                {s.d}
-              </p>
-            </motion.div>
-          );
-        })}
-      </div>
+      <HowItWorksCarousel />
     </Section>
   );
 }
