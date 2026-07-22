@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { Sparkles, BookOpen, AlertTriangle, Wand2, MoreHorizontal } from "lucide-react";
 import { parseAnswer, type AnswerSection } from "@/lib/format-answer";
+import { RichAnswer } from "@/components/RichAnswer";
+import { prettifyMath } from "@/lib/math-notation";
 import { useI18n } from "@/hooks/useI18n";
 
 const iconFor: Record<AnswerSection["key"], React.ComponentType<{ className?: string }>> = {
@@ -24,17 +26,9 @@ export function AnswerRenderer({ text, compact = false }: { text: string; compac
   const parsed = parseAnswer(text, locale);
 
   if (parsed.raw || parsed.sections.length === 0) {
-    // No structured sections detected — render plain paragraphs.
-    const paras = (parsed.raw || text).split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
-    return (
-      <div className={compact ? "space-y-2" : "space-y-3"}>
-        {paras.map((p, i) => (
-          <p key={i} className="text-[15px] leading-relaxed text-foreground">
-            {p.replace(/\s*—\s*/g, ", ")}
-          </p>
-        ))}
-      </div>
-    );
+    // No structured sections detected — render the answer as Markdown so lists,
+    // emphasis and maths notation come through instead of raw syntax.
+    return <RichAnswer text={parsed.raw || text} />;
   }
 
   return (
@@ -85,7 +79,7 @@ export function AnswerRenderer({ text, compact = false }: { text: string; compac
                       {c.label}
                     </span>
                     <span className="text-[15px] leading-relaxed text-foreground">
-                      {c.value}
+                      {prettifyMath(c.value)}
                     </span>
                   </li>
                 ))}
@@ -93,9 +87,7 @@ export function AnswerRenderer({ text, compact = false }: { text: string; compac
             )}
 
             {s.paragraphs.map((p, k) => (
-              <p key={k} className="mt-1.5 text-[15px] leading-relaxed text-foreground">
-                {p}
-              </p>
+              <RichAnswer key={k} text={p} className="mt-1.5" />
             ))}
           </motion.section>
         );

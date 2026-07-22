@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AnswerRenderer } from "@/components/AnswerRenderer";
 import { AnalysisCeremony } from "@/components/AnalysisCeremony";
 import { AnswersPanel } from "@/components/AnswersPanel";
+import { RichAnswer } from "@/components/RichAnswer";
 import { QuickActionsBar, useQuickActions } from "@/components/QuickActionsBar";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useI18n } from "@/hooks/useI18n";
@@ -366,14 +367,12 @@ function ExplanationPanel({
 
       {exp.explanation && (
         <ExplanationCard icon={Sparkles} title={t((d) => d.doc.sections.explanation)} tone="emerald">
-          {splitParagraphs(exp.explanation).map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
+          <RichAnswer text={exp.explanation} />
         </ExplanationCard>
       )}
       {exp.why && (
         <ExplanationCard icon={Lightbulb} title={t((d) => d.doc.sections.why)}>
-          <p>{exp.why}</p>
+          <RichAnswer text={exp.why} />
         </ExplanationCard>
       )}
       {exp.common_mistake && (
@@ -382,19 +381,17 @@ function ExplanationPanel({
           title={t((d) => d.doc.sections.commonMistakes)}
           tone="warn"
         >
-          <p>{exp.common_mistake}</p>
+          <RichAnswer text={exp.common_mistake} />
         </ExplanationCard>
       )}
       {exp.example && (
         <ExplanationCard icon={BookOpen} title={t((d) => d.doc.sections.example)}>
-          {splitParagraphs(exp.example).map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
+          <RichAnswer text={exp.example} />
         </ExplanationCard>
       )}
       {exp.analogy && (
         <ExplanationCard icon={Wand2} title={t((d) => d.doc.sections.analogy)}>
-          <p>{exp.analogy}</p>
+          <RichAnswer text={exp.analogy} />
         </ExplanationCard>
       )}
 
@@ -510,13 +507,6 @@ function ExplanationPanel({
   );
 }
 
-function splitParagraphs(text: string): string[] {
-  return text
-    .replace(/\r\n/g, "\n")
-    .split(/\n{2,}/)
-    .map((p) => p.replace(/\s+/g, " ").trim())
-    .filter(Boolean);
-}
 
 function FailedView({ error, onRetry }: { error: string | null; onRetry: () => void }) {
   const { t } = useI18n();

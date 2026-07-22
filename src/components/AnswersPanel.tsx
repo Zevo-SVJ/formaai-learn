@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, Copy, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { prettifyMath } from "@/lib/math-notation";
 import { useI18n } from "@/hooks/useI18n";
 
 export type Answer = { label: string; question: string; answer: string };
@@ -12,7 +13,8 @@ export function AnswersPanel({ answers }: { answers: Answer[] }) {
   const [copied, setCopied] = useState(false);
 
   const copyAll = async () => {
-    const text = answers.map((a, i) => `${a.label || i + 1}. ${a.answer}`).join("\n");
+    // Copy the same prettified text the student sees.
+    const text = answers.map((a, i) => `${a.label || i + 1}. ${prettifyMath(a.answer)}`).join("\n");
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
@@ -68,11 +70,11 @@ export function AnswersPanel({ answers }: { answers: Answer[] }) {
               <div className="min-w-0 flex-1">
                 {a.question && (
                   <div className="mb-1 truncate text-[12px] font-medium text-muted-foreground">
-                    {a.question}
+                    {prettifyMath(a.question)}
                   </div>
                 )}
                 <div className="text-[16px] font-semibold leading-snug text-foreground">
-                  {a.answer}
+                  {prettifyMath(a.answer)}
                 </div>
               </div>
             </div>
