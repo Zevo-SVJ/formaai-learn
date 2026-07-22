@@ -117,9 +117,12 @@ function seedRand(seed: string) {
   };
 }
 
-export function subjectMetric(s: SubjectItem, locale: string): { value: string; label: string } {
+export function subjectMetric(
+  s: SubjectItem,
+  locale: string,
+): { value: string; kind: "uploads" | "scans" } {
   const rnd = seedRand(s.id);
-  const kind = rnd() > 0.5 ? "uploads" : "scans";
+  const kind: "uploads" | "scans" = rnd() > 0.5 ? "uploads" : "scans";
   // 5k → 60k range, one decimal
   const n = 5 + rnd() * 55;
   const rounded = Math.round(n * 10) / 10;
@@ -128,9 +131,6 @@ export function subjectMetric(s: SubjectItem, locale: string): { value: string; 
     maximumFractionDigits: 1,
   }).format(rounded);
   const value = `${numFmt}k`;
-  const isFr = locale.startsWith("fr");
-  const label = kind === "uploads"
-    ? isFr ? "dépôts" : "uploads"
-    : isFr ? "scans" : "scans";
-  return { value, label };
+  // Return the kind; the caller translates it via i18n so this stays language-agnostic.
+  return { value, kind };
 }

@@ -12,14 +12,13 @@ const MAX_MB = 20;
 export function useLessonUpload() {
   const navigate = useNavigate();
   const analyze = useServerFn(analyzeDocument);
-  const { locale } = useI18n();
-  const isFr = locale.startsWith("fr");
+  const { t } = useI18n();
   const [busy, setBusy] = useState<string | null>(null);
 
   const handleFile = useCallback(
     async (file: File) => {
       if (file.size > MAX_MB * 1024 * 1024) {
-        toast.error(isFr ? `Fichier trop lourd. Max ${MAX_MB} Mo.` : `File too large. Max ${MAX_MB} MB.`);
+        toast.error(t((d) => d.upload.fileTooLarge, { max: MAX_MB }));
         return;
       }
       // Resolving the session must never take the upload down with it.
@@ -53,7 +52,7 @@ export function useLessonUpload() {
       }
       const userId = user.id;
       try {
-        setBusy(isFr ? "Envoi" : "Uploading");
+        setBusy(t((d) => d.upload.uploading));
         const ext = file.name.split(".").pop() || "bin";
         const path = `${userId}/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage
@@ -75,7 +74,7 @@ export function useLessonUpload() {
           .single();
         if (insErr || !row) throw insErr ?? new Error("insert failed");
 
-        setBusy(isFr ? "Lecture" : "Reading");
+        setBusy(t((d) => d.upload.reading));
         analyze({ data: { documentId: row.id } }).catch(async (e) => {
           console.error(e);
           // If the request never reached the server - a dropped mobile
@@ -88,22 +87,18 @@ export function useLessonUpload() {
             .update({ status: "failed", error: e instanceof Error ? e.message : String(e) })
             .eq("id", row.id)
             .in("status", ["uploading", "extracting", "analyzing"]);
-          toast.error(
-            isFr
-              ? "L'analyse a échoué. Ouvre le document pour réessayer."
-              : "Analysis failed. Open the document to retry.",
-          );
+          toast.error(t((d) => d.upload.analysisFailed));
         });
         navigate({ to: "/doc/$docId", params: { docId: row.id } });
       } catch (e) {
         console.error(e);
-        toast.error(e instanceof Error ? e.message : isFr ? "Envoi impossible" : "Upload failed");
+        toast.error(e instanceof Error ? e.message : t((d) => d.upload.uploadFailed));
       } finally {
         setBusy(null);
       }
     },
-    [analyze, navigate, isFr],
+    [analyze, navigate, t],
   );
 
-  return { handleFile, busy, isFr };
+  return { handleFile, busy };
 }

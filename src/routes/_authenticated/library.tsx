@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
 import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
+import { relativeTime } from "@/lib/relative-time";
 import { AppHeader } from "@/components/AppHeader";
 import { UploadArea } from "@/components/UploadArea";
 import { useI18n } from "@/hooks/useI18n";
@@ -24,7 +25,7 @@ type Doc = {
 };
 
 function Library() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const list = useServerFn(listDocuments);
   const fav = useServerFn(toggleFavorite);
   const qc = useQueryClient();
@@ -122,7 +123,14 @@ function Library() {
                 {d.chapter && <span>{d.chapter}</span>}
               </div>
               <div className="relative mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-                <span>{relativeTime(d.created_at, locale)}</span>
+                <span>
+                  {relativeTime(d.created_at, {
+                    justNow: t((d2) => d2.common.justNow),
+                    min: t((d2) => d2.common.minutesAgo),
+                    h: t((d2) => d2.common.hoursAgo),
+                    d: t((d2) => d2.common.daysAgo),
+                  })}
+                </span>
                 <span className="inline-flex items-center gap-1 font-semibold text-foreground opacity-0 transition-opacity group-hover:opacity-100">
                   {t((d2) => d2.common.continue)}
                   <ArrowRight className="h-3 w-3" />
@@ -164,15 +172,3 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function relativeTime(iso: string, locale: string): string {
-  const isFr = locale.startsWith("fr");
-  const then = new Date(iso).getTime();
-  const now = Date.now();
-  const diffMin = Math.max(0, Math.floor((now - then) / 60000));
-  if (diffMin < 1) return isFr ? "à l'instant" : "just now";
-  if (diffMin < 60) return `${diffMin} ${isFr ? "min" : "min ago"}`;
-  const h = Math.floor(diffMin / 60);
-  if (h < 24) return `${h} ${isFr ? "h" : "h ago"}`;
-  const d = Math.floor(h / 24);
-  return `${d} ${isFr ? "j" : "d ago"}`;
-}

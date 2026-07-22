@@ -91,6 +91,19 @@ export const en = {
     upload: "Upload a lesson",
     scan: "Take a photo",
   },
+  upload: {
+    fileTooLarge: "File too large. Max {{max}} MB.",
+    uploading: "Uploading",
+    reading: "Reading",
+    readingDoc: "Reading your document",
+    analysisFailed: "Analysis failed. Open the document to retry.",
+    uploadFailed: "Upload failed",
+    dropHere: "Drop your lesson here",
+    subtitle: "Lesson, homework, screenshot, photo, PDF or worksheet. Forma reads it and explains it.",
+    chooseFile: "Choose a file",
+    orDragDrop: "or drag and drop",
+    photo: "Photo",
+  },
   compare: {
     eyebrow: "The difference",
     title: "How Forma compares to other tools.",
@@ -163,6 +176,8 @@ export const en = {
     eyebrow: "Every major subject",
     title: "From equations to essays.",
     subtitle: "Forma covers what you actually study at middle and high school.",
+    uploads: "uploads",
+    scans: "scans",
     list: [
       "Mathematics",
       "Physics",
@@ -403,6 +418,12 @@ export const en = {
       quiz: "Generate a quiz",
       method: "Show the method",
       summary: "Summarise",
+      prompts: {
+        simpler: "Explain your last answer in a simpler way, for someone new to the topic.",
+        example: "Give a concrete, worked example that illustrates your last answer.",
+        revision: "Create a clean revision sheet from your last answer.",
+        quiz: "Generate a 3-question quiz focused on your last answer. Ask one at a time and wait for my answer.",
+      },
     },
     sections: {
       answer: "Answer",

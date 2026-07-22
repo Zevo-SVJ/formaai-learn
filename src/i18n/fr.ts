@@ -93,6 +93,19 @@ export const fr: Dict = {
     upload: "Déposer une leçon",
     scan: "Prendre en photo",
   },
+  upload: {
+    fileTooLarge: "Fichier trop lourd. Max {{max}} Mo.",
+    uploading: "Envoi",
+    reading: "Lecture",
+    readingDoc: "Lecture du document",
+    analysisFailed: "L'analyse a échoué. Ouvre le document pour réessayer.",
+    uploadFailed: "Envoi impossible",
+    dropHere: "Dépose ta leçon ici",
+    subtitle: "Leçon, devoir, capture, photo, PDF ou fiche. Forma lit et t'explique.",
+    chooseFile: "Choisir un fichier",
+    orDragDrop: "ou glisse-dépose",
+    photo: "Photo",
+  },
   compare: {
     eyebrow: "La différence",
     title: "Forma face aux autres outils.",
@@ -165,6 +178,8 @@ export const fr: Dict = {
     eyebrow: "Toutes les matières",
     title: "Des équations aux dissertations.",
     subtitle: "Forma couvre ce que tu étudies vraiment au collège et au lycée.",
+    uploads: "dépôts",
+    scans: "scans",
     list: [
       "Mathématiques",
       "Physique",
@@ -405,6 +420,12 @@ export const fr: Dict = {
       quiz: "Fais-moi un quiz",
       method: "Montre la méthode",
       summary: "Résume",
+      prompts: {
+        simpler: "Réexplique-moi ta dernière réponse plus simplement, comme à quelqu'un qui découvre le sujet.",
+        example: "Donne un exemple concret et détaillé qui illustre ta dernière réponse.",
+        revision: "Crée-moi une fiche de révision claire à partir de ta dernière réponse.",
+        quiz: "Génère un quiz de 3 questions ciblées sur ta dernière réponse. Pose-les une par une et attends ma réponse à chaque fois.",
+      },
     },
     sections: {
       answer: "Réponse",

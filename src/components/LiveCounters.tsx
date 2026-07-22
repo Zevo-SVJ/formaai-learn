@@ -14,7 +14,7 @@ function formatNumber(n: number, locale: string): string {
 }
 
 function Counter({ base, perMinute, label }: { base: number; perMinute: number; label: string }) {
-  const { locale } = useI18n();
+  const { t, locale } = useI18n();
   const live = useLiveTicker(base, perMinute);
   const animated = useCountUp(live, 1500);
   const hydrated = useHydrated();
@@ -26,7 +26,7 @@ function Counter({ base, perMinute, label }: { base: number; perMinute: number; 
           <span className="absolute inset-0 animate-ping rounded-full bg-emerald opacity-60" />
           <span className="relative inline-block h-1.5 w-1.5 rounded-full bg-emerald" />
         </span>
-        Live
+        {t((d) => d.liveCounters.live)}
       </div>
       <div className="font-display text-[26px] font-extrabold tracking-tight text-foreground tabular-nums sm:text-[30px]">
         {formatNumber(value, locale)}

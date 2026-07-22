@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
+import { relativeTime } from "@/lib/relative-time";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { UploadArea } from "@/components/UploadArea";
@@ -36,7 +37,7 @@ type Doc = {
 
 function Home() {
   const navigate = useNavigate();
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const list = useServerFn(listDocuments);
   const fav = useServerFn(toggleFavorite);
   const qc = useQueryClient();
@@ -129,7 +130,6 @@ function Home() {
                 key={d.id}
                 doc={d}
                 index={i}
-                locale={locale}
                 onFavToggle={async () => {
                   await fav({ data: { id: d.id, favorite: !d.favorite } });
                   qc.invalidateQueries({ queryKey: ["documents"] });
@@ -167,7 +167,6 @@ function Home() {
                 key={d.id}
                 doc={d}
                 index={i}
-                locale={locale}
                 onFavToggle={async () => {
                   await fav({ data: { id: d.id, favorite: !d.favorite } });
                   qc.invalidateQueries({ queryKey: ["documents"] });
@@ -239,12 +238,10 @@ function EmptyRow({ message, tone }: { message: string; tone: "star" | "book" })
 function DocCard({
   doc,
   index,
-  locale,
   onFavToggle,
 }: {
   doc: Doc;
   index: number;
-  locale: string;
   onFavToggle: () => void;
 }) {
   const { t } = useI18n();
@@ -295,7 +292,14 @@ function DocCard({
         {doc.chapter && <span>{doc.chapter}</span>}
       </div>
       <div className="relative mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-        <span>{relativeTime(doc.created_at, locale)}</span>
+        <span>
+          {relativeTime(doc.created_at, {
+            justNow: t((d) => d.common.justNow),
+            min: t((d) => d.common.minutesAgo),
+            h: t((d) => d.common.hoursAgo),
+            d: t((d) => d.common.daysAgo),
+          })}
+        </span>
         <span className="inline-flex items-center gap-1 font-semibold text-foreground opacity-0 transition-opacity group-hover:opacity-100">
           {t((d) => d.common.continue)}
           <ArrowRight className="h-3 w-3" />
@@ -327,15 +331,3 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function relativeTime(iso: string, locale: string): string {
-  const isFr = locale.startsWith("fr");
-  const then = new Date(iso).getTime();
-  const now = Date.now();
-  const diffMin = Math.max(0, Math.floor((now - then) / 60000));
-  if (diffMin < 1) return isFr ? "à l'instant" : "just now";
-  if (diffMin < 60) return `${diffMin} ${isFr ? "min" : "min ago"}`;
-  const h = Math.floor(diffMin / 60);
-  if (h < 24) return `${h} ${isFr ? "h" : "h ago"}`;
-  const d = Math.floor(h / 24);
-  return `${d} ${isFr ? "j" : "d ago"}`;
-}

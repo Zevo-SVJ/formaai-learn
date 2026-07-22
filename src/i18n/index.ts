@@ -7,8 +7,10 @@ export type Locale = "en" | "fr";
 
 const STORAGE_KEY = "forma:locale";
 
+export const DEFAULT_LOCALE: Locale = "en";
+
 function detectInitialLocale(): Locale {
-  if (typeof window === "undefined") return "en";
+  if (typeof window === "undefined") return DEFAULT_LOCALE;
   // This runs at module scope, so a throw here stops the root route from
   // loading at all and the app boots straight into the error boundary.
   // Android Chrome with site data blocked throws SecurityError on read.
@@ -16,11 +18,12 @@ function detectInitialLocale(): Locale {
   try {
     stored = window.localStorage.getItem(STORAGE_KEY);
   } catch {
-    // No stored preference available; fall back to the browser language.
+    // Storage unavailable; fall through to the default.
   }
   if (stored === "en" || stored === "fr") return stored;
-  const nav = (window.navigator.language || "en").toLowerCase();
-  return nav.startsWith("fr") ? "fr" : "en";
+  // No stored preference: English is the default. (Browser language is
+  // intentionally ignored so the default is predictable and English-first.)
+  return DEFAULT_LOCALE;
 }
 
 if (!i18n.isInitialized) {

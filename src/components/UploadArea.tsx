@@ -15,17 +15,15 @@ const MAX_MB = 20;
 export function UploadArea({ compact = false }: { compact?: boolean }) {
   const navigate = useNavigate();
   const analyze = useServerFn(analyzeDocument);
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isFr = locale.startsWith("fr");
-
   const handleFile = useCallback(
     async (file: File) => {
       if (file.size > MAX_MB * 1024 * 1024) {
-        toast.error(isFr ? `Fichier trop lourd. Max ${MAX_MB} Mo.` : `File too large. Max ${MAX_MB} MB.`);
+        toast.error(t((d) => d.upload.fileTooLarge, { max: MAX_MB }));
         return;
       }
       // Same reasoning as useLessonUpload: getUser() rejects for anything that
@@ -49,7 +47,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
       }
       const userId = user.id;
       try {
-        setBusy(isFr ? "Envoi" : "Uploading");
+        setBusy(t((d) => d.upload.uploading));
         const ext = file.name.split(".").pop() || "bin";
         const path = `${userId}/${crypto.randomUUID()}.${ext}`;
         const { error: upErr } = await supabase.storage
@@ -71,7 +69,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
           .single();
         if (insErr || !row) throw insErr ?? new Error("insert failed");
 
-        setBusy(isFr ? "Lecture du document" : "Reading your document");
+        setBusy(t((d) => d.upload.readingDoc));
         analyze({ data: { documentId: row.id } }).catch(async (e) => {
           console.error(e);
           // A request that never reached the server leaves the row mid-flight
@@ -82,17 +80,17 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
             .update({ status: "failed", error: e instanceof Error ? e.message : String(e) })
             .eq("id", row.id)
             .in("status", ["uploading", "extracting", "analyzing"]);
-          toast.error(isFr ? "L'analyse a échoué. Ouvre le document pour réessayer." : "Analysis failed. Open the document to retry.");
+          toast.error(t((d) => d.upload.analysisFailed));
         });
         navigate({ to: "/doc/$docId", params: { docId: row.id } });
       } catch (e) {
         console.error(e);
-        toast.error(e instanceof Error ? e.message : isFr ? "Envoi impossible" : "Upload failed");
+        toast.error(e instanceof Error ? e.message : t((d) => d.upload.uploadFailed));
       } finally {
         setBusy(null);
       }
     },
-    [analyze, navigate, isFr],
+    [analyze, navigate, t],
   );
 
   // Listen for global upload events (e.g. from Home quick actions).
@@ -119,7 +117,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
         className="forma-cta inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold hover:-translate-y-0.5"
       >
         <Upload className="h-4 w-4" />
-        {isFr ? "Déposer une leçon" : "Upload a lesson"}
+        {t((d) => d.compact.upload)}
         <input
           ref={inputRef}
           type="file"
@@ -131,10 +129,8 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
     );
   }
 
-  const title = busy ?? (isFr ? "Dépose ta leçon ici" : "Drop your lesson here");
-  const sub = isFr
-    ? "Leçon, devoir, capture, photo, PDF ou fiche. Forma lit et t'explique."
-    : "Lesson, homework, screenshot, photo, PDF or worksheet. Forma AI reads it and explains it.";
+  const title = busy ?? t((d) => d.upload.dropHere);
+  const sub = t((d) => d.upload.subtitle);
 
   return (
     <motion.div
@@ -196,17 +192,17 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
             <ImageIcon className="h-3.5 w-3.5" /> Image
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-muted px-3 py-1.5">
-            <Camera className="h-3.5 w-3.5" /> {isFr ? "Photo" : "Photo"}
+            <Camera className="h-3.5 w-3.5" /> {t((d) => d.upload.photo)}
           </span>
         </div>
 
         <div className="mt-6 flex items-center gap-3">
           <span className="forma-cta inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
             <Upload className="h-4 w-4" strokeWidth={2.4} />
-            {isFr ? "Choisir un fichier" : "Choose a file"}
+            {t((d) => d.upload.chooseFile)}
           </span>
           <span className="text-xs text-muted-foreground">
-            {isFr ? "ou glisse-dépose" : "or drag and drop"}
+            {t((d) => d.upload.orDragDrop)}
           </span>
         </div>
         <p className="mt-2 text-[11px] text-muted-foreground">{t((d) => d.hero.ctaHint)}</p>

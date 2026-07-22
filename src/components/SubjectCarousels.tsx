@@ -19,7 +19,7 @@ function Card({ name, icon, value, label }: { name: string; icon: string; value:
 }
 
 function Row({ items, direction }: { items: typeof SUBJECTS; direction: "l" | "r" }) {
-  const { locale } = useI18n();
+  const { t, locale } = useI18n();
   // Duplicate items so the CSS translation from 0 → -50% loops seamlessly.
   const doubled = useMemo(() => [...items, ...items], [items]);
   return (
@@ -43,7 +43,7 @@ function Row({ items, direction }: { items: typeof SUBJECTS; direction: "l" | "r
               name={subjectName(s, locale)}
               icon={s.icon}
               value={m.value}
-              label={m.label}
+              label={t((d) => (m.kind === "uploads" ? d.subjects.uploads : d.subjects.scans))}
             />
           );
         })}
