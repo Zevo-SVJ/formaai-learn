@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Sparkles, ShieldCheck, BookOpen, ArrowRight } from "lucide-react";
+import { BookOpen, ScanText, FileCheck, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { HeroActions } from "@/components/HeroActions";
 import { HowItWorksCarousel } from "@/components/HowItWorksCarousel";
@@ -256,30 +256,38 @@ function Problem() {
 function Solution() {
   const { t, raw } = useI18n();
   const items = raw((d) => d.solution.items);
-  const icons = [BookOpen, Sparkles, ShieldCheck];
+  // Clean interface symbols: scan a document, read/explain, verified source.
+  const icons = [ScanText, BookOpen, FileCheck];
   return (
     <Section
       eyebrow={t((d) => d.solution.eyebrow)}
       title={t((d) => d.solution.title)}
       bg="surface"
     >
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
         {items.map((it, i) => {
-          const Icon = icons[i] ?? Sparkles;
+          const Icon = icons[i] ?? FileCheck;
           return (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4, delay: i * 0.05 }}
-              className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-soft)]"
+              transition={{ duration: 0.55, delay: i * 0.14, ease: [0.2, 0.8, 0.2, 1] }}
+              className="rounded-[1.75rem] border border-border bg-card p-7 sm:p-8"
             >
-              <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-soft">
-                <Icon className="h-5 w-5 text-emerald" strokeWidth={2.25} />
+              <div className="flex items-center justify-between">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-soft">
+                  <Icon className="h-6 w-6 text-emerald" strokeWidth={1.75} />
+                </div>
+                <span className="text-[13px] font-semibold tracking-[0.14em] text-muted-foreground/60">
+                  {`0${i + 1}`}
+                </span>
               </div>
-              <h3 className="text-lg font-bold text-foreground">{it.title}</h3>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
+              <h3 className="mt-6 text-[19px] font-bold tracking-tight text-foreground">
+                {it.title}
+              </h3>
+              <p className="mt-2 text-[14.5px] leading-relaxed text-muted-foreground">
                 {it.body}
               </p>
             </motion.div>

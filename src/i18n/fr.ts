@@ -136,19 +136,19 @@ export const fr: Dict = {
   },
   solution: {
     eyebrow: "La solution",
-    title: "Un tuteur qui lit vraiment ta leçon.",
+    title: "Un tuteur qui comprend ton cours, pas juste tes questions.",
     items: [
       {
-        title: "Il lit ta leçon",
-        body: "Reconnaissance de photos et d'écritures manuscrites. PDF et exercices aussi.",
+        title: "Il comprend ta leçon",
+        body: "Tu lui envoies ton cours. Photo, PDF ou exercice : Forma analyse ton document, même avec une écriture manuscrite.",
       },
       {
-        title: "Il t'apprend, il ne fait pas à ta place",
-        body: "Explications structurées avec le pourquoi, les pièges et un exemple simple.",
+        title: "Il t'explique vraiment",
+        body: "Pas juste la réponse. Il t'explique le raisonnement, les erreurs à éviter et te montre un exemple simple.",
       },
       {
-        title: "Ancré dans ton document",
-        body: "Chaque réponse est fondée sur ta leçon. Aucune information inventée.",
+        title: "Il reste basé sur ton cours",
+        body: "Forma s'appuie sur ton document pour éviter les explications hors sujet.",
       },
     ],
   },

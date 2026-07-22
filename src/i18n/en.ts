@@ -134,19 +134,19 @@ export const en = {
   },
   solution: {
     eyebrow: "The solution",
-    title: "A tutor that actually reads your lesson.",
+    title: "A tutor that understands your lesson, not just your questions.",
     items: [
       {
-        title: "Reads your lesson",
-        body: "OCR handles photos and handwriting. PDFs and worksheets too.",
+        title: "It understands your lesson",
+        body: "Send it your course. Photo, PDF or worksheet: Forma reads your document, even in handwriting.",
       },
       {
-        title: "Teaches, not solves",
-        body: "Structured explanations with the why, common mistakes and simple examples.",
+        title: "It really explains",
+        body: "Not just the answer. It walks you through the reasoning, the mistakes to avoid, and shows a simple example.",
       },
       {
-        title: "Grounded in your document",
-        body: "Every answer is anchored in the lesson you uploaded. No made up facts.",
+        title: "It stays grounded in your course",
+        body: "Forma relies on your document, so explanations never drift off topic.",
       },
     ],
   },
