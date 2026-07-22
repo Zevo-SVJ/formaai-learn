@@ -39,7 +39,7 @@ export const fr: Dict = {
     title1: "Comprends chaque leçon.",
     title2: "Pas seulement la réponse.",
     subtitle:
-      "Dépose une leçon, un exercice ou une photo de tes notes. Forma AI lit, comprend et te réexplique le cours avec des mots qui parlent vraiment.",
+      "Dépose une leçon, un exercice ou une photo de tes notes. Forma lit, comprend et te réexplique le cours avec des mots qui parlent vraiment.",
     cta: "Essayer gratuitement",
     ctaHint: "Sans carte. Sans mur d'inscription.",
     menu: {
@@ -127,7 +127,7 @@ export const fr: Dict = {
     eyebrow: "Le problème",
     title: "Avoir la réponse ne veut pas dire comprendre.",
     subtitle:
-      "La plupart des IA font tes devoirs à ta place. Forma AI fait l'inverse. Elle t'aide vraiment à comprendre la leçon.",
+      "La plupart des IA font tes devoirs à ta place. Forma fait l'inverse : elle t'aide vraiment à comprendre la leçon.",
     items: [
       "Tu ouvres la leçon, rien ne rentre.",
       "Tu demandes à une IA. Elle te donne la réponse, pas l'idée.",
@@ -157,7 +157,7 @@ export const fr: Dict = {
     title: "Trois étapes. Pas de blabla.",
     steps: [
       { t: "Dépose n'importe quoi", d: "Une photo, un PDF ou une capture de ton exercice." },
-      { t: "Forma lit tout", d: "Détecte la matière, le niveau, le chapitre et les concepts clés." },
+      { t: "Forma lit tout", d: "Il repère la matière, le niveau et les idées qui comptent vraiment." },
       { t: "Tu comprends enfin", d: "Une explication claire avec exemples et un chat qui connaît déjà ta leçon." },
     ],
   },

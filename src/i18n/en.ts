@@ -37,7 +37,7 @@ export const en = {
     title1: "Understand every lesson.",
     title2: "Not just the answer.",
     subtitle:
-      "Upload a lesson, worksheet or a photo of your notes. Forma AI reads it, understands it, and teaches it back in words that actually make sense.",
+      "Upload a lesson, worksheet or a photo of your notes. Forma reads it, understands it, and teaches it back in words that actually make sense.",
     cta: "Try it free",
     ctaHint: "No card. No signup wall.",
     menu: {
@@ -125,7 +125,7 @@ export const en = {
     eyebrow: "The problem",
     title: "Answers are not the same as understanding.",
     subtitle:
-      "Most AI tools solve your homework for you. Forma AI does the opposite. It helps you actually learn the thing.",
+      "Most AI tools solve your homework for you. Forma does the opposite: it helps you actually learn the lesson.",
     items: [
       "You stare at the lesson and none of it clicks.",
       "You ask an AI. It gives you the answer, not the idea.",
@@ -155,7 +155,7 @@ export const en = {
     title: "Three steps. No busywork.",
     steps: [
       { t: "Upload anything", d: "A photo, PDF or a screenshot of your worksheet." },
-      { t: "Forma reads it", d: "Detects the subject, level, chapter and key concepts." },
+      { t: "Forma reads it", d: "It picks up the subject, the level and the ideas that actually matter." },
       { t: "You understand it", d: "A clear explanation with examples and a chat that already knows the lesson." },
     ],
   },
