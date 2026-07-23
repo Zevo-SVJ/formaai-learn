@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { redeemReferralCode } from "@/lib/referral.functions";
 import { takePendingReferral } from "@/lib/pending-referral";
 import "@/i18n";
+import { getLocale } from "@/i18n";
 
 function NotFoundComponent() {
   return (
@@ -138,6 +139,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   const redeem = useServerFn(redeemReferralCode);
+
+  // The shell is server-rendered with lang="en". Once hydrated, reflect the
+  // actually active locale (auto-detected from the browser or a saved
+  // preference) on <html lang> for accessibility and SEO. Running this in an
+  // effect keeps it out of hydration, so it never causes a mismatch.
+  useEffect(() => {
+    document.documentElement.setAttribute("lang", getLocale());
+  }, []);
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {

@@ -8,7 +8,6 @@ import { lovable } from "@/integrations/lovable";
 import { storePendingReferral } from "@/lib/pending-referral";
 import { toast } from "sonner";
 import { useI18n } from "@/hooks/useI18n";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -144,7 +143,6 @@ function Auth() {
           >
             <ArrowLeft className="h-4 w-4" /> {t((d) => d.common.back)}
           </Link>
-          <LanguageSwitcher />
         </div>
 
         <motion.div

@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useI18n } from "@/hooks/useI18n";
 import { Logo } from "@/components/Logo";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArrowLeft } from "lucide-react";
 
@@ -26,7 +25,6 @@ function Terms() {
           <Link to="/" className="inline-flex items-center gap-2">
             <Logo />
           </Link>
-          <LanguageSwitcher />
         </div>
       </header>
       <main className="mx-auto max-w-2xl px-5 py-12 sm:py-16">

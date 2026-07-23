@@ -19,7 +19,6 @@ import { AnalysisCeremony } from "@/components/AnalysisCeremony";
 import { AnswersPanel } from "@/components/AnswersPanel";
 import { RichAnswer } from "@/components/RichAnswer";
 import { QuickActionsBar, useQuickActions } from "@/components/QuickActionsBar";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useI18n } from "@/hooks/useI18n";
 import {
   ArrowLeft,
@@ -162,7 +161,6 @@ function DocPage() {
                   : t((d) => d.doc.favoriteAdd)}
               </button>
             )}
-            <LanguageSwitcher />
             <Link to="/home" className="hidden sm:block">
               <Logo />
             </Link>

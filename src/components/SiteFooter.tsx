@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Mail } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useI18n } from "@/hooks/useI18n";
 
 const INSTAGRAM_URL =
@@ -46,7 +45,6 @@ export function SiteFooter() {
             <Mail className="h-4 w-4" />
             {CONTACT_EMAIL}
           </a>
-          <LanguageSwitcher variant="ghost" />
         </nav>
       </div>
       <div className="mx-auto max-w-6xl px-5 pb-6 text-xs text-muted-foreground">

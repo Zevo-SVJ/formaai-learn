@@ -9,7 +9,6 @@ import { SolutionStory } from "@/components/SolutionStory";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 
 import { SiteFooter } from "@/components/SiteFooter";
@@ -96,7 +95,6 @@ function Header() {
           </a>
         </nav>
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
           <Link
             to="/auth"
             className="inline-flex items-center rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground hover:border-border-strong"

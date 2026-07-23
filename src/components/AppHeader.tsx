@@ -1,6 +1,5 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/useI18n";
 import { LogOut, Home as HomeIcon, BookOpen, LineChart } from "lucide-react";
@@ -51,7 +50,6 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
           <NavLink to="/progress" icon={LineChart} label={t((d) => d.progress.nav)} />
         </nav>
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
           <button
             onClick={async () => {
               await supabase.auth.signOut();
