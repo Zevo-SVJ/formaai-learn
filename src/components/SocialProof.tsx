@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 // Elegant, subtle, premium: four overlapping avatars with a single initial.
@@ -15,7 +16,7 @@ export function SocialProof() {
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+      transition={{ duration: 0.5, ease: EASE.out }}
       className="inline-flex items-center gap-3 rounded-full border border-border bg-surface/80 py-1.5 pl-1.5 pr-4 shadow-[var(--shadow-soft)] backdrop-blur"
     >
       <div className="flex -space-x-2">

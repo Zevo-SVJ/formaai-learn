@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { COUNTRIES, countryName } from "@/lib/countries";
 import { CheckCircle2, Search, ChevronRight } from "lucide-react";
@@ -180,7 +181,7 @@ function Step({ children }: { children: React.ReactNode }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+      transition={{ duration: 0.35, ease: EASE.out }}
       className="pt-4 sm:pt-8"
     >
       {children}
@@ -219,7 +220,7 @@ function QuestionSingle({
               key={o.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, delay: i * 0.04 }}
+              transition={{ duration: 0.25, delay: i * 0.04, ease: EASE.out }}
               onClick={() => onPick(o.id)}
               className={[
                 "flex w-full items-center justify-between gap-3 rounded-2xl border p-4 text-left text-[15px] font-semibold transition-all",
@@ -260,7 +261,7 @@ function Insight({
       <motion.h1
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.4, ease: EASE.out }}
         className="mt-3 text-[34px] font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl"
       >
         {t(statKey)}
@@ -268,7 +269,7 @@ function Insight({
       <motion.p
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.15 }}
+        transition={{ duration: 0.4, delay: 0.15, ease: EASE.out }}
         className="mt-6 text-[26px] font-bold tracking-tight text-emerald sm:text-3xl"
       >
         {t(punchKey)}
@@ -454,7 +455,7 @@ function LoadingStep({ onDone }: { onDone: () => void }) {
   return (
     <motion.div
       animate={{ opacity: leaving ? 0 : 1 }}
-      transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+      transition={{ duration: 0.5, ease: EASE.inOut }}
       className="flex flex-col items-center pt-10 text-center sm:pt-16"
     >
       {/* The logo, breathing. Nothing else. */}
@@ -490,7 +491,7 @@ function LoadingStep({ onDone }: { onDone: () => void }) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.42, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.42, ease: EASE.out }}
             className="absolute inset-0 flex items-center justify-center gap-2.5"
           >
             <TaskCheck checked={checked} />
@@ -509,13 +510,13 @@ function TaskCheck({ checked }: { checked: boolean }) {
       <motion.span
         className="absolute inset-0 rounded-full border border-border"
         animate={{ opacity: checked ? 0 : 1, scale: checked ? 0.7 : 1 }}
-        transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+        transition={{ duration: 0.28, ease: EASE.inOut }}
       />
       <motion.span
         className="absolute inset-0 flex items-center justify-center rounded-full bg-emerald text-white"
         initial={false}
         animate={{ opacity: checked ? 1 : 0, scale: checked ? 1 : 0.7 }}
-        transition={{ duration: 0.32, ease: [0.2, 0.8, 0.2, 1] }}
+        transition={{ duration: 0.32, ease: EASE.out }}
       >
         <svg
           viewBox="0 0 24 24"
@@ -530,7 +531,7 @@ function TaskCheck({ checked }: { checked: boolean }) {
             d="M20 6 9 17l-5-5"
             initial={false}
             animate={{ pathLength: checked ? 1 : 0 }}
-            transition={{ duration: 0.34, delay: checked ? 0.08 : 0, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.34, delay: checked ? 0.08 : 0, ease: EASE.out }}
           />
         </svg>
       </motion.span>

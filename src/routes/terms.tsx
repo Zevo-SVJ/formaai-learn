@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -37,6 +38,7 @@ function Terms() {
         <motion.h1
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: EASE.out }}
           className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
         >
           {t((d) => d.legal.terms.title)}
@@ -54,7 +56,7 @@ function Terms() {
               initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.3, delay: i * 0.04 }}
+              transition={{ duration: 0.3, delay: i * 0.04, ease: EASE.out }}
             >
               <h2 className="text-lg font-bold text-foreground">{s.h}</h2>
               <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">

@@ -19,6 +19,7 @@ import { AnalysisCeremony } from "@/components/AnalysisCeremony";
 import { AnswersPanel } from "@/components/AnswersPanel";
 import { RichAnswer } from "@/components/RichAnswer";
 import { QuickActionsBar, useQuickActions } from "@/components/QuickActionsBar";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import {
   ArrowLeft,
@@ -267,7 +268,7 @@ function ExplanationCard({
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.3, ease: EASE.out }}
       className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
     >
       <div className="mb-3 flex items-center gap-2.5">
@@ -422,6 +423,7 @@ function ExplanationPanel({
                     key={m.id}
                     initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, ease: EASE.out }}
                     className={isUser ? "flex justify-end" : ""}
                   >
                     {isUser ? (

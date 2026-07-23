@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useServerFn } from "@tanstack/react-start";
 import { analyzeDocument } from "@/lib/documents.functions";
 import { toast } from "sonner";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 const ACCEPT = "image/*,application/pdf,.txt,.md";
@@ -136,7 +137,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+      transition={{ duration: 0.5, ease: EASE.out }}
       onDragOver={(e) => {
         e.preventDefault();
         setDragging(true);

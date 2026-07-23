@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { ScanText, BookOpen, FileCheck } from "lucide-react";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 const icons = [ScanText, BookOpen, FileCheck];
@@ -50,7 +51,7 @@ export function SolutionStory() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+              transition={{ duration: 0.4, ease: EASE.out }}
               className="absolute inset-0 flex flex-col items-center justify-center text-center"
             >
               <div className="flex h-20 w-20 items-center justify-center rounded-[1.75rem] bg-emerald-soft">

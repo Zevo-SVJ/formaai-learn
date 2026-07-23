@@ -12,6 +12,7 @@ import { CompareSection } from "@/components/CompareSection";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 
 import { SiteFooter } from "@/components/SiteFooter";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import {
   Accordion,
@@ -132,7 +133,7 @@ function Hero() {
         <motion.h1
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.2, 0.8, 0.2, 1] }}
+          transition={{ duration: 0.55, ease: EASE.out }}
           className="text-[38px] font-bold leading-[1.03] tracking-[-0.04em] text-foreground sm:text-6xl"
         >
           {t((d) => d.hero.title1)}
@@ -142,7 +143,7 @@ function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: EASE.out }}
           className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-lg"
         >
           {t((d) => d.hero.subtitle)}
@@ -158,7 +159,7 @@ function Hero() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.25, ease: [0.2, 0.8, 0.2, 1] }}
+        transition={{ duration: 0.6, delay: 0.25, ease: EASE.out }}
         className="relative -mx-5 mt-12 sm:mt-16"
       >
         <SubjectCarousels />
@@ -240,7 +241,7 @@ function Problem() {
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.4, delay: i * 0.05 }}
+            transition={{ duration: 0.4, delay: i * 0.05, ease: EASE.out }}
             className="rounded-2xl border border-border bg-surface px-5 py-4 text-[15px] text-foreground shadow-[var(--shadow-soft)]"
           >
             <span className="mr-3 font-semibold text-emerald">0{i + 1}</span>

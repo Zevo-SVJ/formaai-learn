@@ -3,6 +3,7 @@ import { Sparkles, BookOpen, AlertTriangle, Wand2, MoreHorizontal } from "lucide
 import { parseAnswer, type AnswerSection } from "@/lib/format-answer";
 import { RichAnswer } from "@/components/RichAnswer";
 import { prettifyMath } from "@/lib/math-notation";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 const iconFor: Record<AnswerSection["key"], React.ComponentType<{ className?: string }>> = {
@@ -51,7 +52,7 @@ export function AnswerRenderer({ text, compact = false }: { text: string; compac
             key={i}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: i * 0.04 }}
+            transition={{ duration: 0.25, delay: i * 0.04, ease: EASE.out }}
             className={[
               "rounded-3xl border border-border bg-card p-4 sm:p-5",
               compact ? "" : "shadow-[var(--shadow-soft)]",

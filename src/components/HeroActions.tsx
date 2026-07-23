@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDown, Camera, FileText, ImageIcon, ScanLine, Upload, X, Loader2 } from "lucide-react";
 import { useLessonUpload } from "@/hooks/useLessonUpload";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 // Apple-style bottom action sheet on mobile, popover on desktop.
@@ -75,7 +76,7 @@ export function HeroActions() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+        transition={{ duration: 0.5, ease: EASE.out }}
         className="mx-auto flex w-full max-w-md flex-col items-stretch gap-3 sm:flex-row sm:justify-center"
       >
         <button
@@ -117,7 +118,7 @@ export function HeroActions() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.2, ease: EASE.inOut }}
               onClick={() => setOpen(false)}
               className="fixed inset-0 z-40 bg-foreground/25 backdrop-blur-sm"
             />
@@ -126,7 +127,7 @@ export function HeroActions() {
               initial={{ y: 40, opacity: 0, scale: 0.98 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 40, opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1] }}
+              transition={{ duration: 0.28, ease: EASE.out }}
               className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md p-3 sm:inset-0 sm:my-auto sm:h-fit"
               role="dialog"
               aria-modal="true"

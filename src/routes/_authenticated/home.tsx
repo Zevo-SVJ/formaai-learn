@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { UploadArea } from "@/components/UploadArea";
 import { ReferralCard } from "@/components/ReferralCard";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import {
   BookOpen,
@@ -85,7 +86,7 @@ function Home() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: 0.35, ease: EASE.out }}
           className="mb-8 flex flex-col gap-1"
         >
           <h1 className="text-[30px] font-bold leading-tight tracking-tight text-foreground sm:text-[38px]">
@@ -181,6 +182,7 @@ function Home() {
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.35, ease: EASE.out }}
           className="mt-14 flex flex-col gap-2 rounded-3xl border border-border bg-emerald-soft/50 p-6 sm:flex-row sm:items-center sm:justify-between"
         >
           <div className="flex items-start gap-3">
@@ -249,7 +251,7 @@ function DocCard({
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.03 }}
+      transition={{ duration: 0.3, delay: index * 0.03, ease: EASE.out }}
       className="group relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:border-border-strong"
     >
       <Link

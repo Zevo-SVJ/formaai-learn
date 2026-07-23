@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { MotionConfig } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
 import { Toaster } from "sonner";
 
@@ -173,8 +174,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
-      <Toaster richColors position="top-center" />
+      {/* Honour the OS "reduce motion" setting across every framer animation,
+          without touching layout for everyone else. */}
+      <MotionConfig reducedMotion="user">
+        <Outlet />
+        <Toaster richColors position="top-center" />
+      </MotionConfig>
     </QueryClientProvider>
   );
 }

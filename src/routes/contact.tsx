@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -41,6 +42,7 @@ function Contact() {
         <motion.h1
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: EASE.out }}
           className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
         >
           {t((d) => d.legal.contact.title)}
@@ -60,7 +62,7 @@ function Contact() {
         <motion.form
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: EASE.out }}
           onSubmit={(e) => {
             e.preventDefault();
             setSent(true);

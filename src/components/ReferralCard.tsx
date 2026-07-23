@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Copy, Check, Gift, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { getMyReferral } from "@/lib/referral.functions";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 export function ReferralCard() {
@@ -54,7 +55,7 @@ export function ReferralCard() {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
+      transition={{ duration: 0.35, ease: EASE.out }}
       className="relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:p-6"
     >
       <div
@@ -117,7 +118,7 @@ export function ReferralCard() {
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: EASE.out }}
             className="h-full rounded-full bg-emerald"
           />
         </div>

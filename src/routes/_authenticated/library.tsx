@@ -6,6 +6,7 @@ import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
 import { relativeTime } from "@/lib/relative-time";
 import { AppHeader } from "@/components/AppHeader";
 import { UploadArea } from "@/components/UploadArea";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { BookOpen, Loader2, Star, CheckCircle2, AlertCircle, ArrowRight, Home } from "lucide-react";
 
@@ -80,7 +81,7 @@ function Library() {
               key={d.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: i * 0.02 }}
+              transition={{ duration: 0.3, delay: i * 0.02, ease: EASE.out }}
               className="group relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:border-border-strong"
             >
               <Link

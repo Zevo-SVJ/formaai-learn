@@ -2,6 +2,7 @@ import { useI18n } from "@/hooks/useI18n";
 import { useCountUp, useLiveTicker } from "@/hooks/useCountUp";
 import { useHydrated } from "@/hooks/useHydrated";
 import { motion } from "framer-motion";
+import { EASE } from "@/lib/motion";
 
 function formatNumber(n: number, locale: string): string {
   try {
@@ -43,7 +44,7 @@ export function LiveCounters() {
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.5, ease: EASE.out }}
       className="mx-auto grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3"
     >
       <Counter base={128_431} perMinute={4.2} label={t((d) => d.liveCounters.lessons)} />

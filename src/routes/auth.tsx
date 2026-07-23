@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { storePendingReferral } from "@/lib/pending-referral";
 import { toast } from "sonner";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 export const Route = createFileRoute("/auth")({
@@ -148,7 +149,7 @@ function Auth() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.4, ease: EASE.out }}
           className="flex flex-col items-center text-center"
         >
           <Logo size={40} withWordmark={false} />
@@ -241,7 +242,7 @@ function Auth() {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.25 }}
+                  transition={{ duration: 0.25, ease: EASE.inOut }}
                   className="overflow-hidden"
                 >
                   <div className="relative">

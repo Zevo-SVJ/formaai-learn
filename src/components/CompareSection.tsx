@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Check, Minus } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 export function CompareSection() {
@@ -28,7 +29,7 @@ export function CompareSection() {
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.5, ease: EASE.out }}
             className="relative overflow-hidden rounded-[2rem] border border-emerald/40 bg-card p-7 shadow-[var(--shadow-emerald)] sm:p-9"
           >
             <div
@@ -49,7 +50,7 @@ export function CompareSection() {
                   initial={{ opacity: 0, x: -8 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.35, delay: 0.05 * i }}
+                  transition={{ duration: 0.35, delay: 0.05 * i, ease: EASE.out }}
                   className="flex items-start gap-3 text-[15px] font-medium text-foreground"
                 >
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald text-white">
@@ -65,7 +66,7 @@ export function CompareSection() {
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.5, delay: 0.1, ease: EASE.out }}
             className="relative overflow-hidden rounded-[2rem] border border-border bg-surface-muted/60 p-7 sm:p-9"
           >
             <div className="flex items-center justify-between">
@@ -83,7 +84,7 @@ export function CompareSection() {
                   initial={{ opacity: 0, x: -8 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.35, delay: 0.05 * i }}
+                  transition={{ duration: 0.35, delay: 0.05 * i, ease: EASE.out }}
                   className="flex items-start gap-3 text-[15px] text-muted-foreground"
                 >
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-background text-muted-foreground">

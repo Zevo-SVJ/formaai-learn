@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import { Camera, ScanText, Lightbulb } from "lucide-react";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 const stepIcons = [Camera, ScanText, Lightbulb];
@@ -25,7 +26,7 @@ export function HowItWorksCarousel() {
       initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+      transition={{ duration: 0.5, ease: EASE.out }}
     >
       {/* Mobile: a swipeable deck. */}
       <Deck steps={steps} />
@@ -130,9 +131,9 @@ function Deck({ steps }: { steps: Step[] }) {
                 exit={{
                   x: "-118%",
                   opacity: 0,
-                  transition: { duration: 0.32, ease: [0.4, 0, 0.2, 1] },
+                  transition: { duration: 0.32, ease: EASE.inOut },
                 }}
-                transition={{ duration: 0.42, ease: [0.22, 0.61, 0.36, 1] }}
+                transition={{ duration: 0.42, ease: EASE.out }}
                 drag={isFront ? "x" : false}
                 dragSnapToOrigin
                 dragElastic={0.55}

@@ -287,7 +287,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .forma-scan,
-  .forma-orbit { animation: none; }
+  .forma-orbit,
+  .forma-marquee-l,
+  .forma-marquee-r { animation: none; }
 }
 
 /* Draw-in line animation for premium charts. */

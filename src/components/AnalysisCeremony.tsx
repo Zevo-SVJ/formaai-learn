@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FileText, Loader2 } from "lucide-react";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 /**
@@ -132,7 +133,7 @@ export function AnalysisCeremony({
           animate={{ opacity: succeeded ? 0.95 : [0.45, 0.7, 0.45], scale: succeeded ? 1.15 : 1 }}
           transition={
             succeeded
-              ? { duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }
+              ? { duration: 0.6, ease: EASE.out }
               : { duration: 3.6, repeat: Infinity, ease: "easeInOut" }
           }
         />
@@ -154,11 +155,11 @@ export function AnalysisCeremony({
             filter: succeeded ? "blur(6px)" : "blur(0px)",
           }}
           transition={{
-            width: { duration: 0.95, ease: [0.2, 0.85, 0.2, 1] },
-            height: { duration: 0.95, ease: [0.2, 0.85, 0.2, 1] },
-            borderRadius: { duration: 0.95, ease: [0.2, 0.85, 0.2, 1] },
-            scale: { duration: 0.55, ease: [0.4, 0, 0.2, 1] },
-            opacity: { duration: 0.45, ease: "easeOut" },
+            width: { duration: 0.95, ease: EASE.out },
+            height: { duration: 0.95, ease: EASE.out },
+            borderRadius: { duration: 0.95, ease: EASE.out },
+            scale: { duration: 0.55, ease: EASE.inOut },
+            opacity: { duration: 0.45, ease: EASE.out },
             filter: { duration: 0.45 },
           }}
         >
@@ -222,7 +223,7 @@ export function AnalysisCeremony({
               strokeDashoffset: ring * (1 - progress),
               opacity: circled && !succeeded ? 1 : 0,
             }}
-            transition={{ duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.9, ease: EASE.out }}
           />
         </svg>
 
@@ -256,7 +257,7 @@ export function AnalysisCeremony({
               initial={{ opacity: 0, y: 14, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, y: -14, filter: "blur(4px)" }}
-              transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+              transition={{ duration: 0.45, ease: EASE.out }}
               className="absolute inset-0 flex items-center justify-center gap-3 rounded-2xl border border-border bg-surface px-5 shadow-[var(--shadow-soft)]"
             >
               <StepMark checked={checked} />
@@ -294,7 +295,7 @@ function StepMark({ checked }: { checked: boolean }) {
                 d="M20 6 9 17l-5-5"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
-                transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+                transition={{ duration: 0.35, ease: EASE.out }}
               />
             </svg>
           </motion.span>
@@ -331,7 +332,7 @@ function SuccessMark({ size }: { size: number }) {
         style={{ height: size, width: size }}
         initial={{ scale: 0.72, opacity: 0.75 }}
         animate={{ scale: 1.22, opacity: 0 }}
-        transition={{ duration: 1.1, ease: "easeOut" }}
+        transition={{ duration: 1.1, ease: EASE.out }}
       />
       <motion.div
         className="flex items-center justify-center rounded-full"
@@ -359,7 +360,7 @@ function SuccessMark({ size }: { size: number }) {
             d="M26 52 L43 69 L75 33"
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 0.55, delay: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.55, delay: 0.24, ease: EASE.out }}
           />
         </svg>
       </motion.div>

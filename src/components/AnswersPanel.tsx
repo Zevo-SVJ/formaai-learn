@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Check, Copy, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { prettifyMath } from "@/lib/math-notation";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 export type Answer = { label: string; question: string; answer: string };
@@ -29,7 +30,7 @@ export function AnswersPanel({ answers }: { answers: Answer[] }) {
     <motion.section
       initial={{ opacity: 0, y: 14, scale: 0.985 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
+      transition={{ duration: 0.5, ease: EASE.out }}
       className="rounded-3xl border border-emerald/25 bg-gradient-to-br from-emerald-soft/70 to-card p-5 shadow-[var(--shadow-soft)] sm:p-6"
     >
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -60,7 +61,7 @@ export function AnswersPanel({ answers }: { answers: Answer[] }) {
             key={i}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, delay: 0.12 + i * 0.06, ease: [0.2, 0.8, 0.2, 1] }}
+            transition={{ duration: 0.35, delay: 0.12 + i * 0.06, ease: EASE.out }}
             className="rounded-2xl border border-border bg-card p-4"
           >
             <div className="flex items-start gap-3">

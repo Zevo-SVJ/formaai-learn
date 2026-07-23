@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 import { Upload, Camera, Loader2 } from "lucide-react";
 import { useLessonUpload } from "@/hooks/useLessonUpload";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 const ACCEPT = "image/*,application/pdf,.txt,.md";
@@ -19,7 +20,7 @@ export function CompactActions({ size = "md" }: { size?: "sm" | "md" }) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}
+      transition={{ duration: 0.45, ease: EASE.out }}
       className="mx-auto flex w-full max-w-md flex-col items-stretch gap-2.5 sm:flex-row sm:justify-center"
     >
       <button
