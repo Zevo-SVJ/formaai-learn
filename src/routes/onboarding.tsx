@@ -5,7 +5,7 @@ import { Logo } from "@/components/Logo";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { COUNTRIES, countryName } from "@/lib/countries";
-import { CheckCircle2, Search, ChevronRight, Sparkles } from "lucide-react";
+import { CheckCircle2, Search, ChevronRight, BookOpen } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -214,7 +214,7 @@ function IntroTransition({ onStart }: { onStart: () => void }) {
         transition={{ duration: 0.5, ease: EASE.out }}
         className="flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-emerald-soft"
       >
-        <Sparkles className="h-7 w-7 text-emerald" strokeWidth={1.75} />
+        <BookOpen className="h-7 w-7 text-emerald" strokeWidth={1.75} />
       </motion.div>
 
       <h1 className="mt-7 text-[28px] font-bold leading-[1.1] tracking-tight text-foreground sm:text-4xl">
