@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
 
 function Landing() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <Header />
       <Hero />
       <Problem />
@@ -74,7 +74,7 @@ function Header() {
   return (
     <header
       className={[
-        "sticky top-0 z-30 border-b transition-colors",
+        "safe-top sticky top-0 z-30 border-b transition-colors",
         scrolled
           ? "border-border/60 bg-background/85 backdrop-blur-md"
           : "border-transparent bg-transparent",

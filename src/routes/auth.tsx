@@ -135,7 +135,7 @@ function Auth() {
   };
 
   return (
-    <div className="relative min-h-screen bg-background">
+    <div className="safe-top relative min-h-dvh bg-background">
       <div className="mx-auto flex max-w-md flex-col px-5 pt-6 sm:pt-10">
         <div className="mb-10 flex items-center justify-between">
           <Link

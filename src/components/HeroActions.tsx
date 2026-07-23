@@ -128,7 +128,7 @@ export function HeroActions() {
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: 40, opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.28, ease: EASE.out }}
-              className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md p-3 sm:inset-0 sm:my-auto sm:h-fit"
+              className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:inset-0 sm:my-auto sm:h-fit sm:pb-3"
               role="dialog"
               aria-modal="true"
               aria-label={t((d) => d.hero.menu.title)}

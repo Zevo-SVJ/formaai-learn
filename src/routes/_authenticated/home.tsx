@@ -2,10 +2,9 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
 import { relativeTime } from "@/lib/relative-time";
-import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { UploadArea } from "@/components/UploadArea";
 import { ReferralCard } from "@/components/ReferralCard";
@@ -52,19 +51,22 @@ function Home() {
     },
   });
 
-  const [greetName, setGreetName] = useState<string | null>(null);
+  // Read the signed-in user from the context the _authenticated layout already
+  // resolved, so the greeting is right on the first paint. Fetching it again
+  // and setting state swapped the greeting text mid-entrance — a visible
+  // re-render exactly as the page animated in.
+  const { user } = Route.useRouteContext();
+  const greetName = useMemo(() => {
+    const md = user?.user_metadata as Record<string, unknown> | undefined;
+    return (
+      (md?.full_name as string | undefined) ||
+      (md?.name as string | undefined) ||
+      (user?.email ? user.email.split("@")[0] : null) ||
+      null
+    );
+  }, [user]);
+
   useEffect(() => {
-    supabase.auth
-      .getUser()
-      .then(({ data: u }) => {
-        const name =
-          (u.user?.user_metadata?.full_name as string | undefined) ||
-          (u.user?.user_metadata?.name as string | undefined) ||
-          (u.user?.email ? u.user.email.split("@")[0] : null);
-        setGreetName(name);
-      })
-      // The greeting falls back to the anonymous wording; never break the page.
-      .catch((e) => console.error("[home] could not read the profile name", e));
     // If user hasn't done onboarding, take them through it once.
     try {
       const done = window.localStorage.getItem("forma:onboarded");
@@ -78,7 +80,7 @@ function Home() {
   const recent = useMemo(() => (data ?? []).slice(0, 6), [data]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <AppHeader />
 
       <main className="mx-auto max-w-5xl px-5 py-8 sm:py-12">

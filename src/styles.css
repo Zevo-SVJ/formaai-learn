@@ -124,6 +124,19 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    /* No grey flash on tap — taps should feel native, not web. */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* On touch devices, iOS Safari zooms the page when a control smaller than
+     16px is focused. Keep the design's sizes on desktop, but never let the
+     keyboard trigger that zoom on mobile. */
+  @media (pointer: coarse) {
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
   }
 
   /* Accidental horizontal scrolling must be impossible anywhere in the app,
@@ -161,6 +174,17 @@
     background: var(--emerald-soft);
     color: var(--foreground);
   }
+}
+
+/* Safe-area helpers for notched / Dynamic-Island / home-indicator devices.
+   The page is rendered with viewport-fit=cover, so edge chrome must be padded
+   for by hand. Applied to elements that otherwise have no padding on that
+   edge (sticky header shells, the bottom sheet's outer wrapper). */
+@utility safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+@utility safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 @utility hairline {

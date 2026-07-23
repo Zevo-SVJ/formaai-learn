@@ -22,8 +22,8 @@ function Contact() {
   const [sent, setSent] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 border-b border-border/60 bg-background/85 backdrop-blur">
+    <div className="min-h-dvh bg-background">
+      <header className="safe-top sticky top-0 z-20 border-b border-border/60 bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-5 py-3.5">
           <Link to="/">
             <Logo />

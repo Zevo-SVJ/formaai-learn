@@ -68,7 +68,7 @@ function Onboarding() {
 
   const totalSteps = 7; // Q1, insight1, Q2, Q3, insight2, Q4, loading
   return (
-    <div className="min-h-screen bg-background">
+    <div className="safe-top min-h-dvh bg-background">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4 sm:py-5">
         <Logo />
         {!intro && <StepIndicator current={step + 1} total={totalSteps} />}

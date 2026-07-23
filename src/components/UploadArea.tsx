@@ -136,8 +136,14 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: EASE.out }}
+      animate={{ opacity: 1, y: 0, scale: dragging ? 1.01 : 1 }}
+      whileHover={{ y: -2 }}
+      transition={{
+        duration: 0.5,
+        ease: EASE.out,
+        // Drag feedback stays snappy; the entrance stays calm.
+        scale: { duration: 0.18, ease: EASE.out },
+      }}
       onDragOver={(e) => {
         e.preventDefault();
         setDragging(true);
@@ -147,10 +153,12 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
       onClick={() => !busy && inputRef.current?.click()}
       className={[
         "group relative mx-auto w-full max-w-2xl cursor-pointer overflow-hidden rounded-[2rem] border p-6 sm:p-10",
-        "bg-surface transition-all duration-300",
+        // Colours/shadow only: framer owns transform + opacity here, so the CSS
+        // transition must not also cover them or the entrance stutters.
+        "bg-surface transition-[border-color,box-shadow] duration-300",
         dragging
-          ? "border-emerald shadow-[var(--shadow-emerald)] scale-[1.01]"
-          : "border-border-strong shadow-[var(--shadow-lift)] hover:-translate-y-0.5",
+          ? "border-emerald shadow-[var(--shadow-emerald)]"
+          : "border-border-strong shadow-[var(--shadow-lift)]",
       ].join(" ")}
     >
       <div
