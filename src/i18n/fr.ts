@@ -333,13 +333,10 @@ export const fr: Dict = {
     skip: "Passer",
     finish: "Terminer",
     intro: {
-      eyebrow: "Document analysé",
-      title: "Ton tuteur est presque prêt.",
+      title: "Préparons ton tuteur.",
       subtitle:
-        "Personnalisons Forma pour que les explications collent à ton niveau et à ta façon d'apprendre.",
-      point1: "Forma a lu et compris ce que tu as envoyé",
-      point2: "Quelques détails rapides et le tuteur est à toi",
-      cta: "Personnaliser mon tuteur",
+        "Quelques infos rapides pour que Forma adapte ses explications à ton niveau.",
+      cta: "Continuer",
     },
     q1: {
       title: "Tu es là pour quoi ?",

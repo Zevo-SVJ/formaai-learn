@@ -199,18 +199,15 @@ function Step({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * The bridge between the finished analysis and the questions. Short and
- * reassuring: it confirms the document was understood, then frames the coming
- * questions as personalizing the tutor — not as friction or a survey.
+ * A short, reassuring bridge into the questions. A visitor who just clicked
+ * upload lands here first, so it frames the coming questions as setting up
+ * their tutor rather than as a form. Deliberately minimal: one line of why,
+ * then Continue.
  */
 function IntroTransition({ onStart }: { onStart: () => void }) {
   const { t } = useI18n();
-  const points = [
-    t((d) => d.onboarding.intro.point1),
-    t((d) => d.onboarding.intro.point2),
-  ];
   return (
-    <div className="flex flex-col items-center pt-6 text-center sm:pt-12">
+    <div className="flex flex-col items-center pt-10 text-center sm:pt-20">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -220,36 +217,16 @@ function IntroTransition({ onStart }: { onStart: () => void }) {
         <Sparkles className="h-7 w-7 text-emerald" strokeWidth={1.75} />
       </motion.div>
 
-      <div className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-emerald/30 bg-emerald-soft/50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald">
-        <CheckCircle2 className="h-3.5 w-3.5" />
-        {t((d) => d.onboarding.intro.eyebrow)}
-      </div>
-
-      <h1 className="mt-5 text-[28px] font-bold leading-[1.1] tracking-tight text-foreground sm:text-4xl">
+      <h1 className="mt-7 text-[28px] font-bold leading-[1.1] tracking-tight text-foreground sm:text-4xl">
         {t((d) => d.onboarding.intro.title)}
       </h1>
       <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-[16px]">
         {t((d) => d.onboarding.intro.subtitle)}
       </p>
 
-      <div className="mt-8 flex w-full max-w-sm flex-col gap-2.5 text-left">
-        {points.map((line, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.15 + i * 0.08, ease: EASE.out }}
-            className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-[14.5px] font-medium text-foreground shadow-[var(--shadow-soft)]"
-          >
-            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald" />
-            {line}
-          </motion.div>
-        ))}
-      </div>
-
       <button
         onClick={onStart}
-        className="mt-9 inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background transition-transform hover:-translate-y-0.5"
+        className="mt-10 inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background transition-transform hover:-translate-y-0.5"
       >
         {t((d) => d.onboarding.intro.cta)}
         <ChevronRight className="h-4 w-4" />

@@ -5,7 +5,6 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { analyzeDocument } from "@/lib/documents.functions";
-import { putPendingFile } from "@/lib/pending-upload-file";
 import { useI18n } from "@/hooks/useI18n";
 
 const MAX_MB = 20;
@@ -36,17 +35,11 @@ export function useLessonUpload() {
       }
 
       if (!user) {
-        // Landing → Preparing (analysis preview) → Onboarding → Auth → App.
-        // Stash the real file so the very same document is analyzed for real
-        // once an account exists; the preview screen reads it back to show the
-        // existing analysis experience. Stashing must never block the handoff.
-        try {
-          await putPendingFile(file);
-        } catch {
-          // If storage is blocked the preview simply falls back to the landing;
-          // failing to send the visitor onward is the only unacceptable outcome.
-        }
-        navigate({ to: "/preparing" });
+        // No analysis runs from the landing. Clicking upload is a transition
+        // into onboarding, which personalizes the tutor first; sign-up happens
+        // at the end of onboarding. The onboarding route opens on a short intro
+        // screen that explains why the questions exist.
+        navigate({ to: "/onboarding" });
         return;
       }
       const userId = user.id;
