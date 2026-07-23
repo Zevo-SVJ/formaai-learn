@@ -74,7 +74,7 @@ export function AnswersPanel({ answers }: { answers: Answer[] }) {
                     {prettifyMath(a.question)}
                   </div>
                 )}
-                <div className="text-[16px] font-semibold leading-snug text-foreground">
+                <div className="text-[16px] font-semibold leading-snug text-foreground [overflow-wrap:anywhere]">
                   {prettifyMath(a.answer)}
                 </div>
               </div>

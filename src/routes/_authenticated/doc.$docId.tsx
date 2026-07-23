@@ -427,7 +427,7 @@ function ExplanationPanel({
                     className={isUser ? "flex justify-end" : ""}
                   >
                     {isUser ? (
-                      <div className="max-w-[85%] rounded-2xl bg-foreground px-4 py-2.5 text-[14.5px] leading-relaxed text-background">
+                      <div className="max-w-[85%] rounded-2xl bg-foreground px-4 py-2.5 text-[14.5px] leading-relaxed text-background [overflow-wrap:anywhere]">
                         {text}
                       </div>
                     ) : (

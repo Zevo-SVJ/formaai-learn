@@ -79,7 +79,7 @@ export function AnswerRenderer({ text, compact = false }: { text: string; compac
                     <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-foreground text-[11px] font-bold text-background">
                       {c.label}
                     </span>
-                    <span className="text-[15px] leading-relaxed text-foreground">
+                    <span className="min-w-0 text-[15px] leading-relaxed text-foreground [overflow-wrap:anywhere]">
                       {prettifyMath(c.value)}
                     </span>
                   </li>
