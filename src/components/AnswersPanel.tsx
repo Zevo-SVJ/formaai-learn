@@ -49,7 +49,7 @@ export function AnswersPanel({ answers }: { answers: Answer[] }) {
         </div>
         <button
           onClick={copyAll}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3 py-2 text-[12.5px] font-semibold text-foreground transition hover:border-emerald hover:text-emerald"
+          className="inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-[12.5px] font-semibold text-foreground transition hover:border-emerald hover:text-emerald"
         >
           {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
           {copied ? t((d) => d.doc.copied) : t((d) => d.doc.copyAll)}
