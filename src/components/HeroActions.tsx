@@ -145,7 +145,7 @@ export function HeroActions() {
                   </div>
                   <button
                     onClick={() => setOpen(false)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:text-foreground"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground hover:text-foreground"
                     aria-label={t((d) => d.common.close)}
                   >
                     <X className="h-4 w-4" />

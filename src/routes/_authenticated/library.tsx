@@ -47,7 +47,7 @@ function Library() {
         back={
           <button
             onClick={() => navigate({ to: "/home" })}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface hover:border-border-strong"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface hover:border-border-strong"
             aria-label={t((d) => d.common.home)}
           >
             <Home className="h-4 w-4" />
@@ -104,7 +104,7 @@ function Library() {
                       await fav({ data: { id: d.id, favorite: !d.favorite } });
                       qc.invalidateQueries({ queryKey: ["documents"] });
                     }}
-                    className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-surface transition hover:border-border-strong"
+                    className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface transition hover:border-border-strong"
                   >
                     <Star
                       className={`h-3.5 w-3.5 ${

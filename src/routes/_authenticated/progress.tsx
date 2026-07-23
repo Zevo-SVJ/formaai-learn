@@ -299,17 +299,17 @@ function ProgressPage() {
                       setEditing(g);
                       setOpen(true);
                     }}
-                    className="rounded-full p-2 text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground hover:bg-surface-muted hover:text-foreground"
                     aria-label="Edit"
                   >
-                    <Pencil className="h-3.5 w-3.5" />
+                    <Pencil className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => remove(g.id)}
-                    className="rounded-full p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                     aria-label="Delete"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </li>
               ))}
@@ -424,7 +424,10 @@ function GradeSheet({
         exit={{ y: 30, opacity: 0 }}
         transition={{ type: "spring", damping: 30, stiffness: 260 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg overflow-hidden rounded-t-3xl bg-card p-5 shadow-2xl sm:rounded-3xl"
+        // Cap the height and scroll inside so a long form (or the on-screen
+        // keyboard) can never push the submit button out of reach, and clear
+        // the home indicator on the bottom-sheet layout.
+        className="max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[85dvh] sm:rounded-3xl"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-[18px] font-bold text-foreground">
@@ -433,7 +436,7 @@ function GradeSheet({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 text-muted-foreground hover:bg-surface-muted"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-surface-muted"
           >
             <X className="h-4 w-4" />
           </button>

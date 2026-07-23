@@ -23,7 +23,7 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
       <Link
         to={to}
         className={[
-          "inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[13px] font-semibold transition-colors",
+          "inline-flex min-h-[40px] items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold transition-colors",
           active
             ? "bg-foreground text-background"
             : "text-muted-foreground hover:text-foreground",
@@ -55,7 +55,7 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
               await supabase.auth.signOut();
               navigate({ to: "/" });
             }}
-            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-2 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+            className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-2 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
             aria-label={t((d) => d.common.signOut)}
           >
             <LogOut className="h-3.5 w-3.5" />

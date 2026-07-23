@@ -127,7 +127,7 @@ function DocPage() {
           <div className="flex min-w-0 items-center gap-3">
             <button
               onClick={() => navigate({ to: "/home" })}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-surface hover:border-border-strong"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface hover:border-border-strong"
               aria-label={t((d) => d.common.back)}
             >
               <ArrowLeft className="h-4 w-4" />
@@ -353,7 +353,7 @@ function ExplanationPanel({
         <button
           onClick={onFavToggle}
           className={[
-            "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+            "inline-flex min-h-[40px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition",
             doc.favorite
               ? "border-amber-500/30 bg-amber-500/10 text-amber-600"
               : "border-border bg-surface text-muted-foreground",
@@ -495,7 +495,7 @@ function ExplanationPanel({
             <button
               type="submit"
               disabled={!input.trim() || isBusy}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-foreground text-background transition disabled:opacity-40"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground text-background transition disabled:opacity-40"
               aria-label="Send"
             >
               {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
