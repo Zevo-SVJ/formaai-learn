@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PreparingRouteImport } from './routes/preparing'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CameraTestRouteImport } from './routes/camera-test'
@@ -37,6 +38,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreparingRoute = PreparingRouteImport.update({
+  id: '/preparing',
+  path: '/preparing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/camera-test': typeof CameraTestRoute
   '/contact': typeof ContactRoute
   '/onboarding': typeof OnboardingRoute
+  '/preparing': typeof PreparingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/camera-test': typeof CameraTestRoute
   '/contact': typeof ContactRoute
   '/onboarding': typeof OnboardingRoute
+  '/preparing': typeof PreparingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/camera-test': typeof CameraTestRoute
   '/contact': typeof ContactRoute
   '/onboarding': typeof OnboardingRoute
+  '/preparing': typeof PreparingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/camera-test'
     | '/contact'
     | '/onboarding'
+    | '/preparing'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/camera-test'
     | '/contact'
     | '/onboarding'
+    | '/preparing'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/camera-test'
     | '/contact'
     | '/onboarding'
+    | '/preparing'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -197,6 +209,7 @@ export interface RootRouteChildren {
   CameraTestRoute: typeof CameraTestRoute
   ContactRoute: typeof ContactRoute
   OnboardingRoute: typeof OnboardingRoute
+  PreparingRoute: typeof PreparingRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preparing': {
+      id: '/preparing'
+      path: '/preparing'
+      fullPath: '/preparing'
+      preLoaderRoute: typeof PreparingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -330,6 +350,7 @@ const rootRouteChildren: RootRouteChildren = {
   CameraTestRoute: CameraTestRoute,
   ContactRoute: ContactRoute,
   OnboardingRoute: OnboardingRoute,
+  PreparingRoute: PreparingRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { analyzeDocument } from "@/lib/documents.functions";
+import { putPendingFile } from "@/lib/pending-upload-file";
 import { useI18n } from "@/hooks/useI18n";
 
 const MAX_MB = 20;
@@ -35,19 +36,17 @@ export function useLessonUpload() {
       }
 
       if (!user) {
-        // New flow: Landing → Onboarding → Auth → App.
+        // Landing → Preparing (analysis preview) → Onboarding → Auth → App.
+        // Stash the real file so the very same document is analyzed for real
+        // once an account exists; the preview screen reads it back to show the
+        // existing analysis experience. Stashing must never block the handoff.
         try {
-          sessionStorage.setItem("forma:pendingUpload", "1");
+          await putPendingFile(file);
         } catch {
-          // Losing this marker is acceptable; failing to send the visitor
-          // onward is not, so it must not sit between here and navigate().
+          // If storage is blocked the preview simply falls back to the landing;
+          // failing to send the visitor onward is the only unacceptable outcome.
         }
-        // Always onboarding, never straight to the sign-up wall. The
-        // forma:onboarded flag is written when onboarding ends, which is
-        // before the visitor has an account, so anyone who backed out of
-        // sign-up was being treated as onboarded and never saw it again.
-        // Onboarding still finishes at /auth, so this cannot skip sign-in.
-        navigate({ to: "/onboarding" });
+        navigate({ to: "/preparing" });
         return;
       }
       const userId = user.id;

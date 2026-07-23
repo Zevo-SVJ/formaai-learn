@@ -2,13 +2,15 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
 import { relativeTime } from "@/lib/relative-time";
 import { supabase } from "@/integrations/supabase/client";
 import { AppHeader } from "@/components/AppHeader";
 import { UploadArea } from "@/components/UploadArea";
 import { ReferralCard } from "@/components/ReferralCard";
+import { useLessonUpload } from "@/hooks/useLessonUpload";
+import { getPendingFile, clearPendingFile } from "@/lib/pending-upload-file";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import {
@@ -42,6 +44,29 @@ function Home() {
   const list = useServerFn(listDocuments);
   const fav = useServerFn(toggleFavorite);
   const qc = useQueryClient();
+  const { handleFile } = useLessonUpload();
+
+  // A visitor who uploaded from the landing has their real file waiting from
+  // before they had an account. Now that they are signed in and onboarded, run
+  // it through the exact same upload + analysis pipeline as any in-app upload,
+  // which lands them on the document with real results. Runs at most once.
+  const consumedPending = useRef(false);
+  useEffect(() => {
+    if (consumedPending.current) return;
+    let onboarded = false;
+    try {
+      onboarded = window.localStorage.getItem("forma:onboarded") === "1";
+    } catch {
+      onboarded = false;
+    }
+    if (!onboarded) return; // the redirect below sends them to onboarding first
+    consumedPending.current = true;
+    getPendingFile().then((file) => {
+      if (!file) return;
+      clearPendingFile();
+      handleFile(file);
+    });
+  }, [handleFile]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["documents"],
