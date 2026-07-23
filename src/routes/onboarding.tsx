@@ -267,12 +267,16 @@ function QuestionSingle({
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, delay: i * 0.04, ease: EASE.out }}
+              whileHover={{ y: -2 }}
               onClick={() => onPick(o.id)}
               className={[
-                "flex w-full items-center justify-between gap-3 rounded-2xl border p-4 text-left text-[15px] font-semibold transition-all",
+                // transition-colors only: the entrance transform/opacity is
+                // driven by framer, so the CSS transition must not also cover
+                // transform/opacity or the two fight and the row stutters.
+                "flex w-full items-center justify-between gap-3 rounded-2xl border p-4 text-left text-[15px] font-semibold transition-colors",
                 active
                   ? "border-emerald bg-emerald-soft/60 text-foreground shadow-[var(--shadow-soft)]"
-                  : "border-border bg-card text-foreground hover:-translate-y-0.5 hover:border-border-strong",
+                  : "border-border bg-card text-foreground hover:border-border-strong",
               ].join(" ")}
             >
               {o.label}

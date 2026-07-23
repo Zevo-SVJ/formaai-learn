@@ -58,7 +58,10 @@ const components: Components = {
     );
   },
   pre: ({ children }) => (
-    <pre className="mt-3 overflow-x-auto rounded-2xl border border-border bg-surface-muted p-3">{children}</pre>
+    <pre className="mt-3 max-w-full overflow-x-auto rounded-2xl border border-border bg-surface-muted p-3">{children}</pre>
+  ),
+  img: ({ src, alt }) => (
+    <img src={typeof src === "string" ? src : undefined} alt={alt ?? ""} className="mt-3 h-auto max-w-full rounded-xl" />
   ),
   hr: () => <hr className="my-4 border-border" />,
   table: ({ children }) => (
@@ -77,7 +80,9 @@ const components: Components = {
  */
 export function RichAnswer({ text, className }: { text: string; className?: string }) {
   return (
-    <div className={className}>
+    // min-w-0 lets this shrink inside flex/grid parents; break-words keeps long
+    // unbroken strings (URLs, tokens) from forcing horizontal overflow.
+    <div className={["min-w-0 break-words", className].filter(Boolean).join(" ")}>
       <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
         {text}
       </ReactMarkdown>

@@ -252,7 +252,8 @@ function DocCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.03, ease: EASE.out }}
-      className="group relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-all hover:-translate-y-0.5 hover:border-border-strong"
+      whileHover={{ y: -2 }}
+      className="group relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-colors hover:border-border-strong"
     >
       <Link
         to="/doc/$docId"

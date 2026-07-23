@@ -126,12 +126,29 @@
     scroll-behavior: smooth;
   }
 
+  /* Accidental horizontal scrolling must be impossible anywhere in the app,
+     whatever the content. `clip` (not `hidden`) is deliberate: it prevents
+     horizontal panning while leaving vertical scroll and sticky headers
+     working, because the vertical axis stays `visible`. */
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
     letter-spacing: -0.01em;
+  }
+
+  /* Media and embeds never widen their container. */
+  img,
+  video,
+  canvas,
+  iframe {
+    max-width: 100%;
   }
 
   h1, h2, h3, h4 {
