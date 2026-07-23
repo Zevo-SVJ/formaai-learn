@@ -330,6 +330,15 @@ export const en = {
     next: "Next",
     skip: "Skip",
     finish: "Finish",
+    intro: {
+      eyebrow: "Document analyzed",
+      title: "Your tutor is almost ready.",
+      subtitle:
+        "Let's personalize Forma so explanations match your level and how you learn best.",
+      point1: "Forma read and understood what you uploaded",
+      point2: "A few quick details make the tutor yours",
+      cta: "Personalize my tutor",
+    },
     q1: {
       title: "What are you here for?",
       subtitle: "Pick what fits you best. You can change this later.",

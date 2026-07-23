@@ -5,7 +5,7 @@ import { Logo } from "@/components/Logo";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { COUNTRIES, countryName } from "@/lib/countries";
-import { CheckCircle2, Search, ChevronRight } from "lucide-react";
+import { CheckCircle2, Search, ChevronRight, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -30,6 +30,10 @@ const ANSWERS_KEY = "forma:onboardingAnswers";
 
 function Onboarding() {
   const navigate = useNavigate();
+  // A short reassuring bridge from the analysis to the questions. It makes
+  // clear the questions personalize the tutor rather than repeat the work, and
+  // is not one of the counted onboarding steps.
+  const [intro, setIntro] = useState(true);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({ subjects: [] });
 
@@ -67,11 +71,16 @@ function Onboarding() {
     <div className="min-h-screen bg-background">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4 sm:py-5">
         <Logo />
-        <StepIndicator current={step + 1} total={totalSteps} />
+        {!intro && <StepIndicator current={step + 1} total={totalSteps} />}
       </header>
       <main className="mx-auto flex max-w-xl flex-col px-5 pb-16">
         <AnimatePresence mode="wait">
-          {step === 0 && (
+          {intro && (
+            <Step key="intro">
+              <IntroTransition onStart={() => setIntro(false)} />
+            </Step>
+          )}
+          {!intro && step === 0 && (
             <Step key="q1">
               <QuestionSingle
                 titleKey={(d) => d.onboarding.q1.title}
@@ -186,6 +195,66 @@ function Step({ children }: { children: React.ReactNode }) {
     >
       {children}
     </motion.section>
+  );
+}
+
+/**
+ * The bridge between the finished analysis and the questions. Short and
+ * reassuring: it confirms the document was understood, then frames the coming
+ * questions as personalizing the tutor — not as friction or a survey.
+ */
+function IntroTransition({ onStart }: { onStart: () => void }) {
+  const { t } = useI18n();
+  const points = [
+    t((d) => d.onboarding.intro.point1),
+    t((d) => d.onboarding.intro.point2),
+  ];
+  return (
+    <div className="flex flex-col items-center pt-6 text-center sm:pt-12">
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, ease: EASE.out }}
+        className="flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-emerald-soft"
+      >
+        <Sparkles className="h-7 w-7 text-emerald" strokeWidth={1.75} />
+      </motion.div>
+
+      <div className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-emerald/30 bg-emerald-soft/50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald">
+        <CheckCircle2 className="h-3.5 w-3.5" />
+        {t((d) => d.onboarding.intro.eyebrow)}
+      </div>
+
+      <h1 className="mt-5 text-[28px] font-bold leading-[1.1] tracking-tight text-foreground sm:text-4xl">
+        {t((d) => d.onboarding.intro.title)}
+      </h1>
+      <p className="mt-3 max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-[16px]">
+        {t((d) => d.onboarding.intro.subtitle)}
+      </p>
+
+      <div className="mt-8 flex w-full max-w-sm flex-col gap-2.5 text-left">
+        {points.map((line, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.15 + i * 0.08, ease: EASE.out }}
+            className="flex items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-[14.5px] font-medium text-foreground shadow-[var(--shadow-soft)]"
+          >
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald" />
+            {line}
+          </motion.div>
+        ))}
+      </div>
+
+      <button
+        onClick={onStart}
+        className="mt-9 inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background transition-transform hover:-translate-y-0.5"
+      >
+        {t((d) => d.onboarding.intro.cta)}
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
   );
 }
 

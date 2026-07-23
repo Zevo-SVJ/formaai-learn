@@ -171,24 +171,10 @@ export function AnalysisCeremony({
             extractedText={extractedText}
           />
 
-          {/* Scanning light — the subject is never static. */}
-          {!succeeded && (
-            <>
-              <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div className="forma-scan absolute inset-x-0 h-16 bg-gradient-to-b from-emerald/0 via-emerald/25 to-emerald/0" />
-                <div className="forma-scan absolute inset-x-0 h-px bg-emerald/70 [animation-delay:-0.05s]" />
-              </div>
-              <div
-                aria-hidden
-                className="forma-orbit pointer-events-none absolute -inset-1/4 opacity-40"
-                style={{
-                  background:
-                    "conic-gradient(from 0deg, transparent 0deg, oklch(0.78 0.1 155 / 0.22) 50deg, transparent 120deg, transparent 360deg)",
-                }}
-              />
-              <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/30" />
-            </>
-          )}
+          {/* Understanding light — the document stays fully visible while soft
+              luminous zones drift across it, as if the AI were reading one part
+              of the lesson after another. No scan line, no sweep. */}
+          {!succeeded && <Understanding reduceMotion={!!reduceMotion} />}
         </motion.div>
 
         {/* Progress ring that tightens as the work advances. */}
@@ -273,6 +259,67 @@ export function AnalysisCeremony({
           )}
         </AnimatePresence>
       </div>
+    </div>
+  );
+}
+
+/**
+ * A calm "reading" light. Three soft emerald zones fade and swell over the
+ * document on staggered, mismatched cycles, so the highlight drifts between
+ * regions organically instead of pulsing in place — it reads as understanding,
+ * not scanning. The document underneath is never hidden (screen blend, low
+ * opacity), and it holds still for anyone who prefers reduced motion.
+ */
+function Understanding({ reduceMotion }: { reduceMotion: boolean }) {
+  const zones = [
+    { x: 34, y: 32, size: 64, dur: 5.2, delay: 0 },
+    { x: 68, y: 45, size: 58, dur: 5.9, delay: 1.4 },
+    { x: 46, y: 71, size: 60, dur: 5.0, delay: 2.8 },
+  ];
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+      {zones.map((z, i) => (
+        <span
+          key={i}
+          aria-hidden
+          className="absolute"
+          style={{
+            left: `${z.x}%`,
+            top: `${z.y}%`,
+            width: `${z.size}%`,
+            height: `${z.size}%`,
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <motion.span
+            className="absolute inset-0 rounded-full"
+            style={{
+              background:
+                "radial-gradient(circle, oklch(0.86 0.13 155 / 0.5) 0%, oklch(0.86 0.13 155 / 0) 68%)",
+              mixBlendMode: "screen",
+              filter: "blur(6px)",
+            }}
+            animate={
+              reduceMotion
+                ? { opacity: 0.26 }
+                : { opacity: [0.06, 0.5, 0.06], scale: [0.9, 1.08, 0.9] }
+            }
+            transition={
+              reduceMotion
+                ? undefined
+                : {
+                    duration: z.dur,
+                    delay: z.delay,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.5, 1],
+                  }
+            }
+          />
+        </span>
+      ))}
+      {/* A quiet rim light for depth. */}
+      <div className="absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/30" />
     </div>
   );
 }

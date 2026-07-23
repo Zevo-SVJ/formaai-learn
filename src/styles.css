@@ -270,24 +270,7 @@
 .forma-marquee-l { animation: forma-marquee-l 60s linear infinite; }
 .forma-marquee-r { animation: forma-marquee-r 60s linear infinite; }
 
-@keyframes forma-scan {
-  0%   { transform: translateY(-30%); opacity: 0; }
-  20%  { opacity: 1; }
-  80%  { opacity: 1; }
-  100% { transform: translateY(130%); opacity: 0; }
-}
-.forma-scan { animation: forma-scan 2.4s ease-in-out infinite; }
-
-/* Slow light rotation layered over the scan, so the subject stays alive. */
-@keyframes forma-orbit {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-.forma-orbit { animation: forma-orbit 7s linear infinite; }
-
 @media (prefers-reduced-motion: reduce) {
-  .forma-scan,
-  .forma-orbit,
   .forma-marquee-l,
   .forma-marquee-r { animation: none; }
 }
