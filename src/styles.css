@@ -154,6 +154,11 @@
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
     letter-spacing: -0.01em;
+    /* In landscape on a notched device the cutout is on the left or right;
+       inset the whole page so nothing hides under it. Zero in portrait / on
+       devices without a cutout, so it changes nothing there. */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
   }
 
   /* Media and embeds never widen their container. */
