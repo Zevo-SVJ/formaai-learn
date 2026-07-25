@@ -40,7 +40,10 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:py-3.5">
         <div className="flex min-w-0 items-center gap-3">
           {back}
-          <Link to="/home" className="shrink-0">
+          {/* -m-2 p-2 enlarges the tap area to ~44px around the 28px logo
+              without changing the layout (the negative margin cancels the
+              padding). */}
+          <Link to="/home" className="-m-2 flex shrink-0 items-center p-2">
             <Logo />
           </Link>
         </div>
