@@ -51,6 +51,7 @@ function Landing() {
       <SolutionStory />
       <HowItWorks />
       <CompareSection />
+      <MidCTA />
       <ReviewsSection />
       <FAQSection />
       <PreFooterCTA />
@@ -168,11 +169,33 @@ function Hero() {
   );
 }
 
+// Middle CTA: once the value is clear (after the comparison), invite the visitor
+// to start — and quietly widen the story from "explain courses" to "your
+// learning companion that also tracks your grades and progress".
+function MidCTA() {
+  const { t } = useI18n();
+  return (
+    <section className="px-5 py-16 sm:py-20">
+      <div className="mx-auto max-w-xl text-center">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          {t((d) => d.hero.midTitle)}
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-base">
+          {t((d) => d.hero.midBody)}
+        </p>
+        <div className="mt-8">
+          <HeroActions secondary={false} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function PreFooterCTA() {
   return (
     <section className="px-5 pb-4 pt-2">
       <div className="mx-auto max-w-md">
-        <HeroActions />
+        <HeroActions secondary={false} />
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
-import { Camera, ScanText, Lightbulb } from "lucide-react";
+import { Camera, ScanText, Lightbulb, MoveHorizontal } from "lucide-react";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
@@ -84,6 +84,7 @@ const PEEK_SCALE = 0.05;
 const VISIBLE_DEPTH = 3; // front + two peeking
 
 function Deck({ steps }: { steps: Step[] }) {
+  const { t } = useI18n();
   const [cards, setCards] = useState<DeckCard[]>(() =>
     steps.map((_, i) => ({ key: i, step: i })),
   );
@@ -106,10 +107,15 @@ function Deck({ steps }: { steps: Step[] }) {
     <div className="sm:hidden">
       {/* The wrapper is the width of the front card; peeking cards overflow to
           the right into the section padding. Nudged left by roughly half the
-          peek so the visible deck still reads as centered. */}
-      <div
+          peek so the visible deck still reads as centered. On first view it
+          does one gentle sideways nudge — a wordless "you can drag me" cue. */}
+      <motion.div
         className="relative mx-auto h-[366px] w-[264px] select-none"
-        style={{ transform: `translateX(-${PEEK_X / 2}px)`, touchAction: "pan-y" }}
+        style={{ touchAction: "pan-y" }}
+        initial={{ x: -PEEK_X / 2 }}
+        whileInView={{ x: [-PEEK_X / 2, -PEEK_X / 2 - 16, -PEEK_X / 2] }}
+        viewport={{ once: true, margin: "-120px" }}
+        transition={{ duration: 1.1, delay: 0.45, ease: EASE.inOut, times: [0, 0.5, 1] }}
       >
         <AnimatePresence initial={false}>
           {cards.map((card, pos) => {
@@ -153,6 +159,20 @@ function Deck({ steps }: { steps: Step[] }) {
             );
           })}
         </AnimatePresence>
+      </motion.div>
+
+      {/* A discreet manual-swipe cue. Not dots — a small directional hint so it
+          never reads like an auto-advancing carousel. */}
+      <div className="mt-6 flex items-center justify-center gap-2 text-[12.5px] font-medium text-muted-foreground">
+        <motion.span
+          aria-hidden
+          animate={{ x: [0, -4, 0] }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          className="text-emerald"
+        >
+          <MoveHorizontal className="h-4 w-4" strokeWidth={2} />
+        </motion.span>
+        {t((d) => d.how.swipeHint)}
       </div>
     </div>
   );

@@ -6,7 +6,9 @@ import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 // Apple-style bottom action sheet on mobile, popover on desktop.
-export function HeroActions() {
+// `secondary` shows the "see how it works" button next to the main CTA; the
+// bottom-of-page CTA hides it for a cleaner final call to action.
+export function HeroActions({ secondary = true }: { secondary?: boolean } = {}) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const { handleFile, busy } = useLessonUpload();
@@ -87,13 +89,15 @@ export function HeroActions() {
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" strokeWidth={2.4} />}
           {t((d) => d.hero.menu.upload)}
         </button>
-        <button
-          onClick={scrollToHow}
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-border-strong bg-surface px-6 py-3.5 text-[15px] font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-foreground"
-        >
-          {t((d) => d.hero.menu.see)}
-          <ArrowDown className="h-4 w-4" strokeWidth={2.4} />
-        </button>
+        {secondary && (
+          <button
+            onClick={scrollToHow}
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-border-strong bg-surface px-6 py-3.5 text-[15px] font-semibold text-foreground transition-all hover:-translate-y-0.5 hover:border-foreground"
+          >
+            {t((d) => d.hero.menu.see)}
+            <ArrowDown className="h-4 w-4" strokeWidth={2.4} />
+          </button>
+        )}
       </motion.div>
 
       {/* Hidden file inputs — outside the sheet so they're always in the tree. */}

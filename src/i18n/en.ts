@@ -40,8 +40,11 @@ export const en = {
       "Upload a lesson, worksheet or a photo of your notes. Forma reads it, understands it, and teaches it back in words that actually make sense.",
     cta: "Try it free",
     ctaHint: "No card. No signup wall.",
+    midTitle: "Your learning companion",
+    midBody:
+      "Forma explains your courses, and tracks your grades and progress over time.",
     menu: {
-      upload: "Upload a lesson",
+      upload: "Analyze my course",
       see: "See how it works",
       eyebrow: "Add a lesson",
       title: "How do you want to add it?",
@@ -166,6 +169,7 @@ export const en = {
   how: {
     eyebrow: "How it works",
     title: "Three steps. No busywork.",
+    swipeHint: "Swipe to explore",
     steps: [
       { t: "Upload anything", d: "A photo, PDF or a screenshot of your worksheet." },
       { t: "Forma reads it", d: "It picks up the subject, the level and the ideas that actually matter." },

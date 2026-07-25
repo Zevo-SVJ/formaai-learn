@@ -42,8 +42,11 @@ export const fr: Dict = {
       "Dépose une leçon, un exercice ou une photo de tes notes. Forma lit, comprend et te réexplique le cours avec des mots qui parlent vraiment.",
     cta: "Essayer gratuitement",
     ctaHint: "Sans carte. Sans mur d'inscription.",
+    midTitle: "Ton compagnon d'apprentissage",
+    midBody:
+      "Forma explique tes cours, et suit tes notes et ta progression dans le temps.",
     menu: {
-      upload: "Déposer une leçon",
+      upload: "Analyser mon cours",
       see: "Voir comment ça marche",
       eyebrow: "Ajouter une leçon",
       title: "Comment veux-tu l'ajouter ?",
@@ -168,6 +171,7 @@ export const fr: Dict = {
   how: {
     eyebrow: "Comment ça marche",
     title: "Trois étapes. Pas de blabla.",
+    swipeHint: "Glisse pour explorer",
     steps: [
       { t: "Dépose n'importe quoi", d: "Une photo, un PDF ou une capture de ton exercice." },
       { t: "Forma lit tout", d: "Il repère la matière, le niveau et les idées qui comptent vraiment." },
