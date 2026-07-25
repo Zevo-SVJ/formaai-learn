@@ -46,16 +46,19 @@ export function prettifyMath(input: string): string {
 
   // sqrt(...) with no nested parentheses. A single atom drops the parentheses
   // (sqrt(14) -> √14); anything with operators keeps them (sqrt(x+1) -> √(x+1))
-  // so the radical's scope stays unambiguous.
-  s = s.replace(/\bsqrt\(([^()]+)\)/gi, (_m, inner: string) =>
+  // so the radical's scope stays unambiguous. The guard is a lookbehind for a
+  // letter (not a word boundary) so a coefficient reads correctly too:
+  // "3sqrt(45)" -> "3√45" (a \b would fail here, since 3 and s are both word
+  // characters), while "resqrt" and other words are still left untouched.
+  s = s.replace(/(?<![A-Za-z])sqrt\(([^()]+)\)/gi, (_m, inner: string) =>
     /^[\w.]+$/.test(inner) ? `√${inner}` : `√(${inner})`,
   );
 
-  // Numeric fractions to a fraction slash, which preserves the exact value and
-  // just reads as a fraction. Guarded so dates (12/25/2024), ratios and
-  // decimals (3.5/2, 13/4.5) are never touched, while a fraction followed by
-  // ordinary punctuation (13/4.) still converts.
-  s = s.replace(/(?<![\d/.])(\d{1,3})\/(\d{1,3})(?![\d/])(?!\.\d)/g, "$1⁄$2");
+  // Fractions are left exactly as the AI wrote them ("13/75"). Converting the
+  // slash to U+2044 was inconsistent — it only fired for integer/integer, so an
+  // answer mixing "13/75" and "4/24.8" rendered with two different slashes —
+  // and the fraction-slash glyph itself is unreliable across fonts. A plain
+  // slash is the AI's own notation and reads correctly everywhere.
 
   // Relational symbols. Text nodes only reach here, so code is never affected.
   s = s
