@@ -23,13 +23,13 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
       <Link
         to={to}
         className={[
-          "inline-flex min-h-[40px] items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold transition-colors",
+          "inline-flex min-h-[40px] items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-semibold tracking-tight transition-colors",
           active
             ? "bg-foreground text-background"
-            : "text-muted-foreground hover:text-foreground",
+            : "text-muted-foreground hover:bg-surface-muted hover:text-foreground",
         ].join(" ")}
       >
-        <Icon className="h-3.5 w-3.5" />
+        <Icon className="h-4 w-4" strokeWidth={2} />
         <span className="hidden sm:inline">{label}</span>
       </Link>
     );
@@ -58,10 +58,10 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
               await supabase.auth.signOut();
               navigate({ to: "/" });
             }}
-            className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full border border-border bg-surface px-3.5 py-2 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+            className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-border bg-surface px-3.5 py-2 text-[13px] font-semibold tracking-tight text-muted-foreground transition-colors hover:border-border-strong hover:text-foreground"
             aria-label={t((d) => d.common.signOut)}
           >
-            <LogOut className="h-3.5 w-3.5" />
+            <LogOut className="h-4 w-4" strokeWidth={2} />
             <span className="hidden sm:inline">{t((d) => d.common.signOut)}</span>
           </button>
         </div>

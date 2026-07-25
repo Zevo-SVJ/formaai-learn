@@ -17,7 +17,7 @@ import {
   CheckCircle2,
   AlertCircle,
   ArrowRight,
-  Sparkles,
+  GraduationCap,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/home")({
@@ -189,7 +189,7 @@ function Home() {
         >
           <div className="flex items-start gap-3">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald text-white">
-              <Sparkles className="h-5 w-5" />
+              <GraduationCap className="h-5 w-5" strokeWidth={1.9} />
             </div>
             <div>
               <div className="text-[16px] font-bold text-foreground">

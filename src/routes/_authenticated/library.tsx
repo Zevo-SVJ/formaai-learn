@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
 import { relativeTime } from "@/lib/relative-time";
 import { AppHeader } from "@/components/AppHeader";
-import { UploadArea } from "@/components/UploadArea";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { BookOpen, Loader2, Star, CheckCircle2, AlertCircle, ArrowRight, Home } from "lucide-react";
@@ -63,10 +62,6 @@ function Library() {
           <p className="text-[15px] text-muted-foreground">
             {t((d) => d.home.recentEmpty)}
           </p>
-        </div>
-
-        <div className="mb-10">
-          <UploadArea />
         </div>
 
         {isLoading && (

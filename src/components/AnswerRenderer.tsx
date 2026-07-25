@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Sparkles, BookOpen, AlertTriangle, Wand2, MoreHorizontal } from "lucide-react";
+import { Check, BookOpen, AlertTriangle, ListChecks, MoreHorizontal } from "lucide-react";
 import { parseAnswer, type AnswerSection } from "@/lib/format-answer";
 import { RichAnswer } from "@/components/RichAnswer";
 import { prettifyMath } from "@/lib/math-notation";
@@ -7,9 +7,9 @@ import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 const iconFor: Record<AnswerSection["key"], React.ComponentType<{ className?: string }>> = {
-  answer: Sparkles,
+  answer: Check,
   explanation: BookOpen,
-  method: Wand2,
+  method: ListChecks,
   commonMistakes: AlertTriangle,
   details: MoreHorizontal,
 };

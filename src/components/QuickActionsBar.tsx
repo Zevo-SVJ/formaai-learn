@@ -1,4 +1,4 @@
-import { Wand2, BookOpen, ClipboardList, ListChecks } from "lucide-react";
+import { Lightbulb, BookOpen, ClipboardList, ListChecks } from "lucide-react";
 import { useI18n } from "@/hooks/useI18n";
 
 export type QuickAction = { id: string; label: string; prompt: string; icon: React.ComponentType<{ className?: string }> };
@@ -9,7 +9,7 @@ export function useQuickActions(): QuickAction[] {
     {
       id: "simpler",
       label: t((d) => d.doc.quickActions.simpler),
-      icon: Wand2,
+      icon: Lightbulb,
       prompt: t((d) => d.doc.quickActions.prompts.simpler),
     },
     {

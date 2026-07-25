@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Check, Copy, Sparkles } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { prettifyMath } from "@/lib/math-notation";
 import { EASE } from "@/lib/motion";
@@ -35,8 +35,8 @@ export function AnswersPanel({ answers }: { answers: Answer[] }) {
     >
       <div className="mb-4 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald text-white">
-            <Sparkles className="h-4 w-4" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-emerald text-white">
+            <Check className="h-4.5 w-4.5" strokeWidth={2.75} />
           </div>
           <div>
             <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald">

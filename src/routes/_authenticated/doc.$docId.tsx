@@ -25,11 +25,11 @@ import {
   ArrowLeft,
   Loader2,
   Send,
-  Sparkles,
+  GraduationCap,
   BookOpen,
   Lightbulb,
   AlertTriangle,
-  Wand2,
+  Shapes,
   RefreshCw,
   Star,
 } from "lucide-react";
@@ -365,7 +365,7 @@ function ExplanationPanel({
       </div>
 
       {exp.explanation && (
-        <ExplanationCard icon={Sparkles} title={t((d) => d.doc.sections.explanation)} tone="emerald">
+        <ExplanationCard icon={GraduationCap} title={t((d) => d.doc.sections.explanation)} tone="emerald">
           <RichAnswer text={exp.explanation} />
         </ExplanationCard>
       )}
@@ -389,7 +389,7 @@ function ExplanationPanel({
         </ExplanationCard>
       )}
       {exp.analogy && (
-        <ExplanationCard icon={Wand2} title={t((d) => d.doc.sections.analogy)}>
+        <ExplanationCard icon={Shapes} title={t((d) => d.doc.sections.analogy)}>
           <RichAnswer text={exp.analogy} />
         </ExplanationCard>
       )}
