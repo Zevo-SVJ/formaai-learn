@@ -120,7 +120,7 @@ function ProgressPage() {
         </div>
 
         {/* Overall + range */}
-        <section className="mt-8 grid gap-4 sm:grid-cols-3">
+        <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:col-span-1">
             <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               {t((d) => d.progressPage.overall)}
@@ -230,7 +230,7 @@ function ProgressPage() {
               {t((d) => d.progressPage.noData)}
             </div>
           ) : (
-            <div className="grid gap-2.5 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
               {bySubject.map((s) => (
                 <div key={s.subject} className="rounded-2xl border border-border bg-card p-4">
                   <div className="flex items-baseline justify-between">

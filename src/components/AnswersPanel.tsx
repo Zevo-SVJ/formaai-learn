@@ -55,7 +55,7 @@ export function AnswersPanel({ answers }: { answers: Answer[] }) {
           {copied ? t((d) => d.doc.copied) : t((d) => d.doc.copyAll)}
         </button>
       </div>
-      <ul className="grid gap-2.5 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
         {answers.map((a, i) => (
           <motion.li
             key={i}

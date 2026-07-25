@@ -24,7 +24,7 @@ export function CompareSection() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-2 md:gap-5">
+        <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             whileInView={{ opacity: 1, y: 0 }}

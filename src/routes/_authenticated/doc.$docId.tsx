@@ -206,7 +206,7 @@ function DocPage() {
             {doc.explanation?.answers && doc.explanation.answers.length > 0 && (
               <AnswersPanel answers={doc.explanation.answers} />
             )}
-            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
               <DocumentViewer doc={doc} fileUrl={fileUrl} />
               <ExplanationPanel
                 doc={doc}

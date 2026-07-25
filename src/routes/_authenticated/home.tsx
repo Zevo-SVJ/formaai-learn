@@ -127,7 +127,7 @@ function Home() {
         {favorites.length === 0 ? (
           <EmptyRow message={t((d) => d.home.favoritesEmpty)} tone="star" />
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {favorites.map((d, i) => (
               <DocCard
                 key={d.id}
@@ -164,7 +164,7 @@ function Home() {
         ) : recent.length === 0 ? (
           <EmptyRow message={t((d) => d.home.recentEmpty)} tone="book" />
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {recent.map((d, i) => (
               <DocCard
                 key={d.id}
