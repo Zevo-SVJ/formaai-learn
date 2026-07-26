@@ -304,7 +304,7 @@ function ChatPage() {
             <button
               type="submit"
               disabled={!input.trim() || isBusy}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground text-background transition disabled:opacity-40"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground text-background transition hover:opacity-90 disabled:opacity-40"
               aria-label={t((d) => d.doc.askCta)}
             >
               {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

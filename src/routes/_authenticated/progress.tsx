@@ -264,7 +264,7 @@ function ProgressPage() {
             {t((d) => d.progressPage.recent)}
           </h2>
           {isLoading ? (
-            <div className="flex justify-center py-10 text-muted-foreground">
+            <div className="flex items-center justify-center py-14 text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
             </div>
           ) : grades.length === 0 ? (
@@ -560,7 +560,7 @@ function GradeSheet({
         <button
           type="submit"
           disabled={saving}
-          className="mt-3.5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3 text-[15px] font-semibold text-background disabled:opacity-60"
+          className="mt-3.5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3 text-[15px] font-semibold text-background transition hover:opacity-90 disabled:opacity-60"
         >
           {saving && <Loader2 className="h-4 w-4 animate-spin" />}
           {t((d) => d.common.save)}

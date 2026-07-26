@@ -299,7 +299,7 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
       <Link
         to="/doc/$docId/chat"
         params={{ docId: doc.id }}
-        className="group flex items-center gap-4 rounded-3xl border border-emerald/25 bg-card p-5 shadow-[var(--shadow-soft)] ring-1 ring-emerald/10 transition hover:border-emerald/40 hover:shadow-[var(--shadow-md)]"
+        className="group flex items-center gap-4 rounded-3xl border border-emerald/25 bg-card p-5 shadow-[var(--shadow-soft)] transition hover:border-emerald/40 hover:shadow-[var(--shadow-lift)]"
       >
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald text-white shadow-[var(--shadow-soft)]">
           <MessageCircle className="h-5 w-5" />
