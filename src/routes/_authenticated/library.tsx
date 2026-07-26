@@ -6,8 +6,9 @@ import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
 import { relativeTime } from "@/lib/relative-time";
 import { AppHeader } from "@/components/AppHeader";
 import { EASE } from "@/lib/motion";
+import { subjectIcon } from "@/lib/subject-icon";
 import { useI18n } from "@/hooks/useI18n";
-import { BookOpen, Loader2, Star, CheckCircle2, AlertCircle, ArrowRight, Home } from "lucide-react";
+import { Loader2, Star, CheckCircle2, AlertCircle, ArrowRight, Home } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/library")({
   component: Library,
@@ -71,7 +72,9 @@ function Library() {
         )}
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {(data ?? []).map((d, i) => (
+          {(data ?? []).map((d, i) => {
+            const Icon = subjectIcon(d.subject);
+            return (
             <motion.div
               key={d.id}
               initial={{ opacity: 0, y: 8 }}
@@ -88,7 +91,7 @@ function Library() {
               />
               <div className="relative flex items-start justify-between gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-soft">
-                  <BookOpen className="h-5 w-5 text-emerald" />
+                  <Icon className="h-5 w-5 text-emerald" strokeWidth={1.9} />
                 </div>
                 <div className="flex items-center gap-1.5">
                   <StatusBadge status={d.status} />
@@ -134,7 +137,8 @@ function Library() {
                 </span>
               </div>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         {!isLoading && (data ?? []).length === 0 && (

@@ -129,13 +129,17 @@
   }
 
   /* On touch devices, iOS Safari zooms the page when a control smaller than
-     16px is focused. Keep the design's sizes on desktop, but never let the
-     keyboard trigger that zoom on mobile. */
+     16px is focused (and never zooms back out). Keep the design's sizes on
+     desktop, but never let the keyboard trigger that zoom on mobile. The
+     `!important` is required: without it a Tailwind text-[15px] class on the
+     field wins on specificity and the zoom returns. Covers every current and
+     future editable control, including contenteditable. */
   @media (pointer: coarse) {
     input,
     textarea,
-    select {
-      font-size: 16px;
+    select,
+    [contenteditable] {
+      font-size: 16px !important;
     }
   }
 

@@ -9,6 +9,7 @@ import { SolutionStory } from "@/components/SolutionStory";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
+import { ProgressFeature } from "@/components/ProgressFeature";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 
 import { SiteFooter } from "@/components/SiteFooter";
@@ -50,6 +51,7 @@ function Landing() {
       <Problem />
       <SolutionStory />
       <HowItWorks />
+      <ProgressFeature />
       <CompareSection />
       <MidCTA />
       <ReviewsSection />

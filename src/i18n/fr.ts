@@ -109,6 +109,14 @@ export const fr: Dict = {
     orDragDrop: "ou glisse-dépose",
     photo: "Photo",
   },
+  progressFeature: {
+    badge: "Nouveau",
+    title: "Vois vraiment comment tu progresses.",
+    body: "Ajoute une note avec sa matière, son coefficient et sa date. Forma transforme tes résultats en tableau de bord clair, pour comprendre ta progression dans le temps.",
+    chips: ["Note", "Matière", "Coefficient", "Date", "Barème"],
+    average: "Moyenne générale",
+    trend: "Ce trimestre",
+  },
   compare: {
     eyebrow: "La différence",
     title: "Forma face aux autres outils.",
@@ -340,6 +348,7 @@ export const fr: Dict = {
       title: "Préparons ton tuteur.",
       subtitle:
         "Quelques infos rapides pour que Forma adapte ses explications à ton niveau.",
+      namePlaceholder: "Ton prénom",
       cta: "Continuer",
     },
     q1: {
@@ -399,8 +408,16 @@ export const fr: Dict = {
     },
   },
   home: {
-    greeting: "Salut {{name}},",
-    greetingAnon: "Content de te revoir,",
+    greetings: {
+      morning: "Bonjour {{name}}",
+      afternoon: "Bon après-midi {{name}}",
+      evening: "Bonsoir {{name}}",
+    },
+    greetingsAnon: {
+      morning: "Bonjour,",
+      afternoon: "Bon après-midi,",
+      evening: "Bonsoir,",
+    },
     subhead: "Qu'est-ce qu'on apprend aujourd'hui ?",
     upload: "Déposer une leçon",
     favorites: "Enregistrés",

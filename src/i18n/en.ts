@@ -107,6 +107,14 @@ export const en = {
     orDragDrop: "or drag and drop",
     photo: "Photo",
   },
+  progressFeature: {
+    badge: "New",
+    title: "See how you are really progressing.",
+    body: "Add a grade with its subject, coefficient and date. Forma turns your results into a clean dashboard, so you can understand your progress over time.",
+    chips: ["Grade", "Subject", "Coefficient", "Date", "Scale"],
+    average: "Overall average",
+    trend: "This term",
+  },
   compare: {
     eyebrow: "The difference",
     title: "How Forma compares to other tools.",
@@ -338,6 +346,7 @@ export const en = {
       title: "Let's set up your tutor.",
       subtitle:
         "A few quick details so Forma can match its explanations to your level.",
+      namePlaceholder: "Your first name",
       cta: "Continue",
     },
     q1: {
@@ -397,8 +406,16 @@ export const en = {
     },
   },
   home: {
-    greeting: "Hi {{name}},",
-    greetingAnon: "Welcome back,",
+    greetings: {
+      morning: "Good morning, {{name}}",
+      afternoon: "Good afternoon, {{name}}",
+      evening: "Good evening, {{name}}",
+    },
+    greetingsAnon: {
+      morning: "Good morning,",
+      afternoon: "Good afternoon,",
+      evening: "Good evening,",
+    },
     subhead: "What are we learning today?",
     upload: "Upload a lesson",
     favorites: "Saved for later",

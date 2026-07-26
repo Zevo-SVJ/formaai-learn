@@ -2,7 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/useI18n";
-import { LogOut, House, Library, TrendingUp } from "lucide-react";
+import { LogOut, House, BookMarked, TrendingUp } from "lucide-react";
 
 export function AppHeader({ back }: { back?: React.ReactNode }) {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
         </div>
         <nav className="flex items-center gap-1">
           <NavLink to="/home" icon={House} label={t((d) => d.common.home)} />
-          <NavLink to="/library" icon={Library} label={t((d) => d.common.library)} />
+          <NavLink to="/library" icon={BookMarked} label={t((d) => d.common.library)} />
           <NavLink to="/progress" icon={TrendingUp} label={t((d) => d.progress.nav)} />
         </nav>
         <div className="flex items-center gap-2">

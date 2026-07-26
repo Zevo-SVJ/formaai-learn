@@ -9,6 +9,8 @@ import { AppHeader } from "@/components/AppHeader";
 import { UploadArea } from "@/components/UploadArea";
 import { ReferralCard } from "@/components/ReferralCard";
 import { EASE } from "@/lib/motion";
+import { subjectIcon } from "@/lib/subject-icon";
+import { daypart } from "@/lib/greeting";
 import { useI18n } from "@/hooks/useI18n";
 import {
   BookOpen,
@@ -56,15 +58,30 @@ function Home() {
   // and setting state swapped the greeting text mid-entrance — a visible
   // re-render exactly as the page animated in.
   const { user } = Route.useRouteContext();
+  // The first name and country come from onboarding (before an account exists),
+  // so read them back from where onboarding stored them.
+  const onboarding = useMemo(() => {
+    try {
+      return JSON.parse(window.localStorage.getItem("forma:onboardingAnswers") || "{}") as {
+        name?: string;
+        country?: string;
+      };
+    } catch {
+      return {};
+    }
+  }, []);
   const greetName = useMemo(() => {
     const md = user?.user_metadata as Record<string, unknown> | undefined;
     return (
       (md?.full_name as string | undefined) ||
       (md?.name as string | undefined) ||
+      (onboarding.name && onboarding.name.trim() ? onboarding.name.trim() : null) ||
       (user?.email ? user.email.split("@")[0] : null) ||
       null
     );
-  }, [user]);
+  }, [user, onboarding]);
+  // Local morning / afternoon / evening, from the student's country timezone.
+  const part = daypart(onboarding.country);
 
   useEffect(() => {
     // If user hasn't done onboarding, take them through it once.
@@ -93,8 +110,8 @@ function Home() {
         >
           <h1 className="text-[30px] font-bold leading-tight tracking-tight text-foreground sm:text-[38px]">
             {greetName
-              ? t((d) => d.home.greeting, { name: capitalize(greetName) })
-              : t((d) => d.home.greetingAnon)}
+              ? t((d) => d.home.greetings[part], { name: capitalize(greetName) })
+              : t((d) => d.home.greetingsAnon[part])}
           </h1>
           <p className="text-[15px] text-muted-foreground sm:text-[17px]">
             {t((d) => d.home.subhead)}
@@ -249,6 +266,7 @@ function DocCard({
   onFavToggle: () => void;
 }) {
   const { t } = useI18n();
+  const Icon = subjectIcon(doc.subject);
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -265,7 +283,7 @@ function DocCard({
       />
       <div className="relative flex items-start justify-between gap-3">
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-soft">
-          <BookOpen className="h-5 w-5 text-emerald" />
+          <Icon className="h-5 w-5 text-emerald" strokeWidth={1.9} />
         </div>
         <div className="flex items-center gap-1.5">
           <StatusBadge status={doc.status} />

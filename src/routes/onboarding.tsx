@@ -19,6 +19,7 @@ export const Route = createFileRoute("/onboarding")({
 
 
 type Answers = {
+  name?: string;
   goal?: string;
   grade?: string;
   country?: string;
@@ -77,7 +78,13 @@ function Onboarding() {
         <AnimatePresence mode="wait">
           {intro && (
             <Step key="intro">
-              <IntroTransition onStart={() => setIntro(false)} />
+              <IntroTransition
+                initialName={answers.name}
+                onStart={(name) => {
+                  persist({ ...answers, name });
+                  setIntro(false);
+                }}
+              />
             </Step>
           )}
           {!intro && step === 0 && (
@@ -204,10 +211,18 @@ function Step({ children }: { children: React.ReactNode }) {
  * their tutor rather than as a form. Deliberately minimal: one line of why,
  * then Continue.
  */
-function IntroTransition({ onStart }: { onStart: () => void }) {
+function IntroTransition({
+  initialName,
+  onStart,
+}: {
+  initialName?: string;
+  onStart: (name: string) => void;
+}) {
   const { t } = useI18n();
+  const [name, setName] = useState(initialName ?? "");
+  const submit = () => onStart(name.trim());
   return (
-    <div className="flex flex-col items-center pt-10 text-center sm:pt-20">
+    <div className="flex flex-col items-center pt-10 text-center sm:pt-16">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -224,9 +239,22 @@ function IntroTransition({ onStart }: { onStart: () => void }) {
         {t((d) => d.onboarding.intro.subtitle)}
       </p>
 
+      {/* First name — so Forma can greet the student personally afterwards. */}
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") submit();
+        }}
+        autoComplete="given-name"
+        enterKeyHint="done"
+        placeholder={t((d) => d.onboarding.intro.namePlaceholder)}
+        className="mt-8 w-full max-w-sm rounded-2xl border border-border bg-surface px-4 py-3.5 text-center text-[16px] font-medium outline-none placeholder:font-normal placeholder:text-muted-foreground focus:border-emerald"
+      />
+
       <button
-        onClick={onStart}
-        className="mt-10 inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background transition-transform hover:-translate-y-0.5"
+        onClick={submit}
+        className="mt-4 inline-flex w-full max-w-sm items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background transition-transform hover:-translate-y-0.5"
       >
         {t((d) => d.onboarding.intro.cta)}
         <ChevronRight className="h-4 w-4" />
