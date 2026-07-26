@@ -383,14 +383,29 @@ function GradeSheet({
   const [note, setNote] = useState<string>(initial?.note ?? "");
   const [saving, setSaving] = useState(false);
 
-  // Lock the page behind the sheet: without this, dragging on the sheet (or its
-  // scrim) scrolls / rubber-bands the page underneath, which reads as the modal
-  // being dragged around. Restored on close.
+  // Freeze the page behind the sheet completely. `overflow: hidden` alone does
+  // not stop iOS from scrolling / rubber-banding the page underneath, so we pin
+  // the body with `position: fixed` at its current offset and restore that exact
+  // scroll position on close. The background can no longer move at all.
   useEffect(() => {
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const body = document.body;
+    const scrollY = window.scrollY;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = prev;
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.width = prev.width;
+      body.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
     };
   }, []);
 
@@ -445,7 +460,7 @@ function GradeSheet({
         // the home indicator on the bottom-sheet layout.
         className="max-h-[90dvh] w-full max-w-lg touch-pan-y overflow-y-auto overscroll-contain rounded-t-3xl bg-card p-5 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[85dvh] sm:rounded-3xl"
       >
-        <div className="mb-3.5 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between">
           <h2 className="text-[18px] font-bold text-foreground">
             {initial ? t((d) => d.progressPage.editGrade) : t((d) => d.progressPage.newGrade)}
           </h2>
@@ -458,7 +473,7 @@ function GradeSheet({
           </button>
         </div>
 
-        <div className="grid gap-2.5">
+        <div className="grid gap-2">
           <Field label={t((d) => d.progressPage.fields.subject)}>
             <input
               required
@@ -467,7 +482,7 @@ function GradeSheet({
               className="w-full rounded-2xl border border-border bg-surface px-4 py-2.5 text-[15px] outline-none focus:border-emerald"
             />
           </Field>
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-2 gap-2">
             <Field label={t((d) => d.progressPage.fields.grade)}>
               <input
                 required
@@ -507,7 +522,7 @@ function GradeSheet({
               </div>
             </Field>
           </div>
-          <div className="grid grid-cols-2 gap-2.5">
+          <div className="grid grid-cols-2 gap-2">
             <Field label={t((d) => d.progressPage.fields.coef)}>
               <input
                 inputMode="decimal"
@@ -521,7 +536,7 @@ function GradeSheet({
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full rounded-2xl border border-border bg-surface px-4 py-2.5 text-[15px] outline-none focus:border-emerald"
+                className="block w-full min-w-0 appearance-none rounded-2xl border border-border bg-surface px-3.5 py-2.5 text-[15px] outline-none focus:border-emerald"
               />
             </Field>
           </div>
@@ -537,7 +552,7 @@ function GradeSheet({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              className="w-full resize-none rounded-2xl border border-border bg-surface px-4 py-2.5 text-[14px] outline-none focus:border-emerald"
+              className="w-full resize-none rounded-2xl border border-border bg-surface px-4 py-2 text-[14px] outline-none focus:border-emerald"
             />
           </Field>
         </div>
@@ -545,7 +560,7 @@ function GradeSheet({
         <button
           type="submit"
           disabled={saving}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3 text-[15px] font-semibold text-background disabled:opacity-60"
+          className="mt-3.5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3 text-[15px] font-semibold text-background disabled:opacity-60"
         >
           {saving && <Loader2 className="h-4 w-4 animate-spin" />}
           {t((d) => d.common.save)}

@@ -85,24 +85,46 @@ function ChatPage() {
   });
   const isBusy = status === "submitted" || status === "streaming";
 
-  // Scroll: stick to the bottom ONLY while the reader is already there. Content
-  // growing during generation follows the stream if they haven't scrolled up;
-  // it never forces the viewport down. `status` is deliberately not a trigger,
-  // so finishing a generation can't move the reading position.
+  // Reading, not livestreaming. Generation NEVER moves the viewport: the
+  // assistant's reply grows below the fold and the reader scrolls at their own
+  // pace. The one and only programmatic scroll happens when the student SENDS a
+  // message — a single nudge that brings their question to the top so the reply
+  // begins in view. It never fires again while tokens stream, and never when
+  // generation ends (so the screen can't follow the answer or jump to the end).
   const scrollRef = useRef<HTMLDivElement>(null);
-  const atBottomRef = useRef(true);
-  const onScroll = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    atBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100;
+  const lastUserId = (msgs: UIMessage[]) => {
+    for (let i = msgs.length - 1; i >= 0; i--) if (msgs[i].role === "user") return msgs[i].id;
+    return null;
   };
-  const scrollToBottom = () => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  };
+  // Seed the anchor from any existing history so returning to a conversation
+  // does not trigger a scroll — only messages sent from here do.
+  const anchoredUserIdRef = useRef<string | null>(lastUserId(seedMessages));
   useEffect(() => {
-    if (atBottomRef.current) scrollToBottom();
+    const id = lastUserId(messages);
+    if (!id || id === anchoredUserIdRef.current) return;
+    anchoredUserIdRef.current = id;
+    const el = scrollRef.current;
+    const node = el?.querySelector<HTMLElement>(`[data-mid="${id}"]`);
+    if (!el || !node) return;
+    // Bring the just-sent question to the top; the reply then starts in view.
+    const delta = node.getBoundingClientRect().top - el.getBoundingClientRect().top;
+    el.scrollTop += delta - 12;
   }, [messages]);
+
+  // Keep the page itself from scrolling — only the conversation area scrolls —
+  // so the on-screen keyboard can never leave the whole interface shifted
+  // upward after it closes. Restored when leaving the conversation.
+  useEffect(() => {
+    const de = document.documentElement;
+    const body = document.body;
+    const prev = { de: de.style.overflow, body: body.style.overflow };
+    de.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      de.style.overflow = prev.de;
+      body.style.overflow = prev.body;
+    };
+  }, []);
 
   const [input, setInput] = useState("");
   const quickActions = useQuickActions();
@@ -111,8 +133,6 @@ function ChatPage() {
     const clean = text.trim();
     if (!clean || isBusy) return;
     setInput("");
-    // A deliberate send: reveal the new message and the reply.
-    atBottomRef.current = true;
     await sendMessage({ text: clean });
   };
 
@@ -174,11 +194,7 @@ function ChatPage() {
       </header>
 
       {/* Conversation — full height, comfortable reading width. */}
-      <div
-        ref={scrollRef}
-        onScroll={onScroll}
-        className="flex-1 overflow-y-auto overscroll-contain"
-      >
+      <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain">
         <div className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6">
           {messages.length === 0 ? (
             <motion.div
@@ -221,6 +237,7 @@ function ChatPage() {
                   return (
                     <motion.div
                       key={m.id}
+                      data-mid={m.id}
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, ease: EASE.out }}
@@ -277,6 +294,9 @@ function ChatPage() {
                   submit(input);
                 }
               }}
+              // Safety net for iOS: if dismissing the keyboard leaves the page
+              // nudged, snap it back so nothing stays shifted upward.
+              onBlur={() => window.scrollTo(0, 0)}
               rows={1}
               placeholder={t((d) => d.doc.askPlaceholder)}
               className="min-h-[36px] max-h-40 flex-1 resize-none border-0 bg-transparent px-2 py-2 text-[15px] outline-none placeholder:text-muted-foreground"
