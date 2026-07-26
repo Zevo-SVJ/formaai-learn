@@ -14,6 +14,7 @@ import {
 
 import { AppHeader } from "@/components/AppHeader";
 import { addGrade, deleteGrade, listGrades, updateGrade } from "@/lib/grades.functions";
+import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { Plus, Pencil, Trash2, X, Loader2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
@@ -98,7 +99,12 @@ function ProgressPage() {
     <div className="min-h-dvh bg-background">
       <AppHeader />
 
-      <main className="mx-auto max-w-5xl px-5 py-8 sm:py-12">
+      <motion.main
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: EASE.out }}
+        className="mx-auto max-w-5xl px-5 py-8 sm:py-12"
+      >
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h1 className="text-[30px] font-bold tracking-tight text-foreground sm:text-[36px]">
@@ -316,7 +322,7 @@ function ProgressPage() {
             </ul>
           )}
         </section>
-      </main>
+      </motion.main>
 
       <AnimatePresence>
         {open && (
@@ -425,7 +431,7 @@ function GradeSheet({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center"
+      className="fixed inset-0 z-50 flex touch-none items-end justify-center bg-black/40 sm:items-center"
       onClick={onClose}
     >
       <motion.form
@@ -438,7 +444,7 @@ function GradeSheet({
         // Cap the height and scroll inside so a long form (or the on-screen
         // keyboard) can never push the submit button out of reach, and clear
         // the home indicator on the bottom-sheet layout.
-        className="max-h-[90dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-3xl bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[85dvh] sm:rounded-3xl"
+        className="max-h-[90dvh] w-full max-w-lg touch-pan-y overflow-y-auto overscroll-contain rounded-t-3xl bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[85dvh] sm:rounded-3xl"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-[18px] font-bold text-foreground">

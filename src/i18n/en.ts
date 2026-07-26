@@ -450,7 +450,8 @@ export const en = {
     retry: "Try again",
     working: "Working",
     workingHint: "Forma AI is really reading your document. This usually takes 5 to 15 seconds.",
-    askTitle: "Ask Forma about this lesson",
+    askTitle: "Keep going with your tutor",
+    askSubtitle: "You've got the answer. Now ask anything — Forma explains it step by step.",
     askPlaceholder: "Ask anything about the lesson",
     quickActions: {
       simpler: "Explain more simply",

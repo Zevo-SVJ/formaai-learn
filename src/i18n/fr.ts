@@ -452,7 +452,8 @@ export const fr: Dict = {
     retry: "Réessayer",
     working: "En cours",
     workingHint: "Forma lit vraiment ton document. Ça prend d'habitude 5 à 15 secondes.",
-    askTitle: "Pose ta question sur cette leçon",
+    askTitle: "Continue avec ton tuteur",
+    askSubtitle: "Tu as la réponse. Pose maintenant ta question — Forma t'explique pas à pas.",
     askPlaceholder: "Demande ce que tu veux sur la leçon",
     quickActions: {
       simpler: "Explique plus simplement",

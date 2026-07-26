@@ -32,6 +32,7 @@ import {
   Shapes,
   RefreshCw,
   Star,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -387,48 +388,36 @@ function ExplanationPanel({
           <RichAnswer text={exp.explanation} />
         </ExplanationCard>
       )}
-      {exp.why && (
-        <ExplanationCard icon={Lightbulb} title={t((d) => d.doc.sections.why)}>
-          <RichAnswer text={exp.why} />
-        </ExplanationCard>
-      )}
-      {exp.common_mistake && (
-        <ExplanationCard
-          icon={AlertTriangle}
-          title={t((d) => d.doc.sections.commonMistakes)}
-          tone="warn"
-        >
-          <RichAnswer text={exp.common_mistake} />
-        </ExplanationCard>
-      )}
-      {exp.example && (
-        <ExplanationCard icon={BookOpen} title={t((d) => d.doc.sections.example)}>
-          <RichAnswer text={exp.example} />
-        </ExplanationCard>
-      )}
-      {exp.analogy && (
-        <ExplanationCard icon={Shapes} title={t((d) => d.doc.sections.analogy)}>
-          <RichAnswer text={exp.analogy} />
-        </ExplanationCard>
-      )}
 
-      {/* Chat */}
-      <div className="rounded-3xl border border-border bg-card shadow-[var(--shadow-soft)]">
-        <div className="border-b border-border px-5 py-3">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-            {t((d) => d.doc.askTitle)}
+      {/* Conversation — the natural next step after reading the answer. Placed
+          right under the explanation, and given real visual weight, so students
+          actually notice they can keep asking. The reference sections follow. */}
+      <div className="overflow-hidden rounded-3xl border border-emerald/25 bg-card shadow-[var(--shadow-soft)] ring-1 ring-emerald/10">
+        <div className="flex items-start gap-3 border-b border-border bg-emerald-soft/60 px-5 py-4">
+          <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald text-white shadow-[var(--shadow-soft)]">
+            <MessageCircle className="h-4.5 w-4.5" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-[15px] font-semibold leading-tight text-foreground">
+              {t((d) => d.doc.askTitle)}
+            </h3>
+            <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">
+              {t((d) => d.doc.askSubtitle)}
+            </p>
           </div>
         </div>
 
         <div
           ref={scrollRef}
           onScroll={onScroll}
-          className="max-h-[520px] overflow-y-auto overscroll-contain px-4 py-4 sm:px-5"
+          className="max-h-[520px] min-h-[200px] overflow-y-auto overscroll-contain px-4 py-4 sm:px-5"
         >
           {messages.length === 0 && (
-            <p className="py-6 text-center text-sm text-muted-foreground">
-              {t((d) => d.doc.empty)}
-            </p>
+            <div className="flex h-[168px] items-center justify-center px-6">
+              <p className="max-w-[280px] text-center text-[14px] leading-relaxed text-muted-foreground">
+                {t((d) => d.doc.empty)}
+              </p>
+            </div>
           )}
           <div className="space-y-4">
             <AnimatePresence initial={false}>
@@ -525,6 +514,33 @@ function ExplanationPanel({
           </form>
         </div>
       </div>
+
+      {/* Reference sections — available for students who want to go deeper,
+          after the conversation invitation. */}
+      {exp.why && (
+        <ExplanationCard icon={Lightbulb} title={t((d) => d.doc.sections.why)}>
+          <RichAnswer text={exp.why} />
+        </ExplanationCard>
+      )}
+      {exp.common_mistake && (
+        <ExplanationCard
+          icon={AlertTriangle}
+          title={t((d) => d.doc.sections.commonMistakes)}
+          tone="warn"
+        >
+          <RichAnswer text={exp.common_mistake} />
+        </ExplanationCard>
+      )}
+      {exp.example && (
+        <ExplanationCard icon={BookOpen} title={t((d) => d.doc.sections.example)}>
+          <RichAnswer text={exp.example} />
+        </ExplanationCard>
+      )}
+      {exp.analogy && (
+        <ExplanationCard icon={Shapes} title={t((d) => d.doc.sections.analogy)}>
+          <RichAnswer text={exp.analogy} />
+        </ExplanationCard>
+      )}
     </div>
   );
 }
