@@ -43,8 +43,7 @@ export const fr: Dict = {
     cta: "Essayer gratuitement",
     ctaHint: "Sans carte. Sans mur d'inscription.",
     midTitle: "Ton compagnon d'apprentissage",
-    midBody:
-      "Forma explique tes cours, et suit tes notes et ta progression dans le temps.",
+    midBody: "Forma explique tes cours, et suit tes notes et ta progression dans le temps.",
     menu: {
       upload: "Analyser mon cours",
       see: "Voir comment ça marche",
@@ -120,7 +119,8 @@ export const fr: Dict = {
   compare: {
     eyebrow: "La différence",
     title: "Forma face aux autres outils.",
-    subtitle: "La plupart des outils donnent la réponse et s'en vont. Forma reste jusqu'à ce que tu comprennes vraiment.",
+    subtitle:
+      "La plupart des outils donnent la réponse et s'en vont. Forma reste jusqu'à ce que tu comprennes vraiment.",
     recommended: "Recommandé",
     otherTitle: "Autres outils d'IA",
     typical: "Habituel",
@@ -182,8 +182,14 @@ export const fr: Dict = {
     swipeHint: "Glisse pour explorer",
     steps: [
       { t: "Dépose n'importe quoi", d: "Une photo, un PDF ou une capture de ton exercice." },
-      { t: "Forma lit tout", d: "Il repère la matière, le niveau et les idées qui comptent vraiment." },
-      { t: "Tu comprends enfin", d: "Une explication claire avec exemples et un chat qui connaît déjà ta leçon." },
+      {
+        t: "Forma lit tout",
+        d: "Il repère la matière, le niveau et les idées qui comptent vraiment.",
+      },
+      {
+        t: "Tu comprends enfin",
+        d: "Une explication claire avec exemples et un chat qui connaît déjà ta leçon.",
+      },
     ],
   },
   subjects: {
@@ -236,8 +242,7 @@ export const fr: Dict = {
       {
         name: "Noah Peeters",
         role: "Troisième",
-        quote:
-          "Photo de mon exo de physique, chaque étape est décortiquée et j'ai enfin compris.",
+        quote: "Photo de mon exo de physique, chaque étape est décortiquée et j'ai enfin compris.",
       },
       {
         name: "Chloé Martin",
@@ -254,14 +259,12 @@ export const fr: Dict = {
       {
         name: "Sara El Amrani",
         role: "Terminale",
-        quote:
-          "Mon chapitre de chimie s'est enfin éclairé. L'exemple à la fin change tout.",
+        quote: "Mon chapitre de chimie s'est enfin éclairé. L'exemple à la fin change tout.",
       },
       {
         name: "Julien Perrot",
         role: "Quatrième",
-        quote:
-          "Rapide, propre, et jamais condescendant. Je l'ouvre avant chaque devoir.",
+        quote: "Rapide, propre, et jamais condescendant. Je l'ouvre avant chaque devoir.",
       },
     ],
   },
@@ -320,7 +323,8 @@ export const fr: Dict = {
     checkInbox: "Regarde ta boîte mail",
     checkInboxConfirm: "Confirme ton adresse e-mail depuis ta boîte de réception.",
     linkSent: "On t'a envoyé un lien magique à",
-    terms: "En continuant, tu acceptes les conditions et la politique de confidentialité de Forma AI.",
+    terms:
+      "En continuant, tu acceptes les conditions et la politique de confidentialité de Forma AI.",
     signInFailed: "Connexion impossible",
   },
   referral: {
@@ -329,7 +333,8 @@ export const fr: Dict = {
     body: "Partage ton code ci-dessous. Chaque ami qui s'inscrit avec compte.",
     unlockedEyebrow: "Premium débloqué",
     unlockedTitle: "Merci de faire tourner Forma.",
-    unlockedBody: "Tu as débloqué les fonctionnalités premium. Continue à partager pour aider tes amis.",
+    unlockedBody:
+      "Tu as débloqué les fonctionnalités premium. Continue à partager pour aider tes amis.",
     yourCode: "Ton code",
     copy: "Copier le code",
     copied: "Code copié",
@@ -346,8 +351,7 @@ export const fr: Dict = {
     finish: "Terminer",
     intro: {
       title: "Préparons ton tuteur.",
-      subtitle:
-        "Quelques infos rapides pour que Forma adapte ses explications à ton niveau.",
+      subtitle: "Quelques infos rapides pour que Forma adapte ses explications à ton niveau.",
       namePlaceholder: "Ton prénom",
       cta: "Continuer",
     },
@@ -385,8 +389,7 @@ export const fr: Dict = {
       eyebrow: "La vérité",
       stat: "96 % des élèves révisent surtout en relisant leurs notes.",
       punch: "Toi, tu vas faire mieux.",
-      caption:
-        "Forma t'aide à comprendre, à retenir et à progresser plus efficacement.",
+      caption: "Forma t'aide à comprendre, à retenir et à progresser plus efficacement.",
     },
     insight2: {
       eyebrow: "Un tuteur privé",
@@ -435,7 +438,8 @@ export const fr: Dict = {
     subhead: "Qu'est-ce qu'on apprend aujourd'hui ?",
     upload: "Déposer une leçon",
     favorites: "Enregistrés",
-    favoritesEmpty: "Aucun favori pour le moment. Touche l'étoile d'une explication pour la sauver ici.",
+    favoritesEmpty:
+      "Aucun favori pour le moment. Touche l'étoile d'une explication pour la sauver ici.",
     recent: "Leçons récentes",
     recentEmpty: "Tes leçons récentes apparaîtront ici.",
     seeAll: "Tout voir",
@@ -454,7 +458,8 @@ export const fr: Dict = {
     workingHint: "Forma lit vraiment ton document. Ça prend d'habitude 5 à 15 secondes.",
     askTitle: "Continue avec ton tuteur",
     askSubtitle: "Tu as la réponse. Pose maintenant ta question — Forma t'explique pas à pas.",
-    askPlaceholder: "Demande ce que tu veux sur la leçon",
+    askCta: "Poser une question sur cette analyse",
+    askPlaceholder: "Pose ta question sur cette analyse",
     quickActions: {
       simpler: "Explique plus simplement",
       example: "Donne un exemple",
@@ -463,7 +468,8 @@ export const fr: Dict = {
       method: "Montre la méthode",
       summary: "Résume",
       prompts: {
-        simpler: "Réexplique-moi ta dernière réponse plus simplement, comme à quelqu'un qui découvre le sujet.",
+        simpler:
+          "Réexplique-moi ta dernière réponse plus simplement, comme à quelqu'un qui découvre le sujet.",
         example: "Donne un exemple concret et détaillé qui illustre ta dernière réponse.",
         revision: "Crée-moi une fiche de révision claire à partir de ta dernière réponse.",
         quiz: "Génère un quiz de 3 questions ciblées sur ta dernière réponse. Pose-les une par une et attends ma réponse à chaque fois.",
@@ -504,7 +510,8 @@ export const fr: Dict = {
       ],
       done: "Tout est prêt",
     },
-    empty: "Pose-lui n'importe quelle question sur la leçon. Forma l'a déjà lue.",
+    empty:
+      "Pose n'importe quelle question sur ce que tu as importé. Forma a déjà tout analysé — exercices, images, PDF et documents.",
   },
   legal: {
     terms: {

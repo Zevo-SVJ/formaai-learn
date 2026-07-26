@@ -41,8 +41,7 @@ export const en = {
     cta: "Try it free",
     ctaHint: "No card. No signup wall.",
     midTitle: "Your learning companion",
-    midBody:
-      "Forma explains your courses, and tracks your grades and progress over time.",
+    midBody: "Forma explains your courses, and tracks your grades and progress over time.",
     menu: {
       upload: "Analyze my course",
       see: "See how it works",
@@ -102,7 +101,8 @@ export const en = {
     analysisFailed: "Analysis failed. Open the document to retry.",
     uploadFailed: "Upload failed",
     dropHere: "Drop your lesson here",
-    subtitle: "Lesson, homework, screenshot, photo, PDF or worksheet. Forma reads it and explains it.",
+    subtitle:
+      "Lesson, homework, screenshot, photo, PDF or worksheet. Forma reads it and explains it.",
     chooseFile: "Choose a file",
     orDragDrop: "or drag and drop",
     photo: "Photo",
@@ -118,7 +118,8 @@ export const en = {
   compare: {
     eyebrow: "The difference",
     title: "How Forma compares to other tools.",
-    subtitle: "Most tools give you the answer and leave. Forma stays until you actually understand.",
+    subtitle:
+      "Most tools give you the answer and leave. Forma stays until you actually understand.",
     recommended: "Recommended",
     otherTitle: "Other AI tools",
     typical: "Typical",
@@ -180,8 +181,14 @@ export const en = {
     swipeHint: "Swipe to explore",
     steps: [
       { t: "Upload anything", d: "A photo, PDF or a screenshot of your worksheet." },
-      { t: "Forma reads it", d: "It picks up the subject, the level and the ideas that actually matter." },
-      { t: "You understand it", d: "A clear explanation with examples and a chat that already knows the lesson." },
+      {
+        t: "Forma reads it",
+        d: "It picks up the subject, the level and the ideas that actually matter.",
+      },
+      {
+        t: "You understand it",
+        d: "A clear explanation with examples and a chat that already knows the lesson.",
+      },
     ],
   },
   subjects: {
@@ -252,14 +259,12 @@ export const en = {
       {
         name: "Sara El Amrani",
         role: "Grade 12",
-        quote:
-          "My chemistry chapter finally clicked. The example section is what sold me.",
+        quote: "My chemistry chapter finally clicked. The example section is what sold me.",
       },
       {
         name: "Julien Perrot",
         role: "Grade 9",
-        quote:
-          "Fast, clean and it never talks down to you. I open it before every homework.",
+        quote: "Fast, clean and it never talks down to you. I open it before every homework.",
       },
     ],
   },
@@ -297,7 +302,6 @@ export const en = {
     cookies: "Cookies",
     contact: "Contact",
     rights: "All rights reserved.",
-
   },
   auth: {
     welcome: "Welcome back",
@@ -344,8 +348,7 @@ export const en = {
     finish: "Finish",
     intro: {
       title: "Let's set up your tutor.",
-      subtitle:
-        "A few quick details so Forma can match its explanations to your level.",
+      subtitle: "A few quick details so Forma can match its explanations to your level.",
       namePlaceholder: "Your first name",
       cta: "Continue",
     },
@@ -383,8 +386,7 @@ export const en = {
       eyebrow: "The truth",
       stat: "96% of students mainly revise by rereading their notes.",
       punch: "You will do better.",
-      caption:
-        "Forma helps you understand, remember and improve more effectively.",
+      caption: "Forma helps you understand, remember and improve more effectively.",
     },
     insight2: {
       eyebrow: "A private tutor",
@@ -452,7 +454,8 @@ export const en = {
     workingHint: "Forma AI is really reading your document. This usually takes 5 to 15 seconds.",
     askTitle: "Keep going with your tutor",
     askSubtitle: "You've got the answer. Now ask anything — Forma explains it step by step.",
-    askPlaceholder: "Ask anything about the lesson",
+    askCta: "Ask a question about this analysis",
+    askPlaceholder: "Ask anything about this analysis",
     quickActions: {
       simpler: "Explain more simply",
       example: "Give an example",
@@ -502,14 +505,14 @@ export const en = {
       ],
       done: "Everything is ready",
     },
-    empty: "Ask anything about the lesson. Forma already read it.",
+    empty:
+      "Ask anything about what you uploaded. Forma has already analyzed all of it — exercises, images, PDFs and documents.",
   },
   legal: {
     terms: {
       title: "Terms of Service",
       updated: "Last updated: July 2026",
-      draft:
-        "This is a starter template. Replace it with your final legal text before launch.",
+      draft: "This is a starter template. Replace it with your final legal text before launch.",
       sections: [
         {
           h: "Who we are",
@@ -536,8 +539,7 @@ export const en = {
     privacy: {
       title: "Privacy Policy",
       updated: "Last updated: July 2026",
-      draft:
-        "This is a starter template. Replace it with your final privacy text before launch.",
+      draft: "This is a starter template. Replace it with your final privacy text before launch.",
       sections: [
         {
           h: "What we store",

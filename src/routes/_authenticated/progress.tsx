@@ -3,14 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 
 import { AppHeader } from "@/components/AppHeader";
 import { addGrade, deleteGrade, listGrades, updateGrade } from "@/lib/grades.functions";
@@ -138,7 +131,8 @@ function ProgressPage() {
               <span className="text-[15px] font-semibold text-muted-foreground">/ 20</span>
             </div>
             <div className="mt-2 inline-flex items-center gap-1.5 text-[12px] font-semibold text-emerald">
-              <TrendingUp className="h-3.5 w-3.5" /> {inRange.length} {t((d) => d.progressPage.entries)}
+              <TrendingUp className="h-3.5 w-3.5" /> {inRange.length}{" "}
+              {t((d) => d.progressPage.entries)}
             </div>
           </div>
 
@@ -213,7 +207,12 @@ function ProgressPage() {
                       strokeLinecap="round"
                       fill="url(#formaArea)"
                       dot={false}
-                      activeDot={{ r: 4, fill: "var(--emerald)", stroke: "var(--card)", strokeWidth: 2 }}
+                      activeDot={{
+                        r: 4,
+                        fill: "var(--emerald)",
+                        stroke: "var(--card)",
+                        strokeWidth: 2,
+                      }}
                       isAnimationActive
                       animationDuration={1400}
                       animationEasing="ease-out"
@@ -222,7 +221,6 @@ function ProgressPage() {
                 </ResponsiveContainer>
               )}
             </div>
-
           </div>
         </section>
 
@@ -297,7 +295,8 @@ function ProgressPage() {
                   </div>
                   <div className="text-right">
                     <div className="text-[15px] font-bold text-foreground">
-                      {formatNum(Number(g.grade), locale)} / {formatNum(Number(g.max_grade), locale)}
+                      {formatNum(Number(g.grade), locale)} /{" "}
+                      {formatNum(Number(g.max_grade), locale)}
                     </div>
                   </div>
                   <button
@@ -444,9 +443,9 @@ function GradeSheet({
         // Cap the height and scroll inside so a long form (or the on-screen
         // keyboard) can never push the submit button out of reach, and clear
         // the home indicator on the bottom-sheet layout.
-        className="max-h-[90dvh] w-full max-w-lg touch-pan-y overflow-y-auto overscroll-contain rounded-t-3xl bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[85dvh] sm:rounded-3xl"
+        className="max-h-[90dvh] w-full max-w-lg touch-pan-y overflow-y-auto overscroll-contain rounded-t-3xl bg-card p-5 pb-[calc(1rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[85dvh] sm:rounded-3xl"
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-3.5 flex items-center justify-between">
           <h2 className="text-[18px] font-bold text-foreground">
             {initial ? t((d) => d.progressPage.editGrade) : t((d) => d.progressPage.newGrade)}
           </h2>
@@ -459,30 +458,23 @@ function GradeSheet({
           </button>
         </div>
 
-        <div className="grid gap-3">
+        <div className="grid gap-2.5">
           <Field label={t((d) => d.progressPage.fields.subject)}>
             <input
               required
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-[15px] outline-none focus:border-emerald"
+              className="w-full rounded-2xl border border-border bg-surface px-4 py-2.5 text-[15px] outline-none focus:border-emerald"
             />
           </Field>
-          <Field label={t((d) => d.progressPage.fields.assignment)}>
-            <input
-              value={assignment}
-              onChange={(e) => setAssignment(e.target.value)}
-              className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-[15px] outline-none focus:border-emerald"
-            />
-          </Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             <Field label={t((d) => d.progressPage.fields.grade)}>
               <input
                 required
                 inputMode="decimal"
                 value={grade}
                 onChange={(e) => setGrade(e.target.value)}
-                className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-[15px] outline-none focus:border-emerald"
+                className="w-full rounded-2xl border border-border bg-surface px-4 py-2.5 text-[15px] outline-none focus:border-emerald"
               />
             </Field>
             <Field label={t((d) => d.progressPage.fields.scale)}>
@@ -515,13 +507,13 @@ function GradeSheet({
               </div>
             </Field>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             <Field label={t((d) => d.progressPage.fields.coef)}>
               <input
                 inputMode="decimal"
                 value={coef}
                 onChange={(e) => setCoef(e.target.value)}
-                className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-[15px] outline-none focus:border-emerald"
+                className="w-full rounded-2xl border border-border bg-surface px-4 py-2.5 text-[15px] outline-none focus:border-emerald"
               />
             </Field>
             <Field label={t((d) => d.progressPage.fields.date)}>
@@ -529,16 +521,23 @@ function GradeSheet({
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-[15px] outline-none focus:border-emerald"
+                className="w-full rounded-2xl border border-border bg-surface px-4 py-2.5 text-[15px] outline-none focus:border-emerald"
               />
             </Field>
           </div>
+          <Field label={t((d) => d.progressPage.fields.assignment)}>
+            <input
+              value={assignment}
+              onChange={(e) => setAssignment(e.target.value)}
+              className="w-full rounded-2xl border border-border bg-surface px-4 py-2.5 text-[15px] outline-none focus:border-emerald"
+            />
+          </Field>
           <Field label={t((d) => d.progressPage.fields.note)}>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-[14px] outline-none focus:border-emerald"
+              className="w-full resize-none rounded-2xl border border-border bg-surface px-4 py-2.5 text-[14px] outline-none focus:border-emerald"
             />
           </Field>
         </div>
@@ -546,7 +545,7 @@ function GradeSheet({
         <button
           type="submit"
           disabled={saving}
-          className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background disabled:opacity-60"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-foreground py-3 text-[15px] font-semibold text-background disabled:opacity-60"
         >
           {saving && <Loader2 className="h-4 w-4 animate-spin" />}
           {t((d) => d.common.save)}
@@ -558,7 +557,7 @@ function GradeSheet({
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex flex-col gap-1.5">
+    <label className="flex flex-col gap-1">
       <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
         {label}
       </span>

@@ -23,6 +23,7 @@ import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedDocDocIdRouteImport } from './routes/_authenticated/doc.$docId'
+import { Route as AuthenticatedDocDocIdChatRouteImport } from './routes/_authenticated/doc.$docId_.chat'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -93,6 +94,12 @@ const AuthenticatedDocDocIdRoute = AuthenticatedDocDocIdRouteImport.update({
   path: '/doc/$docId',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDocDocIdChatRoute =
+  AuthenticatedDocDocIdChatRouteImport.update({
+    id: '/doc/$docId_/chat',
+    path: '/doc/$docId/chat',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/progress': typeof AuthenticatedProgressRoute
   '/api/chat': typeof ApiChatRoute
   '/doc/$docId': typeof AuthenticatedDocDocIdRoute
+  '/doc/$docId/chat': typeof AuthenticatedDocDocIdChatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -123,6 +131,7 @@ export interface FileRoutesByTo {
   '/progress': typeof AuthenticatedProgressRoute
   '/api/chat': typeof ApiChatRoute
   '/doc/$docId': typeof AuthenticatedDocDocIdRoute
+  '/doc/$docId/chat': typeof AuthenticatedDocDocIdChatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -140,6 +149,7 @@ export interface FileRoutesById {
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/doc/$docId': typeof AuthenticatedDocDocIdRoute
+  '/_authenticated/doc/$docId_/chat': typeof AuthenticatedDocDocIdChatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/api/chat'
     | '/doc/$docId'
+    | '/doc/$docId/chat'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/progress'
     | '/api/chat'
     | '/doc/$docId'
+    | '/doc/$docId/chat'
   id:
     | '__root__'
     | '/'
@@ -188,6 +200,7 @@ export interface FileRouteTypes {
     | '/_authenticated/progress'
     | '/api/chat'
     | '/_authenticated/doc/$docId'
+    | '/_authenticated/doc/$docId_/chat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -303,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocDocIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/doc/$docId_/chat': {
+      id: '/_authenticated/doc/$docId_/chat'
+      path: '/doc/$docId/chat'
+      fullPath: '/doc/$docId/chat'
+      preLoaderRoute: typeof AuthenticatedDocDocIdChatRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -311,6 +331,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
   AuthenticatedDocDocIdRoute: typeof AuthenticatedDocDocIdRoute
+  AuthenticatedDocDocIdChatRoute: typeof AuthenticatedDocDocIdChatRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -318,6 +339,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
   AuthenticatedDocDocIdRoute: AuthenticatedDocDocIdRoute,
+  AuthenticatedDocDocIdChatRoute: AuthenticatedDocDocIdChatRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

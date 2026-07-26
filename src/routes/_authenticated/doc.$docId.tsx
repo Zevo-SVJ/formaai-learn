@@ -1,30 +1,24 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, type UIMessage } from "ai";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import {
   getDocument,
-  getMessages,
   getSignedFileUrl,
   analyzeDocument,
   toggleFavorite,
 } from "@/lib/documents.functions";
 import { Logo } from "@/components/Logo";
-import { supabase } from "@/integrations/supabase/client";
-import { AnswerRenderer } from "@/components/AnswerRenderer";
 import { AnalysisCeremony } from "@/components/AnalysisCeremony";
 import { AnswersPanel } from "@/components/AnswersPanel";
 import { RichAnswer } from "@/components/RichAnswer";
-import { QuickActionsBar, useQuickActions } from "@/components/QuickActionsBar";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import {
   ArrowLeft,
+  ArrowRight,
   Loader2,
-  Send,
   GraduationCap,
   BookOpen,
   Lightbulb,
@@ -70,7 +64,6 @@ function DocPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const getDoc = useServerFn(getDocument);
-  const getMsgs = useServerFn(getMessages);
   const signFile = useServerFn(getSignedFileUrl);
   const retry = useServerFn(analyzeDocument);
   const fav = useServerFn(toggleFavorite);
@@ -85,12 +78,6 @@ function DocPage() {
     },
   });
 
-  const { data: initialMessages } = useQuery({
-    queryKey: ["messages", docId],
-    queryFn: () => getMsgs({ data: { id: docId } }),
-    enabled: !!doc && doc.status === "ready",
-  });
-
   // The upload ceremony only plays for a document that was still being
   // analyzed when we arrived. Opening a finished lesson goes straight to it.
   const [ceremonyDone, setCeremonyDone] = useState(false);
@@ -99,8 +86,7 @@ function DocPage() {
   useEffect(() => {
     if (pending) sawPending.current = true;
   }, [pending]);
-  const showResults =
-    !!doc && doc.status === "ready" && (!sawPending.current || ceremonyDone);
+  const showResults = !!doc && doc.status === "ready" && (!sawPending.current || ceremonyDone);
 
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   useEffect(() => {
@@ -114,9 +100,7 @@ function DocPage() {
     if (!doc) return;
     const next = !doc.favorite;
     await fav({ data: { id: doc.id, favorite: next } });
-    toast.success(
-      next ? t((d) => d.doc.favoriteToast) : t((d) => d.doc.unfavoriteToast),
-    );
+    toast.success(next ? t((d) => d.doc.favoriteToast) : t((d) => d.doc.unfavoriteToast));
     qc.invalidateQueries({ queryKey: ["document", docId] });
     qc.invalidateQueries({ queryKey: ["documents"] });
   };
@@ -155,12 +139,8 @@ function DocPage() {
                     : "border-border bg-surface text-muted-foreground hover:text-foreground",
                 ].join(" ")}
               >
-                <Star
-                  className={`h-3.5 w-3.5 ${doc.favorite ? "fill-current" : ""}`}
-                />
-                {doc.favorite
-                  ? t((d) => d.doc.favoriteRemove)
-                  : t((d) => d.doc.favoriteAdd)}
+                <Star className={`h-3.5 w-3.5 ${doc.favorite ? "fill-current" : ""}`} />
+                {doc.favorite ? t((d) => d.doc.favoriteRemove) : t((d) => d.doc.favoriteAdd)}
               </button>
             )}
             <Link to="/home" className="hidden sm:block">
@@ -209,11 +189,7 @@ function DocPage() {
             )}
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
               <DocumentViewer doc={doc} fileUrl={fileUrl} />
-              <ExplanationPanel
-                doc={doc}
-                initialMessages={initialMessages ?? []}
-                onFavToggle={onFavToggle}
-              />
+              <ExplanationPanel doc={doc} onFavToggle={onFavToggle} />
             </div>
           </div>
         )}
@@ -285,84 +261,8 @@ function ExplanationCard({
   );
 }
 
-function ExplanationPanel({
-  doc,
-  initialMessages,
-  onFavToggle,
-}: {
-  doc: Doc;
-  initialMessages: Array<{ id: string; role: string; content: string }>;
-  onFavToggle: () => void;
-}) {
-  const [input, setInput] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const { t, locale } = useI18n();
-  const quickActions = useQuickActions();
-
-  const seedMessages: UIMessage[] = useMemo(
-    () =>
-      initialMessages.map((m) => ({
-        id: m.id,
-        role: m.role === "assistant" ? "assistant" : "user",
-        parts: [{ type: "text", text: m.content }],
-      })) as UIMessage[],
-    [initialMessages],
-  );
-
-  const transport = useMemo(
-    () =>
-      new DefaultChatTransport({
-        api: "/api/chat",
-        body: { documentId: doc.id, locale },
-        fetch: async (input, init) => {
-          const { data } = await supabase.auth.getSession();
-          const headers = new Headers(init?.headers);
-          if (data.session?.access_token)
-            headers.set("Authorization", `Bearer ${data.session.access_token}`);
-          return fetch(input, { ...init, headers });
-        },
-      }),
-    [doc.id, locale],
-  );
-
-  const { messages, sendMessage, status } = useChat({
-    id: doc.id,
-    messages: seedMessages,
-    transport,
-    onError: (e) => toast.error(e.message || "Chat error"),
-  });
-
-  // "Stick to bottom only while the reader is already there" — the same
-  // behaviour as Claude/ChatGPT. We follow the stream as it grows if the user
-  // is at the bottom, but never force the viewport down (so finishing a
-  // generation, or the status flipping, can't yank the page to the end).
-  const atBottomRef = useRef(true);
-  const onScroll = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    atBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
-  };
-  const scrollToBottom = () => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  };
-  // Follows new content only when the user hasn't scrolled up. `messages`
-  // changes as tokens stream in; `status` is intentionally NOT a dependency.
-  useEffect(() => {
-    if (atBottomRef.current) scrollToBottom();
-  }, [messages]);
-
-  const isBusy = status === "submitted" || status === "streaming";
-
-  const submit = async (text: string) => {
-    const t = text.trim();
-    if (!t || isBusy) return;
-    setInput("");
-    // Sending is a deliberate action — show the new message and the reply.
-    atBottomRef.current = true;
-    await sendMessage({ text: t });
-  };
-
+function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => void }) {
+  const { t } = useI18n();
   const exp = doc.explanation ?? {};
 
   return (
@@ -384,136 +284,36 @@ function ExplanationPanel({
       </div>
 
       {exp.explanation && (
-        <ExplanationCard icon={GraduationCap} title={t((d) => d.doc.sections.explanation)} tone="emerald">
+        <ExplanationCard
+          icon={GraduationCap}
+          title={t((d) => d.doc.sections.explanation)}
+          tone="emerald"
+        >
           <RichAnswer text={exp.explanation} />
         </ExplanationCard>
       )}
 
-      {/* Conversation — the natural next step after reading the answer. Placed
-          right under the explanation, and given real visual weight, so students
-          actually notice they can keep asking. The reference sections follow. */}
-      <div className="overflow-hidden rounded-3xl border border-emerald/25 bg-card shadow-[var(--shadow-soft)] ring-1 ring-emerald/10">
-        <div className="flex items-start gap-3 border-b border-border bg-emerald-soft/60 px-5 py-4">
-          <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald text-white shadow-[var(--shadow-soft)]">
-            <MessageCircle className="h-4.5 w-4.5" />
-          </div>
-          <div className="min-w-0">
-            <h3 className="text-[15px] font-semibold leading-tight text-foreground">
-              {t((d) => d.doc.askTitle)}
-            </h3>
-            <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">
-              {t((d) => d.doc.askSubtitle)}
-            </p>
-          </div>
+      {/* Conversation CTA — the natural next step after reading the answer.
+          Opens a dedicated, full-height conversation for this analysis instead
+          of a cramped embedded box. The reference sections follow. */}
+      <Link
+        to="/doc/$docId/chat"
+        params={{ docId: doc.id }}
+        className="group flex items-center gap-4 rounded-3xl border border-emerald/25 bg-card p-5 shadow-[var(--shadow-soft)] ring-1 ring-emerald/10 transition hover:border-emerald/40 hover:shadow-[var(--shadow-md)]"
+      >
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald text-white shadow-[var(--shadow-soft)]">
+          <MessageCircle className="h-5 w-5" />
         </div>
-
-        <div
-          ref={scrollRef}
-          onScroll={onScroll}
-          className="max-h-[520px] min-h-[200px] overflow-y-auto overscroll-contain px-4 py-4 sm:px-5"
-        >
-          {messages.length === 0 && (
-            <div className="flex h-[168px] items-center justify-center px-6">
-              <p className="max-w-[280px] text-center text-[14px] leading-relaxed text-muted-foreground">
-                {t((d) => d.doc.empty)}
-              </p>
-            </div>
-          )}
-          <div className="space-y-4">
-            <AnimatePresence initial={false}>
-              {messages.map((m, idx) => {
-                const text = m.parts
-                  .map((p) => (p.type === "text" ? p.text : ""))
-                  .join("");
-                const isUser = m.role === "user";
-                const isLastAssistant =
-                  !isUser &&
-                  messages.slice(idx + 1).every((mm) => mm.role !== "assistant");
-                return (
-                  <motion.div
-                    key={m.id}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, ease: EASE.out }}
-                    className={isUser ? "flex justify-end" : ""}
-                  >
-                    {isUser ? (
-                      <div className="max-w-[85%] rounded-2xl bg-foreground px-4 py-2.5 text-[14.5px] leading-relaxed text-background [overflow-wrap:anywhere]">
-                        {text}
-                      </div>
-                    ) : (
-                      <div>
-                        <AnswerRenderer text={text} compact />
-                        {isLastAssistant && !isBusy && (
-                          <QuickActionsBar onPick={submit} disabled={isBusy} />
-                        )}
-                      </div>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-            {isBusy && (
-              <div className="flex justify-start">
-                <div className="rounded-2xl bg-surface-muted px-4 py-2.5">
-                  <div className="flex gap-1">
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.3s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.15s]" />
-                    <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-muted-foreground" />
-                  </div>
-                </div>
-              </div>
-            )}
+        <div className="min-w-0 flex-1">
+          <div className="text-[16px] font-semibold leading-tight text-foreground">
+            {t((d) => d.doc.askCta)}
           </div>
+          <p className="mt-0.5 text-[13.5px] leading-snug text-muted-foreground">
+            {t((d) => d.doc.askSubtitle)}
+          </p>
         </div>
-
-        <div className="border-t border-border px-3 py-3">
-          {messages.length === 0 && (
-            <div className="mb-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {quickActions.map((a) => (
-                <button
-                  key={a.id}
-                  onClick={() => submit(a.prompt)}
-                  disabled={isBusy}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5 text-[12px] font-semibold text-foreground hover:border-border-strong disabled:opacity-50"
-                >
-                  <a.icon className="h-3 w-3 text-emerald" />
-                  {a.label}
-                </button>
-              ))}
-            </div>
-          )}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              submit(input);
-            }}
-            className="flex items-end gap-2 rounded-2xl border border-border bg-surface p-2 focus-within:border-emerald"
-          >
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  submit(input);
-                }
-              }}
-              rows={1}
-              placeholder={t((d) => d.doc.askPlaceholder)}
-              className="min-h-[36px] max-h-32 flex-1 resize-none border-0 bg-transparent px-2 py-2 text-[15px] outline-none placeholder:text-muted-foreground"
-            />
-            <button
-              type="submit"
-              disabled={!input.trim() || isBusy}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-foreground text-background transition disabled:opacity-40"
-              aria-label="Send"
-            >
-              {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-            </button>
-          </form>
-        </div>
-      </div>
+        <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-emerald" />
+      </Link>
 
       {/* Reference sections — available for students who want to go deeper,
           after the conversation invitation. */}
@@ -544,7 +344,6 @@ function ExplanationPanel({
     </div>
   );
 }
-
 
 function FailedView({ error, onRetry }: { error: string | null; onRetry: () => void }) {
   const { t } = useI18n();
