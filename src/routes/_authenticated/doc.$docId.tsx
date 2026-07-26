@@ -331,9 +331,25 @@ function ExplanationPanel({
     onError: (e) => toast.error(e.message || "Chat error"),
   });
 
+  // "Stick to bottom only while the reader is already there" — the same
+  // behaviour as Claude/ChatGPT. We follow the stream as it grows if the user
+  // is at the bottom, but never force the viewport down (so finishing a
+  // generation, or the status flipping, can't yank the page to the end).
+  const atBottomRef = useRef(true);
+  const onScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    atBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+  };
+  const scrollToBottom = () => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  };
+  // Follows new content only when the user hasn't scrolled up. `messages`
+  // changes as tokens stream in; `status` is intentionally NOT a dependency.
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages.length, status]);
+    if (atBottomRef.current) scrollToBottom();
+  }, [messages]);
 
   const isBusy = status === "submitted" || status === "streaming";
 
@@ -341,6 +357,8 @@ function ExplanationPanel({
     const t = text.trim();
     if (!t || isBusy) return;
     setInput("");
+    // Sending is a deliberate action — show the new message and the reply.
+    atBottomRef.current = true;
     await sendMessage({ text: t });
   };
 
@@ -402,7 +420,11 @@ function ExplanationPanel({
           </div>
         </div>
 
-        <div ref={scrollRef} className="max-h-[520px] overflow-y-auto px-4 py-4 sm:px-5">
+        <div
+          ref={scrollRef}
+          onScroll={onScroll}
+          className="max-h-[520px] overflow-y-auto overscroll-contain px-4 py-4 sm:px-5"
+        >
           {messages.length === 0 && (
             <p className="py-6 text-center text-sm text-muted-foreground">
               {t((d) => d.doc.empty)}

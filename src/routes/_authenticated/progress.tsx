@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ResponsiveContainer,
@@ -378,6 +378,17 @@ function GradeSheet({
   const [note, setNote] = useState<string>(initial?.note ?? "");
   const [saving, setSaving] = useState(false);
 
+  // Lock the page behind the sheet: without this, dragging on the sheet (or its
+  // scrim) scrolls / rubber-bands the page underneath, which reads as the modal
+  // being dragged around. Restored on close.
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const g = parseFloat(grade.replace(",", "."));
@@ -427,7 +438,7 @@ function GradeSheet({
         // Cap the height and scroll inside so a long form (or the on-screen
         // keyboard) can never push the submit button out of reach, and clear
         // the home indicator on the bottom-sheet layout.
-        className="max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[85dvh] sm:rounded-3xl"
+        className="max-h-[90dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-t-3xl bg-card p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:max-h-[85dvh] sm:rounded-3xl"
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-[18px] font-bold text-foreground">

@@ -406,15 +406,29 @@ export const en = {
     },
   },
   home: {
-    greetings: {
+    greet: {
       morning: "Good morning, {{name}}",
       afternoon: "Good afternoon, {{name}}",
       evening: "Good evening, {{name}}",
+      night: "Still up, {{name}}?",
+      back1: "Good to see you again, {{name}}",
+      back2: "Welcome back, {{name}}",
+      back3: "Nice to have you back, {{name}}",
+      away: "It's been a little while, {{name}}",
+      milestone: "{{count}} lessons in already, {{name}}",
+      idle: "Need a hand, {{name}}?",
     },
-    greetingsAnon: {
+    greetAnon: {
       morning: "Good morning,",
       afternoon: "Good afternoon,",
       evening: "Good evening,",
+      night: "Still up?",
+      back1: "Good to see you again,",
+      back2: "Welcome back,",
+      back3: "Nice to have you back,",
+      away: "It's been a little while,",
+      milestone: "{{count}} lessons in already,",
+      idle: "Need a hand?",
     },
     subhead: "What are we learning today?",
     upload: "Upload a lesson",

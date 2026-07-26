@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { motion } from "framer-motion";
-import { useEffect, useMemo } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 import { listDocuments, toggleFavorite } from "@/lib/documents.functions";
 import { relativeTime } from "@/lib/relative-time";
 import { AppHeader } from "@/components/AppHeader";
@@ -10,7 +10,7 @@ import { UploadArea } from "@/components/UploadArea";
 import { ReferralCard } from "@/components/ReferralCard";
 import { EASE } from "@/lib/motion";
 import { subjectIcon } from "@/lib/subject-icon";
-import { daypart } from "@/lib/greeting";
+import { pickGreeting } from "@/lib/greeting";
 import { useI18n } from "@/hooks/useI18n";
 import {
   BookOpen,
@@ -70,18 +70,69 @@ function Home() {
       return {};
     }
   }, []);
+  // The onboarding first name is the app's reference name. Never the Google
+  // profile name — only the name the student chose. Email prefix is a last
+  // resort when onboarding was skipped.
   const greetName = useMemo(() => {
-    const md = user?.user_metadata as Record<string, unknown> | undefined;
-    return (
-      (md?.full_name as string | undefined) ||
-      (md?.name as string | undefined) ||
-      (onboarding.name && onboarding.name.trim() ? onboarding.name.trim() : null) ||
-      (user?.email ? user.email.split("@")[0] : null) ||
-      null
-    );
-  }, [user, onboarding]);
-  // Local morning / afternoon / evening, from the student's country timezone.
-  const part = daypart(onboarding.country);
+    const n = onboarding.name && onboarding.name.trim();
+    if (n) return n;
+    return user?.email ? user.email.split("@")[0] : null;
+  }, [onboarding, user]);
+
+  // Read the previous visit before recording this one, so the greeting can
+  // react to it (same-day return, back after a few days, …).
+  const prevVisit = useMemo(() => {
+    try {
+      const lv = window.localStorage.getItem("forma:lastVisit");
+      const vc = window.localStorage.getItem("forma:visits");
+      return { lastVisitMs: lv ? Number(lv) : null, visitCount: vc ? Number(vc) : 0 };
+    } catch {
+      return { lastVisitMs: null, visitCount: 0 };
+    }
+  }, []);
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("forma:lastVisit", String(Date.now()));
+      window.localStorage.setItem("forma:visits", String((prevVisit.visitCount ?? 0) + 1));
+    } catch {
+      // greetings just fall back to time-of-day
+    }
+  }, [prevVisit.visitCount]);
+
+  // Gently refresh the greeting once the student pauses for a while.
+  const [idle, setIdle] = useState(false);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const arm = () => {
+      setIdle(false);
+      clearTimeout(timer);
+      timer = setTimeout(() => setIdle(true), 90_000);
+    };
+    const events: (keyof WindowEventMap)[] = [
+      "pointerdown",
+      "keydown",
+      "scroll",
+      "touchstart",
+      "mousemove",
+    ];
+    events.forEach((e) => window.addEventListener(e, arm, { passive: true }));
+    arm();
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, arm));
+    };
+  }, []);
+
+  const g = pickGreeting({
+    countryCode: onboarding.country,
+    lastVisitMs: prevVisit.lastVisitMs,
+    visitCount: prevVisit.visitCount,
+    docCount: (data ?? []).length,
+    idle,
+  });
+  const greeting = greetName
+    ? t((d) => d.home.greet[g.key], { name: capitalize(greetName), count: g.count ?? 0 })
+    : t((d) => d.home.greetAnon[g.key], { count: g.count ?? 0 });
 
   useEffect(() => {
     // If user hasn't done onboarding, take them through it once.
@@ -109,9 +160,18 @@ function Home() {
           className="mb-8 flex flex-col gap-1"
         >
           <h1 className="text-[30px] font-bold leading-tight tracking-tight text-foreground sm:text-[38px]">
-            {greetName
-              ? t((d) => d.home.greetings[part], { name: capitalize(greetName) })
-              : t((d) => d.home.greetingsAnon[part])}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={greeting}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.3, ease: EASE.out }}
+                className="inline-block"
+              >
+                {greeting}
+              </motion.span>
+            </AnimatePresence>
           </h1>
           <p className="text-[15px] text-muted-foreground sm:text-[17px]">
             {t((d) => d.home.subhead)}
