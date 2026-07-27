@@ -60,9 +60,7 @@ function Library() {
           <h1 className="text-[30px] font-bold leading-tight tracking-tight text-foreground sm:text-[38px]">
             {t((d) => d.common.library)}
           </h1>
-          <p className="text-[15px] text-muted-foreground">
-            {t((d) => d.home.recentEmpty)}
-          </p>
+          <p className="text-[15px] text-muted-foreground">{t((d) => d.libraryPage.subtitle)}</p>
         </div>
 
         {isLoading && (
@@ -75,75 +73,84 @@ function Library() {
           {(data ?? []).map((d, i) => {
             const Icon = subjectIcon(d.subject);
             return (
-            <motion.div
-              key={d.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: i * 0.02, ease: EASE.out }}
-              whileHover={{ y: -2 }}
-              className="group relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-colors hover:border-border-strong"
-            >
-              <Link
-                to="/doc/$docId"
-                params={{ docId: d.id }}
-                className="absolute inset-0"
-                aria-label={d.title}
-              />
-              <div className="relative flex items-start justify-between gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-soft">
-                  <Icon className="h-5 w-5 text-emerald" strokeWidth={1.9} />
+              <motion.div
+                key={d.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.02, ease: EASE.out }}
+                whileHover={{ y: -2 }}
+                className="group relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] transition-colors hover:border-border-strong"
+              >
+                <Link
+                  to="/doc/$docId"
+                  params={{ docId: d.id }}
+                  className="absolute inset-0"
+                  aria-label={d.title}
+                />
+                <div className="relative flex items-start justify-between gap-3">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-soft">
+                    <Icon className="h-5 w-5 text-emerald" strokeWidth={1.9} />
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <StatusBadge status={d.status} />
+                    <button
+                      onClick={async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        await fav({ data: { id: d.id, favorite: !d.favorite } });
+                        qc.invalidateQueries({ queryKey: ["documents"] });
+                      }}
+                      className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface transition hover:border-border-strong"
+                    >
+                      <Star
+                        className={`h-3.5 w-3.5 ${
+                          d.favorite ? "fill-amber-500 text-amber-500" : "text-muted-foreground"
+                        }`}
+                      />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <StatusBadge status={d.status} />
-                  <button
-                    onClick={async (e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      await fav({ data: { id: d.id, favorite: !d.favorite } });
-                      qc.invalidateQueries({ queryKey: ["documents"] });
-                    }}
-                    className="relative z-10 flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface transition hover:border-border-strong"
-                  >
-                    <Star
-                      className={`h-3.5 w-3.5 ${
-                        d.favorite ? "fill-amber-500 text-amber-500" : "text-muted-foreground"
-                      }`}
-                    />
-                  </button>
+                <h3 className="relative mt-4 line-clamp-2 text-[16px] font-bold text-foreground">
+                  {d.title}
+                </h3>
+                <div className="relative mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+                  {d.subject && <span>{d.subject}</span>}
+                  {d.subject && (d.level || d.chapter) && <span>·</span>}
+                  {d.level && <span>{d.level}</span>}
+                  {d.level && d.chapter && <span>·</span>}
+                  {d.chapter && <span>{d.chapter}</span>}
                 </div>
-              </div>
-              <h3 className="relative mt-4 line-clamp-2 text-[16px] font-bold text-foreground">
-                {d.title}
-              </h3>
-              <div className="relative mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
-                {d.subject && <span>{d.subject}</span>}
-                {d.subject && (d.level || d.chapter) && <span>·</span>}
-                {d.level && <span>{d.level}</span>}
-                {d.level && d.chapter && <span>·</span>}
-                {d.chapter && <span>{d.chapter}</span>}
-              </div>
-              <div className="relative mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-                <span>
-                  {relativeTime(d.created_at, {
-                    justNow: t((d2) => d2.common.justNow),
-                    min: t((d2) => d2.common.minutesAgo),
-                    h: t((d2) => d2.common.hoursAgo),
-                    d: t((d2) => d2.common.daysAgo),
-                  })}
-                </span>
-                <span className="inline-flex items-center gap-1 font-semibold text-foreground opacity-0 transition-opacity group-hover:opacity-100">
-                  {t((d2) => d2.common.continue)}
-                  <ArrowRight className="h-3 w-3" />
-                </span>
-              </div>
-            </motion.div>
+                <div className="relative mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>
+                    {relativeTime(d.created_at, {
+                      justNow: t((d2) => d2.common.justNow),
+                      min: t((d2) => d2.common.minutesAgo),
+                      h: t((d2) => d2.common.hoursAgo),
+                      d: t((d2) => d2.common.daysAgo),
+                    })}
+                  </span>
+                  <span className="inline-flex items-center gap-1 font-semibold text-foreground opacity-0 transition-opacity group-hover:opacity-100">
+                    {t((d2) => d2.common.continue)}
+                    <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </motion.div>
             );
           })}
         </div>
 
         {!isLoading && (data ?? []).length === 0 && (
-          <div className="rounded-3xl border border-dashed border-border bg-surface p-10 text-center text-sm text-muted-foreground">
-            {t((d) => d.home.recentEmpty)}
+          <div className="rounded-3xl border border-dashed border-border bg-surface p-10 text-center">
+            <p className="text-sm text-muted-foreground">{t((d) => d.libraryPage.empty)}</p>
+            {/* Without a way out, an empty library is a dead end: uploading
+                lives on Home, and nothing here says so. */}
+            <Link
+              to="/home"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-[13.5px] font-semibold text-background transition hover:opacity-90"
+            >
+              {t((d) => d.libraryPage.emptyCta)}
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
         )}
       </main>
@@ -172,4 +179,3 @@ function StatusBadge({ status }: { status: string }) {
     </span>
   );
 }
-

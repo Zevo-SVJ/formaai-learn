@@ -56,6 +56,11 @@ export const en = {
   progress: {
     nav: "Progress",
   },
+  libraryPage: {
+    subtitle: "Every lesson you have analyzed, in one place.",
+    empty: "Nothing saved yet. Analyze your first lesson and it will show up here.",
+    emptyCta: "Analyze a lesson",
+  },
   progressPage: {
     title: "Your progress",
     subtitle: "Track every grade and watch your averages grow.",
@@ -452,6 +457,7 @@ export const en = {
     retry: "Try again",
     working: "Working",
     workingHint: "Forma AI is really reading your document. This usually takes 5 to 15 seconds.",
+    stalled: "This is taking longer than expected. The analysis may have been interrupted.",
     askTitle: "Keep going with your tutor",
     askSubtitle: "You've got the answer. Now ask anything — Forma explains it step by step.",
     askCta: "Ask a question about this analysis",

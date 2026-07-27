@@ -58,6 +58,11 @@ export const fr: Dict = {
   progress: {
     nav: "Progrès",
   },
+  libraryPage: {
+    subtitle: "Toutes tes leçons analysées, au même endroit.",
+    empty: "Rien d'enregistré pour l'instant. Analyse ta première leçon et elle apparaîtra ici.",
+    emptyCta: "Analyser une leçon",
+  },
   progressPage: {
     title: "Tes progrès",
     subtitle: "Suis chaque note et regarde tes moyennes évoluer.",
@@ -456,6 +461,7 @@ export const fr: Dict = {
     retry: "Réessayer",
     working: "En cours",
     workingHint: "Forma lit vraiment ton document. Ça prend d'habitude 5 à 15 secondes.",
+    stalled: "Ça prend plus de temps que prévu. L'analyse a peut-être été interrompue.",
     askTitle: "Continue avec ton tuteur",
     askSubtitle: "Tu as la réponse. Pose maintenant ta question — Forma t'explique pas à pas.",
     askCta: "Poser une question sur cette analyse",

@@ -69,11 +69,14 @@ function DocPage() {
   const fav = useServerFn(toggleFavorite);
   const qc = useQueryClient();
 
+  const [stalled, setStalled] = useState(false);
+
   const { data: doc, refetch } = useQuery({
     queryKey: ["document", docId],
     queryFn: () => getDoc({ data: { id: docId } }) as Promise<Doc>,
     refetchInterval: (q) => {
       const d = q.state.data as Doc | undefined;
+      if (stalled) return false;
       return d && d.status !== "ready" && d.status !== "failed" ? 2000 : false;
     },
   });
@@ -86,6 +89,22 @@ function DocPage() {
   useEffect(() => {
     if (pending) sawPending.current = true;
   }, [pending]);
+
+  // If the worker is killed mid-analysis (a serverless timeout, an evicted
+  // instance) nothing gets to mark the row, so it stays "analyzing" and this
+  // page would poll every two seconds forever behind a ceremony that never
+  // finishes. After a wait far longer than a real analysis, stop and offer the
+  // retry instead of hanging.
+  const STALL_MS = 120_000;
+  useEffect(() => {
+    if (!pending) {
+      setStalled(false);
+      return;
+    }
+    const id = window.setTimeout(() => setStalled(true), STALL_MS);
+    return () => window.clearTimeout(id);
+  }, [pending]);
+
   const showResults = !!doc && doc.status === "ready" && (!sawPending.current || ceremonyDone);
 
   const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -157,10 +176,11 @@ function DocPage() {
           </div>
         )}
 
-        {doc && doc.status === "failed" && (
+        {doc && (doc.status === "failed" || (pending && stalled)) && (
           <FailedView
-            error={doc.error}
+            error={doc.status === "failed" ? doc.error : t((d) => d.doc.stalled)}
             onRetry={async () => {
+              setStalled(false);
               try {
                 await retry({ data: { documentId: doc.id } });
                 refetch();
@@ -171,7 +191,7 @@ function DocPage() {
           />
         )}
 
-        {doc && doc.status !== "failed" && !showResults && (
+        {doc && doc.status !== "failed" && !stalled && !showResults && (
           <AnalysisCeremony
             title={doc.title}
             mime={doc.mime}

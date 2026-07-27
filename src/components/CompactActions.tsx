@@ -16,6 +16,15 @@ export function CompactActions({ size = "md" }: { size?: "sm" | "md" }) {
   const pad = size === "sm" ? "px-4 py-2.5 text-[13.5px]" : "px-5 py-3 text-sm";
   const icon = size === "sm" ? "h-4 w-4" : "h-4.5 w-4.5";
 
+  // Clearing the input's value matters: without it the browser fires no change
+  // event when the same file is chosen twice, so retrying a failed upload with
+  // the very same file would silently do nothing.
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (file) handleFile(file);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -28,14 +37,18 @@ export function CompactActions({ size = "md" }: { size?: "sm" | "md" }) {
         className={`group inline-flex items-center justify-center gap-2 rounded-full bg-foreground font-semibold text-background shadow-[var(--shadow-lift)] transition-transform hover:-translate-y-0.5 disabled:opacity-70 ${pad}`}
         disabled={!!busy}
       >
-        {busy ? <Loader2 className={`${icon} animate-spin`} /> : <Upload className={icon} strokeWidth={2.25} />}
+        {busy ? (
+          <Loader2 className={`${icon} animate-spin`} />
+        ) : (
+          <Upload className={icon} strokeWidth={2.25} />
+        )}
         {t((d) => d.compact.upload)}
         <input
           ref={fileRef}
           type="file"
           accept={ACCEPT}
           className="hidden"
-          onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+          onChange={onInputChange}
         />
       </button>
       <button
@@ -51,7 +64,7 @@ export function CompactActions({ size = "md" }: { size?: "sm" | "md" }) {
           accept="image/*"
           capture="environment"
           className="hidden"
-          onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+          onChange={onInputChange}
         />
       </button>
     </motion.div>

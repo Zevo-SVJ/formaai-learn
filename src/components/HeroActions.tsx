@@ -67,8 +67,13 @@ export function HeroActions({ secondary = true }: { secondary?: boolean } = {}) 
     },
   ];
 
-  const onPick = async (file: File | undefined) => {
+  // Clearing the input's value matters: without it the browser fires no change
+  // event when the same file is chosen twice, so retrying a failed upload with
+  // the very same photo would silently do nothing.
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setOpen(false);
+    const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
     await handleFile(file);
   };
@@ -86,7 +91,11 @@ export function HeroActions({ secondary = true }: { secondary?: boolean } = {}) 
           className="forma-cta group inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-[15px] font-semibold hover:-translate-y-0.5 disabled:opacity-70"
           disabled={!!busy}
         >
-          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" strokeWidth={2.4} />}
+          {busy ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Upload className="h-4 w-4" strokeWidth={2.4} />
+          )}
           {t((d) => d.hero.menu.upload)}
         </button>
         {secondary && (
@@ -101,18 +110,38 @@ export function HeroActions({ secondary = true }: { secondary?: boolean } = {}) 
       </motion.div>
 
       {/* Hidden file inputs — outside the sheet so they're always in the tree. */}
-      <input ref={imgRef} type="file" accept="image/*" className="hidden"
-             onChange={(e) => onPick(e.target.files?.[0] ?? undefined)} />
-      <input ref={pdfRef} type="file" accept="application/pdf" className="hidden"
-             onChange={(e) => onPick(e.target.files?.[0] ?? undefined)} />
+      <input ref={imgRef} type="file" accept="image/*" className="hidden" onChange={onPick} />
+      <input
+        ref={pdfRef}
+        type="file"
+        accept="application/pdf"
+        className="hidden"
+        onChange={onPick}
+      />
       {/* The capture inputs stay rendered rather than display:none. Chrome
           builds that use an in-page capture surface instead of the system
           camera activity need a layout box to draw into; sr-only keeps them
           invisible without removing it. Gallery and PDF are left untouched. */}
-      <input ref={photoRef} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} aria-hidden="true"
-             onChange={(e) => onPick(e.target.files?.[0] ?? undefined)} />
-      <input ref={scanRef} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} aria-hidden="true"
-             onChange={(e) => onPick(e.target.files?.[0] ?? undefined)} />
+      <input
+        ref={photoRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={onPick}
+      />
+      <input
+        ref={scanRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={onPick}
+      />
 
       <AnimatePresence>
         {open && (

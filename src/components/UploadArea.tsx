@@ -94,6 +94,15 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
     [analyze, navigate, t],
   );
 
+  // Clearing the input's value matters: without it the browser fires no change
+  // event when the same file is chosen twice, so retrying a failed upload with
+  // the very same file would silently do nothing.
+  const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (file) handleFile(file);
+  };
+
   // Listen for global upload events (e.g. from Home quick actions).
   useEffect(() => {
     const onEvt = (e: Event) => {
@@ -124,7 +133,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
           type="file"
           accept={ACCEPT}
           className="hidden"
-          onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+          onChange={onInputChange}
         />
       </button>
     );
@@ -175,7 +184,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
         type="file"
         accept={ACCEPT}
         className="hidden"
-        onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+        onChange={onInputChange}
       />
 
       <div className="relative flex flex-col items-center text-center">
@@ -186,12 +195,8 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
             <Upload className="h-7 w-7 text-emerald" strokeWidth={2.25} />
           )}
         </div>
-        <h3 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-          {title}
-        </h3>
-        <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-[15px]">
-          {sub}
-        </p>
+        <h3 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">{title}</h3>
+        <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-[15px]">{sub}</p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-medium text-muted-foreground">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-muted px-3 py-1.5">
@@ -210,9 +215,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
             <Upload className="h-4 w-4" strokeWidth={2.4} />
             {t((d) => d.upload.chooseFile)}
           </span>
-          <span className="text-xs text-muted-foreground">
-            {t((d) => d.upload.orDragDrop)}
-          </span>
+          <span className="text-xs text-muted-foreground">{t((d) => d.upload.orDragDrop)}</span>
         </div>
         <p className="mt-2 text-[11px] text-muted-foreground">{t((d) => d.hero.ctaHint)}</p>
       </div>
