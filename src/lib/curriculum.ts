@@ -1,103 +1,698 @@
 // Full curriculum used across landing carousels, onboarding search and Progress subject picker.
 // Groups are used for the searchable grouped picker.
+/** Names keyed by locale. English is the fallback for anything unsupported. */
+export type LocalizedName = Record<string, string>;
+
 export type SubjectItem = {
   id: string;
-  name: string;
-  name_fr: string;
+  names: LocalizedName;
   icon: string; // emoji — light-weight, premium enough and consistent across platforms
-  group: string;
-  group_fr: string;
+  groups: LocalizedName;
 };
 
 const G = {
-  sciences: { en: "Sciences", fr: "Sciences" },
-  languages: { en: "Languages", fr: "Langues" },
-  humanities: { en: "Humanities", fr: "Sciences humaines" },
-  tech: { en: "Technology", fr: "Technologie" },
-  business: { en: "Business", fr: "Économie" },
-  arts: { en: "Arts", fr: "Arts" },
-  health: { en: "Health", fr: "Santé" },
-  university: { en: "University", fr: "Université" },
+  sciences: {
+    en: "Sciences",
+    fr: "Sciences",
+    es: "Ciencias",
+    de: "Naturwissenschaften",
+    pt: "Ciências",
+    it: "Scienze",
+  },
+  languages: {
+    en: "Languages",
+    fr: "Langues",
+    es: "Idiomas",
+    de: "Sprachen",
+    pt: "Línguas",
+    it: "Lingue",
+  },
+  humanities: {
+    en: "Humanities",
+    fr: "Sciences humaines",
+    es: "Humanidades",
+    de: "Geisteswissenschaften",
+    pt: "Humanidades",
+    it: "Materie umanistiche",
+  },
+  tech: {
+    en: "Technology",
+    fr: "Technologie",
+    es: "Tecnología",
+    de: "Technik",
+    pt: "Tecnologia",
+    it: "Tecnologia",
+  },
+  business: {
+    en: "Business",
+    fr: "Économie",
+    es: "Economía",
+    de: "Wirtschaft",
+    pt: "Economia",
+    it: "Economia",
+  },
+  arts: { en: "Arts", fr: "Arts", es: "Arte", de: "Kunst", pt: "Artes", it: "Arte" },
+  health: { en: "Health", fr: "Santé", es: "Salud", de: "Gesundheit", pt: "Saúde", it: "Salute" },
+  university: {
+    en: "University",
+    fr: "Université",
+    es: "Universidad",
+    de: "Universität",
+    pt: "Universidade",
+    it: "Università",
+  },
 };
 
-function make(
-  id: string,
-  name: string,
-  name_fr: string,
-  icon: string,
-  group: keyof typeof G,
-): SubjectItem {
-  return { id, name, name_fr, icon, group: G[group].en, group_fr: G[group].fr };
+function make(id: string, names: LocalizedName, icon: string, group: keyof typeof G): SubjectItem {
+  return { id, names, icon, groups: G[group] };
 }
 
 export const SUBJECTS: SubjectItem[] = [
   // Sciences
-  make("mathematics", "Mathematics", "Mathématiques", "∑", "sciences"),
-  make("algebra", "Algebra", "Algèbre", "𝑥", "sciences"),
-  make("geometry", "Geometry", "Géométrie", "△", "sciences"),
-  make("calculus", "Calculus", "Analyse", "∫", "sciences"),
-  make("statistics", "Statistics", "Statistiques", "📊", "sciences"),
-  make("probability", "Probability", "Probabilités", "🎲", "sciences"),
-  make("physics", "Physics", "Physique", "⚛", "sciences"),
-  make("chemistry", "Chemistry", "Chimie", "⚗", "sciences"),
-  make("physics-chemistry", "Physics & Chemistry", "Physique-Chimie", "🧪", "sciences"),
-  make("biology", "Biology", "Biologie", "🧬", "sciences"),
-  make("svt", "Life & Earth Sciences", "SVT", "🌱", "sciences"),
-  make("mechanics", "Mechanics", "Mécanique", "⚙", "sciences"),
+  make(
+    "mathematics",
+    {
+      en: "Mathematics",
+      fr: "Mathématiques",
+      es: "Matemáticas",
+      de: "Mathematik",
+      pt: "Matemática",
+      it: "Matematica",
+    },
+    "∑",
+    "sciences",
+  ),
+  make(
+    "algebra",
+    { en: "Algebra", fr: "Algèbre", es: "Álgebra", de: "Algebra", pt: "Álgebra", it: "Algebra" },
+    "𝑥",
+    "sciences",
+  ),
+  make(
+    "geometry",
+    {
+      en: "Geometry",
+      fr: "Géométrie",
+      es: "Geometría",
+      de: "Geometrie",
+      pt: "Geometria",
+      it: "Geometria",
+    },
+    "△",
+    "sciences",
+  ),
+  make(
+    "calculus",
+    {
+      en: "Calculus",
+      fr: "Analyse",
+      es: "Cálculo",
+      de: "Analysis",
+      pt: "Cálculo",
+      it: "Analisi matematica",
+    },
+    "∫",
+    "sciences",
+  ),
+  make(
+    "statistics",
+    {
+      en: "Statistics",
+      fr: "Statistiques",
+      es: "Estadística",
+      de: "Statistik",
+      pt: "Estatística",
+      it: "Statistica",
+    },
+    "📊",
+    "sciences",
+  ),
+  make(
+    "probability",
+    {
+      en: "Probability",
+      fr: "Probabilités",
+      es: "Probabilidad",
+      de: "Wahrscheinlichkeit",
+      pt: "Probabilidade",
+      it: "Probabilità",
+    },
+    "🎲",
+    "sciences",
+  ),
+  make(
+    "physics",
+    { en: "Physics", fr: "Physique", es: "Física", de: "Physik", pt: "Física", it: "Fisica" },
+    "⚛",
+    "sciences",
+  ),
+  make(
+    "chemistry",
+    { en: "Chemistry", fr: "Chimie", es: "Química", de: "Chemie", pt: "Química", it: "Chimica" },
+    "⚗",
+    "sciences",
+  ),
+  make(
+    "physics-chemistry",
+    {
+      en: "Physics & Chemistry",
+      fr: "Physique-Chimie",
+      es: "Física y Química",
+      de: "Physik und Chemie",
+      pt: "Física e Química",
+      it: "Fisica e Chimica",
+    },
+    "🧪",
+    "sciences",
+  ),
+  make(
+    "biology",
+    {
+      en: "Biology",
+      fr: "Biologie",
+      es: "Biología",
+      de: "Biologie",
+      pt: "Biologia",
+      it: "Biologia",
+    },
+    "🧬",
+    "sciences",
+  ),
+  make(
+    "svt",
+    {
+      en: "Life & Earth Sciences",
+      fr: "SVT",
+      es: "Biología y Geología",
+      de: "Biologie und Erdkunde",
+      pt: "Biologia e Geologia",
+      it: "Scienze della Terra",
+    },
+    "🌱",
+    "sciences",
+  ),
+  make(
+    "mechanics",
+    {
+      en: "Mechanics",
+      fr: "Mécanique",
+      es: "Mecánica",
+      de: "Mechanik",
+      pt: "Mecânica",
+      it: "Meccanica",
+    },
+    "⚙",
+    "sciences",
+  ),
   // Languages
-  make("french", "French", "Français", "🇫🇷", "languages"),
-  make("english", "English", "Anglais", "🇬🇧", "languages"),
-  make("spanish", "Spanish", "Espagnol", "🇪🇸", "languages"),
-  make("german", "German", "Allemand", "🇩🇪", "languages"),
-  make("italian", "Italian", "Italien", "🇮🇹", "languages"),
-  make("latin", "Latin", "Latin", "🏛", "languages"),
-  make("ancient-greek", "Ancient Greek", "Grec ancien", "Ω", "languages"),
-  make("literature", "Literature", "Littérature", "📖", "languages"),
+  make(
+    "french",
+    {
+      en: "French",
+      fr: "Français",
+      es: "Francés",
+      de: "Französisch",
+      pt: "Francês",
+      it: "Francese",
+    },
+    "🇫🇷",
+    "languages",
+  ),
+  make(
+    "english",
+    { en: "English", fr: "Anglais", es: "Inglés", de: "Englisch", pt: "Inglês", it: "Inglese" },
+    "🇬🇧",
+    "languages",
+  ),
+  make(
+    "spanish",
+    {
+      en: "Spanish",
+      fr: "Espagnol",
+      es: "Español",
+      de: "Spanisch",
+      pt: "Espanhol",
+      it: "Spagnolo",
+    },
+    "🇪🇸",
+    "languages",
+  ),
+  make(
+    "german",
+    { en: "German", fr: "Allemand", es: "Alemán", de: "Deutsch", pt: "Alemão", it: "Tedesco" },
+    "🇩🇪",
+    "languages",
+  ),
+  make(
+    "italian",
+    {
+      en: "Italian",
+      fr: "Italien",
+      es: "Italiano",
+      de: "Italienisch",
+      pt: "Italiano",
+      it: "Italiano",
+    },
+    "🇮🇹",
+    "languages",
+  ),
+  make(
+    "latin",
+    { en: "Latin", fr: "Latin", es: "Latín", de: "Latein", pt: "Latim", it: "Latino" },
+    "🏛",
+    "languages",
+  ),
+  make(
+    "ancient-greek",
+    {
+      en: "Ancient Greek",
+      fr: "Grec ancien",
+      es: "Griego antiguo",
+      de: "Altgriechisch",
+      pt: "Grego antigo",
+      it: "Greco antico",
+    },
+    "Ω",
+    "languages",
+  ),
+  make(
+    "literature",
+    {
+      en: "Literature",
+      fr: "Littérature",
+      es: "Literatura",
+      de: "Literatur",
+      pt: "Literatura",
+      it: "Letteratura",
+    },
+    "📖",
+    "languages",
+  ),
   // Humanities
-  make("history", "History", "Histoire", "🏺", "humanities"),
-  make("geography", "Geography", "Géographie", "🌍", "humanities"),
-  make("history-geography", "History & Geography", "Histoire-Géographie", "🗺", "humanities"),
-  make("philosophy", "Philosophy", "Philosophie", "🦉", "humanities"),
-  make("psychology", "Psychology", "Psychologie", "🧠", "humanities"),
-  make("sociology", "Sociology", "Sociologie", "🫂", "humanities"),
-  make("political-science", "Political Science", "Sciences politiques", "🏛", "humanities"),
-  make("law", "Law", "Droit", "⚖", "humanities"),
+  make(
+    "history",
+    {
+      en: "History",
+      fr: "Histoire",
+      es: "Historia",
+      de: "Geschichte",
+      pt: "História",
+      it: "Storia",
+    },
+    "🏺",
+    "humanities",
+  ),
+  make(
+    "geography",
+    {
+      en: "Geography",
+      fr: "Géographie",
+      es: "Geografía",
+      de: "Erdkunde",
+      pt: "Geografia",
+      it: "Geografia",
+    },
+    "🌍",
+    "humanities",
+  ),
+  make(
+    "history-geography",
+    {
+      en: "History & Geography",
+      fr: "Histoire-Géographie",
+      es: "Historia y Geografía",
+      de: "Geschichte und Erdkunde",
+      pt: "História e Geografia",
+      it: "Storia e Geografia",
+    },
+    "🗺",
+    "humanities",
+  ),
+  make(
+    "philosophy",
+    {
+      en: "Philosophy",
+      fr: "Philosophie",
+      es: "Filosofía",
+      de: "Philosophie",
+      pt: "Filosofia",
+      it: "Filosofia",
+    },
+    "🦉",
+    "humanities",
+  ),
+  make(
+    "psychology",
+    {
+      en: "Psychology",
+      fr: "Psychologie",
+      es: "Psicología",
+      de: "Psychologie",
+      pt: "Psicologia",
+      it: "Psicologia",
+    },
+    "🧠",
+    "humanities",
+  ),
+  make(
+    "sociology",
+    {
+      en: "Sociology",
+      fr: "Sociologie",
+      es: "Sociología",
+      de: "Soziologie",
+      pt: "Sociologia",
+      it: "Sociologia",
+    },
+    "🫂",
+    "humanities",
+  ),
+  make(
+    "political-science",
+    {
+      en: "Political Science",
+      fr: "Sciences politiques",
+      es: "Ciencias políticas",
+      de: "Politikwissenschaft",
+      pt: "Ciência política",
+      it: "Scienze politiche",
+    },
+    "🏛",
+    "humanities",
+  ),
+  make(
+    "law",
+    { en: "Law", fr: "Droit", es: "Derecho", de: "Recht", pt: "Direito", it: "Diritto" },
+    "⚖",
+    "humanities",
+  ),
   // Technology
-  make("technology", "Technology", "Technologie", "🔧", "tech"),
-  make("computer-science", "Computer Science", "Informatique", "💻", "tech"),
-  make("snt", "Digital Sciences (SNT)", "SNT", "🌐", "tech"),
-  make("nsi", "Computer Science (NSI)", "NSI", "⌨", "tech"),
-  make("si", "Engineering Sciences (SI)", "Sciences de l'ingénieur", "🛠", "tech"),
-  make("programming", "Programming", "Programmation", "{ }", "tech"),
-  make("electronics", "Electronics", "Électronique", "🔌", "tech"),
-  make("engineering", "Engineering", "Ingénierie", "🏗", "tech"),
-  make("digital-sciences", "Digital Sciences", "Sciences numériques", "🖥", "tech"),
+  make(
+    "technology",
+    {
+      en: "Technology",
+      fr: "Technologie",
+      es: "Tecnología",
+      de: "Technik",
+      pt: "Tecnologia",
+      it: "Tecnologia",
+    },
+    "🔧",
+    "tech",
+  ),
+  make(
+    "computer-science",
+    {
+      en: "Computer Science",
+      fr: "Informatique",
+      es: "Informática",
+      de: "Informatik",
+      pt: "Informática",
+      it: "Informatica",
+    },
+    "💻",
+    "tech",
+  ),
+  make(
+    "snt",
+    {
+      en: "Digital Sciences (SNT)",
+      fr: "SNT",
+      es: "Ciencias digitales",
+      de: "Digitale Grundbildung",
+      pt: "Ciências digitais",
+      it: "Scienze digitali",
+    },
+    "🌐",
+    "tech",
+  ),
+  make(
+    "nsi",
+    {
+      en: "Computer Science (NSI)",
+      fr: "NSI",
+      es: "Informática avanzada",
+      de: "Informatik (Vertiefung)",
+      pt: "Informática avançada",
+      it: "Informatica avanzata",
+    },
+    "⌨",
+    "tech",
+  ),
+  make(
+    "si",
+    {
+      en: "Engineering Sciences (SI)",
+      fr: "Sciences de l'ingénieur",
+      es: "Ciencias de la ingeniería",
+      de: "Ingenieurwissenschaften",
+      pt: "Ciências da engenharia",
+      it: "Scienze dell'ingegneria",
+    },
+    "🛠",
+    "tech",
+  ),
+  make(
+    "programming",
+    {
+      en: "Programming",
+      fr: "Programmation",
+      es: "Programación",
+      de: "Programmierung",
+      pt: "Programação",
+      it: "Programmazione",
+    },
+    "{ }",
+    "tech",
+  ),
+  make(
+    "electronics",
+    {
+      en: "Electronics",
+      fr: "Électronique",
+      es: "Electrónica",
+      de: "Elektronik",
+      pt: "Eletrónica",
+      it: "Elettronica",
+    },
+    "🔌",
+    "tech",
+  ),
+  make(
+    "engineering",
+    {
+      en: "Engineering",
+      fr: "Ingénierie",
+      es: "Ingeniería",
+      de: "Ingenieurwesen",
+      pt: "Engenharia",
+      it: "Ingegneria",
+    },
+    "🏗",
+    "tech",
+  ),
+  make(
+    "digital-sciences",
+    {
+      en: "Digital Sciences",
+      fr: "Sciences numériques",
+      es: "Ciencias digitales",
+      de: "Digitale Wissenschaften",
+      pt: "Ciências digitais",
+      it: "Scienze digitali",
+    },
+    "🖥",
+    "tech",
+  ),
   // Business / Economics
-  make("economics", "Economics", "Économie", "📈", "business"),
-  make("ses", "Economics (SES)", "SES", "💶", "business"),
-  make("finance", "Finance", "Finance", "💰", "business"),
-  make("marketing", "Marketing", "Marketing", "📣", "business"),
-  make("management", "Management", "Management", "📋", "business"),
-  make("business", "Business", "Commerce", "🏢", "business"),
-  make("accounting", "Accounting", "Comptabilité", "🧾", "business"),
+  make(
+    "economics",
+    {
+      en: "Economics",
+      fr: "Économie",
+      es: "Economía",
+      de: "Wirtschaft",
+      pt: "Economia",
+      it: "Economia",
+    },
+    "📈",
+    "business",
+  ),
+  make(
+    "ses",
+    {
+      en: "Economics (SES)",
+      fr: "SES",
+      es: "Economía y sociología",
+      de: "Wirtschaft und Sozialkunde",
+      pt: "Economia e sociologia",
+      it: "Economia e sociologia",
+    },
+    "💶",
+    "business",
+  ),
+  make(
+    "finance",
+    { en: "Finance", fr: "Finance", es: "Finanzas", de: "Finanzen", pt: "Finanças", it: "Finanza" },
+    "💰",
+    "business",
+  ),
+  make(
+    "marketing",
+    {
+      en: "Marketing",
+      fr: "Marketing",
+      es: "Marketing",
+      de: "Marketing",
+      pt: "Marketing",
+      it: "Marketing",
+    },
+    "📣",
+    "business",
+  ),
+  make(
+    "management",
+    {
+      en: "Management",
+      fr: "Management",
+      es: "Gestión",
+      de: "Management",
+      pt: "Gestão",
+      it: "Management",
+    },
+    "📋",
+    "business",
+  ),
+  make(
+    "business",
+    {
+      en: "Business",
+      fr: "Commerce",
+      es: "Comercio",
+      de: "Handel",
+      pt: "Comércio",
+      it: "Commercio",
+    },
+    "🏢",
+    "business",
+  ),
+  make(
+    "accounting",
+    {
+      en: "Accounting",
+      fr: "Comptabilité",
+      es: "Contabilidad",
+      de: "Rechnungswesen",
+      pt: "Contabilidade",
+      it: "Contabilità",
+    },
+    "🧾",
+    "business",
+  ),
   // Arts
-  make("art", "Art", "Arts plastiques", "🎨", "arts"),
-  make("music", "Music", "Musique", "🎵", "arts"),
-  make("design", "Design", "Design", "✏", "arts"),
-  make("architecture", "Architecture", "Architecture", "🏛", "arts"),
+  make(
+    "art",
+    {
+      en: "Art",
+      fr: "Arts plastiques",
+      es: "Educación plástica",
+      de: "Kunst",
+      pt: "Artes visuais",
+      it: "Arte",
+    },
+    "🎨",
+    "arts",
+  ),
+  make(
+    "music",
+    { en: "Music", fr: "Musique", es: "Música", de: "Musik", pt: "Música", it: "Musica" },
+    "🎵",
+    "arts",
+  ),
+  make(
+    "design",
+    { en: "Design", fr: "Design", es: "Diseño", de: "Design", pt: "Design", it: "Design" },
+    "✏",
+    "arts",
+  ),
+  make(
+    "architecture",
+    {
+      en: "Architecture",
+      fr: "Architecture",
+      es: "Arquitectura",
+      de: "Architektur",
+      pt: "Arquitetura",
+      it: "Architettura",
+    },
+    "🏛",
+    "arts",
+  ),
   // Health
-  make("medicine", "Medicine", "Médecine", "🩺", "health"),
-  make("nursing", "Nursing", "Soins infirmiers", "💊", "health"),
+  make(
+    "medicine",
+    {
+      en: "Medicine",
+      fr: "Médecine",
+      es: "Medicina",
+      de: "Medizin",
+      pt: "Medicina",
+      it: "Medicina",
+    },
+    "🩺",
+    "health",
+  ),
+  make(
+    "nursing",
+    {
+      en: "Nursing",
+      fr: "Soins infirmiers",
+      es: "Enfermería",
+      de: "Krankenpflege",
+      pt: "Enfermagem",
+      it: "Infermieristica",
+    },
+    "💊",
+    "health",
+  ),
   // University / Business school
-  make("university-subjects", "University subjects", "Matières universitaires", "🎓", "university"),
-  make("business-school", "Business school", "École de commerce", "🎯", "university"),
+  make(
+    "university-subjects",
+    {
+      en: "University subjects",
+      fr: "Matières universitaires",
+      es: "Materias universitarias",
+      de: "Studienfächer",
+      pt: "Disciplinas universitárias",
+      it: "Materie universitarie",
+    },
+    "🎓",
+    "university",
+  ),
+  make(
+    "business-school",
+    {
+      en: "Business school",
+      fr: "École de commerce",
+      es: "Escuela de negocios",
+      de: "Wirtschaftshochschule",
+      pt: "Escola de negócios",
+      it: "Business school",
+    },
+    "🎯",
+    "university",
+  ),
 ];
 
+function pick(map: LocalizedName, locale: string) {
+  const base = (locale || "en").toLowerCase().split("-")[0];
+  return map[base] ?? map.en;
+}
 export function subjectName(s: SubjectItem, locale: string) {
-  return locale.startsWith("fr") ? s.name_fr : s.name;
+  return pick(s.names, locale);
 }
 export function subjectGroup(s: SubjectItem, locale: string) {
-  return locale.startsWith("fr") ? s.group_fr : s.group;
+  return pick(s.groups, locale);
 }
 
 // Deterministic believable metrics per subject (mix of uploads / scans).
@@ -126,7 +721,7 @@ export function subjectMetric(
   // 5k → 60k range, one decimal
   const n = 5 + rnd() * 55;
   const rounded = Math.round(n * 10) / 10;
-  const numFmt = new Intl.NumberFormat(locale.startsWith("fr") ? "fr-FR" : "en-US", {
+  const numFmt = new Intl.NumberFormat(locale, {
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   }).format(rounded);

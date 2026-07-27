@@ -2,12 +2,16 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import { en } from "./en";
 import { fr } from "./fr";
+import { es } from "./es";
+import { de } from "./de";
+import { pt } from "./pt";
+import { it } from "./it";
 
 // Registry of supported locales. To add a language later the whole workflow is:
 //   1. add its dictionary file (typed as Dict),
 //   2. register it here,
 // and automatic browser detection starts working for it. Nothing else changes.
-export const LOCALES = { en, fr } as const;
+export const LOCALES = { en, fr, es, de, pt, it } as const;
 export type Locale = keyof typeof LOCALES;
 export const SUPPORTED_LOCALES = Object.keys(LOCALES) as Locale[];
 export const DEFAULT_LOCALE: Locale = "en";
@@ -37,10 +41,7 @@ function detectInitialLocale(): Locale {
   //    fr-FR / fr-CA → fr, en-US / en-GB → en. Check every preferred language
   //    in order; the first supported one wins.
   try {
-    const candidates = [
-      navigator.language,
-      ...(navigator.languages ?? []),
-    ].filter(Boolean);
+    const candidates = [navigator.language, ...(navigator.languages ?? [])].filter(Boolean);
     for (const tag of candidates) {
       const base = tag.toLowerCase().split("-")[0];
       if (isSupported(base)) return base;

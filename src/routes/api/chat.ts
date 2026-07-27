@@ -3,6 +3,7 @@ import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
+import { baseLocale, LANGUAGE_NAMES, sectionTitle, sectionTitleList } from "@/lib/answer-sections";
 
 type Body = { messages?: UIMessage[]; documentId?: string; locale?: string };
 
@@ -48,10 +49,17 @@ export const Route = createFileRoute("/api/chat")({
 
         const userId = doc.user_id;
         const explanation = (doc.explanation as Record<string, string>) || {};
-        const isFr = (locale || "en").startsWith("fr");
+        const base = baseLocale(locale);
+        const isFr = base === "fr";
+        // French and English keep their original hand-written prompts untouched.
+        // Every other supported language reuses the English rules, with the
+        // target language and its own section headers injected, so the parser
+        // recognises whatever the model emits.
         const langLine = isFr
           ? "Réponds toujours en français, quel que soit la langue de la question."
-          : "Always answer in English unless the student writes in another language.";
+          : base === "en"
+            ? "Always answer in English unless the student writes in another language."
+            : `Always answer in ${LANGUAGE_NAMES[base] ?? "English"}, whatever language the question is written in.`;
 
         const formatRules = isFr
           ? `RÈGLES DE FORMAT (obligatoires) :
@@ -76,13 +84,9 @@ D) ...
 - Never use the em dash character. Use a comma or a period.
 - No unnecessary introduction. The answer comes first.
 - Use EXACTLY these section titles, each on its own line, no punctuation:
-Answer
-Explanation
-Method
-Common mistakes
-Additional details
+${sectionTitleList(base).join("\n")}
 - Not all sections are required. Use only the ones that help.
-- If the exercise is multiple choice, put items directly in "Answer", one per line:
+- If the exercise is multiple choice, put items directly in "${sectionTitle("answer", base)}", one per line:
 A) ...
 B) ...
 C) ...

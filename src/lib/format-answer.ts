@@ -2,7 +2,8 @@
  * Parses a plain-text AI answer into structured sections we can render
  * with proper visual hierarchy. No markdown, no bold syntax.
  *
- * Expected model output (English or French), section headers on their own line:
+ * Expected model output (English, French, Spanish, German, Portuguese or
+ * Italian), section headers on their own line:
  *   Answer / Réponse
  *   Explanation / Explication
  *   Method / Méthode
@@ -12,6 +13,8 @@
  * MCQ items like "A) ..." "B = ..." "1) ..." are detected inside "Answer" and
  * rendered as clean key/value rows.
  */
+
+import { sectionTitle } from "./answer-sections";
 
 export type AnswerSection = {
   key: "answer" | "explanation" | "method" | "commonMistakes" | "details";
@@ -26,20 +29,24 @@ export type ParsedAnswer = {
   raw?: string;
 };
 
-const SECTION_TITLES: Record<AnswerSection["key"], { en: string; fr: string }> = {
-  answer: { en: "Answer", fr: "Réponse" },
-  explanation: { en: "Explanation", fr: "Explication" },
-  method: { en: "Method", fr: "Méthode" },
-  commonMistakes: { en: "Common mistakes", fr: "Erreurs fréquentes" },
-  details: { en: "Additional details", fr: "Pour aller plus loin" },
-};
-
 const HEADER_PATTERNS: Array<{ key: AnswerSection["key"]; re: RegExp }> = [
-  { key: "answer", re: /^(answer|réponse|reponse)\s*[:.]?\s*$/i },
-  { key: "explanation", re: /^(explanation|explication)\s*[:.]?\s*$/i },
-  { key: "method", re: /^(method|méthode|methode)\s*[:.]?\s*$/i },
-  { key: "commonMistakes", re: /^(common mistakes|erreurs fréquentes|erreurs frequentes|pièges|pieges)\s*[:.]?\s*$/i },
-  { key: "details", re: /^(additional details|pour aller plus loin|détails|details|plus)\s*[:.]?\s*$/i },
+  {
+    key: "answer",
+    re: /^(answer|réponse|reponse|respuesta|antwort|resposta|risposta)\s*[:.]?\s*$/i,
+  },
+  {
+    key: "explanation",
+    re: /^(explanation|explication|explicación|explicacion|erklärung|erklaerung|erklarung|explicação|explicacao|spiegazione)\s*[:.]?\s*$/i,
+  },
+  { key: "method", re: /^(method|méthode|methode|método|metodo)\s*[:.]?\s*$/i },
+  {
+    key: "commonMistakes",
+    re: /^(common mistakes|erreurs fréquentes|erreurs frequentes|pièges|pieges|errores frecuentes|häufige fehler|haufige fehler|haeufige fehler|erros comuns|errori frequenti)\s*[:.]?\s*$/i,
+  },
+  {
+    key: "details",
+    re: /^(additional details|pour aller plus loin|détails|details|plus|para profundizar|zum weiterlernen|para aprofundar|per approfondire)\s*[:.]?\s*$/i,
+  },
 ];
 
 const CHOICE_RE = /^\s*([A-Ha-h1-9])\s*[).=:\-]\s*(.+)$/;
@@ -79,8 +86,7 @@ export function parseAnswer(text: string, locale: string = "en"): ParsedAnswer {
     buffer = [];
   };
 
-  const isFr = locale.startsWith("fr");
-  const titleOf = (k: AnswerSection["key"]) => (isFr ? SECTION_TITLES[k].fr : SECTION_TITLES[k].en);
+  const titleOf = (k: AnswerSection["key"]) => sectionTitle(k, locale);
 
   const openSection = (key: AnswerSection["key"]) => {
     flush();

@@ -50,6 +50,29 @@ export const COUNTRIES: Country[] = [
   { code: "ZA", en: "South Africa", fr: "Afrique du Sud" },
 ];
 
+// Country names exist in every locale the browser knows, so Intl provides them
+// rather than us maintaining a column per language. The hand-written en/fr
+// names stay as the fallback for engines without Intl.DisplayNames.
+const displayNamesCache = new Map<string, Intl.DisplayNames | null>();
+
+function regionNames(locale: string): Intl.DisplayNames | null {
+  if (!displayNamesCache.has(locale)) {
+    let dn: Intl.DisplayNames | null = null;
+    try {
+      dn = new Intl.DisplayNames([locale], { type: "region" });
+    } catch {
+      dn = null;
+    }
+    displayNamesCache.set(locale, dn);
+  }
+  return displayNamesCache.get(locale) ?? null;
+}
+
 export function countryName(c: Country, locale: string): string {
-  return locale.startsWith("fr") ? c.fr : c.en;
+  const fallback = locale.startsWith("fr") ? c.fr : c.en;
+  try {
+    return regionNames(locale)?.of(c.code) ?? fallback;
+  } catch {
+    return fallback;
+  }
 }

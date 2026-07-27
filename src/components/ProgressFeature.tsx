@@ -19,9 +19,16 @@ export function ProgressFeature() {
   const chips = raw((d) => d.progressFeature.chips) as string[];
   const months = raw((d) => d.progressFeature.months) as string[];
   const subjects = raw((d) => d.progressFeature.subjects) as string[];
-  const fr = locale.startsWith("fr");
-  const avg = fr ? "14,2" : "14.2";
-  const delta = fr ? "+1,8" : "+1.8";
+  // Let Intl pick the decimal separator, so every locale reads naturally
+  // (14,2 in French, Spanish, German, Portuguese and Italian; 14.2 in English).
+  const num = (n: number, signed = false) =>
+    new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+      signDisplay: signed ? "always" : "auto",
+    }).format(n);
+  const avg = num(14.2);
+  const delta = num(1.8, true);
 
   // Chart geometry.
   const W = 320;
@@ -159,7 +166,7 @@ export function ProgressFeature() {
                   />
                 </span>
                 <span className="w-9 shrink-0 text-right text-[12px] font-semibold text-foreground tabular-nums">
-                  {fr ? String(SUBJECT_AVGS[i]).replace(".", ",") : SUBJECT_AVGS[i]}
+                  {num(SUBJECT_AVGS[i])}
                 </span>
               </div>
             ))}

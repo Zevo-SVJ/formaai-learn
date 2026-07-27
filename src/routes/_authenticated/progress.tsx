@@ -359,14 +359,14 @@ function weighted(items: Grade[]): number | null {
 function formatDay(iso: string, locale: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return new Intl.DateTimeFormat(locale.startsWith("fr") ? "fr-FR" : "en-US", {
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
   }).format(d);
 }
 
 function formatNum(n: number, locale: string) {
-  return new Intl.NumberFormat(locale.startsWith("fr") ? "fr-FR" : "en-US", {
+  return new Intl.NumberFormat(locale, {
     maximumFractionDigits: 2,
   }).format(n);
 }

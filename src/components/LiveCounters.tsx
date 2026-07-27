@@ -6,9 +6,7 @@ import { EASE } from "@/lib/motion";
 
 function formatNumber(n: number, locale: string): string {
   try {
-    return new Intl.NumberFormat(locale.startsWith("fr") ? "fr-FR" : "en-US").format(
-      Math.floor(n),
-    );
+    return new Intl.NumberFormat(locale).format(Math.floor(n));
   } catch {
     return Math.floor(n).toLocaleString();
   }

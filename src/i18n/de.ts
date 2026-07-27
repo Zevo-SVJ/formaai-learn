@@ -1,0 +1,683 @@
+import type { Dict } from "./en";
+
+export const de: Dict = {
+  common: {
+    signIn: "Anmelden",
+    signOut: "Abmelden",
+    back: "Zurück",
+    continue: "Weiter",
+    getStarted: "Loslegen",
+    loading: "Lädt",
+    tryAgain: "Erneut versuchen",
+    goHome: "Zur Startseite",
+    or: "oder",
+    search: "Suchen",
+    save: "Speichern",
+    saved: "Gespeichert",
+    remove: "Entfernen",
+    close: "Schließen",
+    home: "Start",
+    library: "Bibliothek",
+    favorites: "Favoriten",
+    subject: "Fach",
+    level: "Stufe",
+    chapter: "Thema",
+    minutesAgo: "Min.",
+    hoursAgo: "Std.",
+    daysAgo: "T.",
+    justNow: "gerade eben",
+    settings: "Einstellungen",
+    language: "Sprache",
+  },
+  nav: {
+    how: "So funktioniert es",
+    features: "Funktionen",
+    reviews: "Stimmen",
+    faq: "FAQ",
+  },
+  hero: {
+    title1: "Verstehe jede Lektion.",
+    title2: "Nicht nur die Lösung.",
+    subtitle:
+      "Lade eine Lektion, eine Aufgabe oder ein Foto deiner Notizen hoch. Forma liest sie, versteht sie und erklärt sie dir so, dass es wirklich klick macht.",
+    cta: "Kostenlos testen",
+    ctaHint: "Keine Karte. Keine Anmeldepflicht.",
+    midTitle: "Dein Lernbegleiter",
+    midBody: "Forma erklärt deinen Stoff und behält deine Noten und Fortschritte im Blick.",
+    menu: {
+      upload: "Meine Lektion analysieren",
+      see: "Ansehen, wie es funktioniert",
+      eyebrow: "Lektion hinzufügen",
+      title: "Wie möchtest du sie hinzufügen?",
+      image: "Bild auswählen",
+      pdf: "PDF auswählen",
+      photo: "Foto aufnehmen",
+      scan: "Dokument scannen",
+    },
+  },
+  progress: {
+    nav: "Fortschritt",
+  },
+  errorPages: {
+    notFound: {
+      title: "Diese Seite gibt es nicht",
+      body: "Der Link ist vielleicht alt, oder in der Adresse steckt ein Tippfehler.",
+      home: "Zurück zum Start",
+    },
+    crash: {
+      title: "Das lief nicht wie geplant",
+      body: "Es ist nichts verloren. Versuch es noch einmal, und wenn es bleibt, geh zurück zum Start.",
+      retry: "Erneut versuchen",
+      home: "Zurück zum Start",
+    },
+  },
+  errors: {
+    network: "Verbindung unterbrochen. Prüf deine Verbindung und versuch es erneut.",
+    rate: "Gerade sehr viele Anfragen. Warte kurz und versuch es erneut.",
+    permission: "Auf diesen Inhalt hast du keinen Zugriff.",
+    notFound: "Dieser Inhalt wurde nicht gefunden. Vielleicht wurde er gelöscht.",
+    server: "Bei Forma hakt gerade etwas. Versuch es gleich noch einmal.",
+    generic: "Das hat nicht geklappt. Versuch es gleich noch einmal.",
+    badCredentials: "E-Mail oder Passwort stimmen nicht.",
+    emailInUse: "Mit dieser E-Mail gibt es schon ein Konto. Melde dich einfach an.",
+    emailNotConfirmed: "Bestätige deine E-Mail-Adresse über dein Postfach.",
+    weakPassword: "Wähle ein Passwort mit mindestens 8 Zeichen.",
+  },
+  libraryPage: {
+    subtitle: "Alle analysierten Lektionen an einem Ort.",
+    empty: "Noch nichts gespeichert. Analysiere deine erste Lektion, dann steht sie hier.",
+    emptyCta: "Lektion analysieren",
+  },
+  progressPage: {
+    title: "Dein Fortschritt",
+    subtitle: "Trag jede Note ein und sieh, wie dein Schnitt wächst.",
+    add: "Note hinzufügen",
+    overall: "Gesamtschnitt",
+    trend: "Verlauf",
+    bySubject: "Nach Fach",
+    recent: "Alle Noten",
+    entries: "Noten",
+    noData: "In diesem Zeitraum gibt es keine Noten.",
+    empty: "Trag deine erste Note ein, um deinen Fortschritt zu sehen.",
+    editGrade: "Note bearbeiten",
+    newGrade: "Neue Note",
+    deleted: "Note gelöscht",
+    saved: "Note gespeichert",
+    invalid: "Bitte prüf die Werte.",
+    ranges: { week: "Woche", month: "Monat", year: "Jahr", all: "Alles" },
+    fields: {
+      subject: "Fach",
+      assignment: "Arbeit",
+      grade: "Note",
+      scale: "Skala",
+      custom: "Andere",
+      coef: "Gewicht",
+      date: "Datum",
+      note: "Notiz",
+    },
+  },
+
+  social: {
+    count: "Über 300.000",
+    label: "Lernende",
+  },
+  compact: {
+    upload: "Lektion hochladen",
+    scan: "Foto aufnehmen",
+  },
+  upload: {
+    fileTooLarge: "Datei zu groß. Maximal {{max}} MB.",
+    uploading: "Wird hochgeladen",
+    reading: "Wird gelesen",
+    readingDoc: "Dein Dokument wird gelesen",
+    analysisFailed:
+      "Die Analyse ist fehlgeschlagen. Öffne das Dokument, um es erneut zu versuchen.",
+    uploadFailed: "Hochladen nicht möglich",
+    dropHere: "Lektion hier ablegen",
+    subtitle:
+      "Lektion, Hausaufgabe, Screenshot, Foto, PDF oder Arbeitsblatt. Forma liest es und erklärt es dir.",
+    chooseFile: "Datei auswählen",
+    orDragDrop: "oder hierher ziehen",
+    photo: "Foto",
+  },
+  progressFeature: {
+    title: "Sieh wirklich, wie du vorankommst.",
+    body: "Trag eine Note mit Fach, Gewichtung und Datum ein. Forma macht daraus ein klares Dashboard, damit du deinen Fortschritt über die Zeit verstehst.",
+    chips: ["Note", "Fach", "Gewicht", "Datum", "Skala"],
+    average: "Gesamtschnitt",
+    months: ["Sep.", "Nov.", "Jan."],
+    subjects: ["Mathematik", "Physik", "Geschichte"],
+  },
+  compare: {
+    eyebrow: "Der Unterschied",
+    title: "Forma im Vergleich zu anderen Tools.",
+    subtitle:
+      "Die meisten Tools geben dir die Lösung und sind weg. Forma bleibt, bis du es wirklich verstanden hast.",
+    recommended: "Empfohlen",
+    otherTitle: "Andere KI-Tools",
+    typical: "Üblich",
+    forma: [
+      "Erklärt jede Antwort Schritt für Schritt",
+      "Passt sich deiner Klasse und deinem Niveau an",
+      "Erstellt dir Lernmaterial",
+      "Hilft dir zu verstehen, nicht nur zu lösen",
+      "Behält deinen gesamten Lernverlauf",
+    ],
+    other: [
+      "Gibt dir nur das Endergebnis",
+      "Dieselbe Antwort für alle, ohne Anpassung",
+      "Keine Lernzettel, keine Merkhilfen",
+      "Gebaut zum Lösen, nicht zum Erklären",
+      "Vergisst deine Arbeit, sobald du den Tab schließt",
+    ],
+  },
+  liveCounters: {
+    lessons: "Lektionen analysiert",
+    exercises: "Aufgaben gelöst",
+    students: "aktive Lernende",
+    live: "Live",
+    updated: "Gerade aktualisiert",
+  },
+
+  problem: {
+    eyebrow: "Das Problem",
+    title: "Die Lösung zu haben heißt nicht, es verstanden zu haben.",
+    subtitle:
+      "Die meisten KI-Tools machen deine Hausaufgaben. Forma macht das Gegenteil: Es hilft dir, den Stoff wirklich zu lernen.",
+    items: [
+      "Du schaust auf die Lektion und nichts davon macht klick.",
+      "Du fragst eine KI. Sie gibt dir die Lösung, nicht die Idee.",
+      "Nächste Woche ist die Arbeit und du verstehst es immer noch nicht.",
+    ],
+  },
+  solution: {
+    eyebrow: "Die Lösung",
+    title: "Ein Tutor, der deinen Stoff versteht, nicht nur deine Fragen.",
+    items: [
+      {
+        title: "Er versteht deine Lektion",
+        body: "Schick ihm deinen Stoff. Foto, PDF oder Arbeitsblatt: Forma liest dein Dokument, auch handschriftlich.",
+      },
+      {
+        title: "Er erklärt es wirklich",
+        body: "Nicht nur die Lösung. Er führt dich durch den Gedankengang, zeigt typische Fehler und ein einfaches Beispiel.",
+      },
+      {
+        title: "Er bleibt bei deinem Material",
+        body: "Forma stützt sich auf dein Dokument, damit die Erklärungen nie am Thema vorbeigehen.",
+      },
+    ],
+  },
+  how: {
+    eyebrow: "So funktioniert es",
+    title: "Drei Schritte. Kein Drumherum.",
+    swipeHint: "Wischen zum Entdecken",
+    steps: [
+      { t: "Lade alles hoch", d: "Ein Foto, ein PDF oder einen Screenshot deiner Aufgabe." },
+      {
+        t: "Forma liest alles",
+        d: "Es erkennt das Fach, die Stufe und die Ideen, auf die es ankommt.",
+      },
+      {
+        t: "Du verstehst es",
+        d: "Eine klare Erklärung mit Beispielen und ein Chat, der deine Lektion schon kennt.",
+      },
+    ],
+  },
+  subjects: {
+    eyebrow: "Alle wichtigen Fächer",
+    title: "Von Gleichungen bis zur Textanalyse.",
+    subtitle: "Forma deckt ab, was du wirklich in der Schule lernst.",
+    uploads: "Uploads",
+    scans: "Scans",
+    list: [
+      "Mathematik",
+      "Physik",
+      "Chemie",
+      "Biologie",
+      "Französisch",
+      "Englisch",
+      "Deutsch",
+      "Spanisch",
+      "Geschichte",
+      "Erdkunde",
+      "Philosophie",
+      "Wirtschaft",
+      "Informatik",
+      "Literatur",
+      "Technik",
+    ],
+  },
+  reviews: {
+    eyebrow: "Lernende",
+    title: "Beliebt bei allen, die es täglich nutzen.",
+    subtitle: "Echte Lernende, echter Stoff, echte Fortschritte.",
+    items: [
+      {
+        name: "Léa Bernard",
+        role: "11. Klasse · Naturwissenschaften",
+        quote:
+          "Ich habe endlich verstanden, wie Faktorisieren geht. Nicht weil es mir die Lösung gab, sondern weil es mich Schritt für Schritt mitgenommen hat.",
+      },
+      {
+        name: "Thomas Rivière",
+        role: "10. Klasse",
+        quote:
+          "Ich fotografiere meine Biologie-Notizen und es erklärt mir, was ich im Unterricht verpasst habe. Das ruhigste Lernwerkzeug, das ich kenne.",
+      },
+      {
+        name: "Amina Youssef",
+        role: "12. Klasse · Wirtschaft",
+        quote:
+          "Es fühlt sich nicht nach Hausaufgabenhilfe an, sondern als würde dir jemand das Kapitel wirklich erklären.",
+      },
+      {
+        name: "Noah Peeters",
+        role: "9. Klasse",
+        quote:
+          "Ich habe ein Foto meiner Physikaufgabe hochgeladen. Es hat jeden Schritt aufgeschlüsselt und ich habe es verstanden.",
+      },
+      {
+        name: "Chloé Martin",
+        role: "11. Klasse · Literatur",
+        quote:
+          "Ich bereite damit meine Aufsätze vor. Die Erklärungen wirken wie von einem Nachhilfelehrer, nicht wie von einem Bot.",
+      },
+      {
+        name: "Marc Ovadia",
+        role: "10. Klasse · Mathe",
+        quote:
+          "Es hat meinen Rechenweg korrigiert, nicht nur das Ergebnis. Genau das macht für mich den Unterschied.",
+      },
+      {
+        name: "Sara El Amrani",
+        role: "12. Klasse",
+        quote: "Mein Chemiekapitel hat endlich klick gemacht. Der Beispielteil hat mich überzeugt.",
+      },
+      {
+        name: "Julien Perrot",
+        role: "9. Klasse",
+        quote: "Schnell, aufgeräumt und nie von oben herab. Ich öffne es vor jeder Hausaufgabe.",
+      },
+    ],
+  },
+  faq: {
+    eyebrow: "FAQ",
+    title: "Alles, beantwortet.",
+    items: [
+      {
+        q: "Gibt Forma AI mir einfach die Lösung?",
+        a: "Nein. Forma ist zum Erklären gebaut. Es schlüsselt das Konzept auf, zeigt, warum es zählt, weist auf typische Fehler hin und gibt ein einfaches Beispiel. Du kannst jederzeit nachhaken.",
+      },
+      {
+        q: "Was kann ich hochladen?",
+        a: "Fotos deiner Notizen, Screenshots, PDFs, Arbeitsblätter und handschriftliche Seiten. Wenn es ein Dokument ist, liest Forma es.",
+      },
+      {
+        q: "Bleibt meine Arbeit privat?",
+        a: "Ja. Deine Dokumente liegen privat in deinem Konto und sind nur für dich sichtbar.",
+      },
+      {
+        q: "Welche Fächer werden unterstützt?",
+        a: "Jedes Fach, das man in der Schule hat. Mathe, Naturwissenschaften, Geschichte, Sprachen und mehr.",
+      },
+    ],
+  },
+  finalCta: {
+    title: "Fang heute an zu verstehen.",
+    subtitle: "Lade deine erste Lektion hoch. Keine Formulare, kein Drumherum.",
+    cta: "Loslegen",
+  },
+  footer: {
+    tagline: "Für alle, die wirklich lernen wollen.",
+    terms: "AGB",
+    privacy: "Datenschutz",
+    cookies: "Cookies",
+    contact: "Kontakt",
+    rights: "Alle Rechte vorbehalten.",
+  },
+  auth: {
+    welcome: "Schön, dich wiederzusehen",
+    tagline: "Melde dich an, um mit Forma weiterzumachen.",
+    createAccount: "Konto erstellen",
+    createTagline: "Letzter Schritt, dann ist dein Fortschritt gesichert.",
+    tabSignup: "Konto erstellen",
+    tabSignin: "Anmelden",
+    google: "Weiter mit Google",
+    apple: "Weiter mit Apple",
+    email: "Weiter mit E-Mail",
+    emailPlaceholder: "du@schule.de",
+    passwordPlaceholder: "Passwort (mind. 8 Zeichen)",
+    referralPlaceholder: "Einladungscode (optional)",
+    referralHint:
+      "Hast du den Code einer Freundin oder eines Freundes? Trag ihn ein und hilf beim Freischalten von Premium.",
+    createCta: "Konto erstellen",
+    signinCta: "Anmelden",
+    checkInbox: "Schau in dein Postfach",
+    checkInboxConfirm: "Bestätige deine E-Mail-Adresse über dein Postfach.",
+    linkSent: "Wir haben dir einen Magic Link geschickt an",
+    terms: "Wenn du fortfährst, akzeptierst du die AGB und die Datenschutzerklärung von Forma AI.",
+    signInFailed: "Anmeldung nicht möglich",
+  },
+  referral: {
+    eyebrow: "Einladungen",
+    title: "Lade 3 Freunde ein. Schalte Premium frei.",
+    body: "Teile deinen Code. Jede Person, die damit startet, zählt.",
+    unlockedEyebrow: "Premium freigeschaltet",
+    unlockedTitle: "Danke, dass du Forma weitersagst.",
+    unlockedBody:
+      "Du hast die Premium-Funktionen freigeschaltet. Teile weiter, damit deine Freunde besser lernen.",
+    yourCode: "Dein Code",
+    copy: "Code kopieren",
+    copied: "Code kopiert",
+    copyFailed: "Code konnte nicht kopiert werden",
+    share: "Teilen",
+    shareBody: "Lerne mit Forma AI. Nutze meinen Code {{code}} für den Start.",
+    friends: "Freunde dabei",
+  },
+
+  onboarding: {
+    stepOf: "Schritt {{current}} von {{total}}",
+    next: "Weiter",
+    skip: "Überspringen",
+    finish: "Fertig",
+    intro: {
+      title: "Richten wir deinen Tutor ein.",
+      subtitle: "Ein paar kurze Angaben, damit Forma die Erklärungen an dein Niveau anpasst.",
+      namePlaceholder: "Dein Vorname",
+      cta: "Weiter",
+    },
+    q1: {
+      title: "Wofür bist du hier?",
+      subtitle: "Wähl, was am besten passt. Du kannst es später ändern.",
+      options: [
+        { id: "understand", label: "Meinen Stoff verstehen" },
+        { id: "revise", label: "Für eine Arbeit lernen" },
+        { id: "homework", label: "Hilfe bei Hausaufgaben" },
+        { id: "essays", label: "Bessere Texte schreiben" },
+      ],
+    },
+    q2: {
+      title: "In welcher Klasse bist du?",
+      subtitle: "Damit wir Ton und Tiefe anpassen.",
+      options: [
+        { id: "middle", label: "Mittelstufe" },
+        { id: "highJunior", label: "Oberstufe, erste Jahre" },
+        { id: "highSenior", label: "Abschlussjahr" },
+        { id: "prep", label: "Studienvorbereitung" },
+      ],
+    },
+    q3: {
+      title: "Wo gehst du zur Schule?",
+      subtitle: "Nur damit wir die Fächer an dein Programm anpassen.",
+      searchPlaceholder: "Land suchen",
+      noResults: "Kein Land gefunden",
+    },
+    q4: {
+      title: "Welche Fächer sind dir am wichtigsten?",
+      subtitle: "Wähl bis zu fünf. Das personalisiert nur deine Startseite.",
+    },
+    insight1: {
+      eyebrow: "Die Wahrheit",
+      stat: "96 % der Lernenden wiederholen vor allem, indem sie ihre Notizen nochmal lesen.",
+      punch: "Du machst es besser.",
+      caption: "Forma hilft dir, wirksamer zu verstehen, zu behalten und besser zu werden.",
+    },
+    insight2: {
+      eyebrow: "Ein privater Tutor",
+      stat: "Da, sobald du deine Hausaufgaben aufschlägst.",
+      punch: "Keine Abkürzung. Ein Lehrer.",
+      caption:
+        "Forma liest deine echte Lektion, bevor es antwortet. Jede Erklärung stützt sich auf dein eigenes Dokument.",
+    },
+    loading: {
+      title: "Dein Forma wird vorbereitet",
+      caption: "Alles wird auf deine Art zu lernen abgestimmt.",
+      steps: [
+        "Deine Lernziele verstehen",
+        "Dein Dashboard einrichten",
+        "Deinen Assistenten vorbereiten",
+        "Deinen Lernbereich aufbauen",
+        "Letzte Details",
+      ],
+    },
+  },
+  home: {
+    greet: {
+      morning: "Guten Morgen, {{name}}",
+      afternoon: "Guten Tag, {{name}}",
+      evening: "Guten Abend, {{name}}",
+      night: "Noch wach, {{name}}?",
+      back1: "Schön, dich wiederzusehen, {{name}}",
+      back2: "Willkommen zurück, {{name}}",
+      back3: "Gut, dass du wieder da bist, {{name}}",
+      away: "Ist eine Weile her, {{name}}",
+      milestone: "Schon {{count}} Lektionen zusammen, {{name}}",
+      idle: "Brauchst du Hilfe, {{name}}?",
+    },
+    greetAnon: {
+      morning: "Guten Morgen,",
+      afternoon: "Guten Tag,",
+      evening: "Guten Abend,",
+      night: "Noch wach?",
+      back1: "Schön, dich wiederzusehen,",
+      back2: "Willkommen zurück,",
+      back3: "Gut, dass du wieder da bist,",
+      away: "Ist eine Weile her,",
+      milestone: "Schon {{count}} Lektionen zusammen,",
+      idle: "Brauchst du Hilfe?",
+    },
+    subhead: "Was lernen wir heute?",
+    upload: "Lektion hochladen",
+    favorites: "Für später gespeichert",
+    favoritesEmpty:
+      "Noch keine Favoriten. Tipp den Stern bei einer Erklärung an, um sie hier zu sichern.",
+    recent: "Zuletzt bearbeitet",
+    recentEmpty: "Hier erscheinen deine zuletzt bearbeiteten Lektionen.",
+    seeAll: "Alle ansehen",
+    encourage: {
+      title: "Jeden Tag ein bisschen.",
+      body: "Wer Forma auch nur fünf Minuten am Tag öffnet, versteht doppelt so viel von dem, was er liest.",
+    },
+  },
+  doc: {
+    reading: "Dokument wird gelesen",
+    understanding: "Lektion wird verstanden",
+    ready: "Fertig",
+    failed: "Analyse fehlgeschlagen",
+    retry: "Erneut versuchen",
+    working: "Läuft",
+    workingHint: "Forma liest dein Dokument wirklich. Das dauert meist 5 bis 15 Sekunden.",
+    stalled: "Das dauert länger als erwartet. Vielleicht wurde die Analyse unterbrochen.",
+    unreadable:
+      "Forma konnte dieses Dokument nicht lesen. Versuch ein schärferes Foto, bei gutem Licht und mit der ganzen Seite im Bild.",
+    askTitle: "Mach mit deinem Tutor weiter",
+    askSubtitle:
+      "Du hast die Antwort. Frag jetzt, was du willst, Forma erklärt es dir Schritt für Schritt.",
+    askCta: "Frage zu dieser Analyse stellen",
+    askPlaceholder: "Frag alles zu dieser Analyse",
+    quickActions: {
+      simpler: "Einfacher erklären",
+      example: "Beispiel geben",
+      revision: "Lernzettel erstellen",
+      quiz: "Quiz erstellen",
+      method: "Rechenweg zeigen",
+      summary: "Zusammenfassen",
+      prompts: {
+        simpler: "Erkläre deine letzte Antwort einfacher, für jemanden, der neu im Thema ist.",
+        example: "Gib ein konkretes, durchgerechnetes Beispiel zu deiner letzten Antwort.",
+        revision: "Erstelle aus deiner letzten Antwort einen übersichtlichen Lernzettel.",
+        quiz: "Erstelle ein Quiz mit 3 Fragen zu deiner letzten Antwort. Stell eine nach der anderen und warte auf meine Antwort.",
+      },
+    },
+    sections: {
+      answer: "Antwort",
+      explanation: "Erklärung",
+      method: "Methode",
+      commonMistakes: "Häufige Fehler",
+      details: "Zum Weiterlernen",
+      why: "Warum das zählt",
+      example: "Einfaches Beispiel",
+      analogy: "Vergleich",
+    },
+    favoriteAdd: "Speichern",
+    favoriteRemove: "Gespeichert",
+    favoriteToast: "In deinen Favoriten gespeichert",
+    unfavoriteToast: "Aus den Favoriten entfernt",
+    answersHint: "Die Lösungen, direkt auf den Punkt.",
+    copyAll: "Lösungen kopieren",
+    copied: "Lösungen kopiert",
+    copyFailed: "Kopieren nicht möglich",
+    scan: {
+      title: "Dein Dokument wird analysiert",
+      caption: "Jede Frage wird gelesen und die Lösungen werden vorbereitet.",
+      steps: [
+        "Bild erkannt",
+        "Aufgaben werden gelesen",
+        "Fragen werden verstanden",
+        "Lösungen werden vorbereitet",
+      ],
+      stepsFile: [
+        "Dokument erkannt",
+        "Seiten werden gelesen",
+        "Fragen werden verstanden",
+        "Lösungen werden vorbereitet",
+      ],
+      done: "Alles bereit",
+    },
+    empty:
+      "Frag alles zu dem, was du hochgeladen hast. Forma hat schon alles analysiert: Aufgaben, Bilder, PDFs und Dokumente.",
+  },
+  legal: {
+    terms: {
+      title: "Nutzungsbedingungen",
+      updated: "Zuletzt aktualisiert: Juli 2026",
+      sections: [
+        {
+          h: "Wer wir sind",
+          p: "Forma AI ist ein Lernwerkzeug, das Schülerinnen und Schülern hilft, ihren eigenen Unterrichtsstoff zu verstehen. Mit der Nutzung von Forma akzeptierst du diese Bedingungen.",
+        },
+        {
+          h: "Was Forma tut, und was nicht",
+          p: "Forma erklärt deine Dokumente, damit du lernst. Es schreibt deine Arbeiten nicht für dich und ersetzt deine Lehrkräfte nicht. Für die Regeln deiner Schule bleibst du selbst verantwortlich.",
+        },
+        {
+          h: "Dein Konto",
+          p: "Du musst mindestens 15 Jahre alt sein oder die Zustimmung eines Elternteils beziehungsweise einer erziehungsberechtigten Person haben. Deine Angaben müssen korrekt sein, und du bist dafür verantwortlich, deine Zugangsdaten geheim zu halten. Ein Konto ist persönlich und wird nicht geteilt.",
+        },
+        {
+          h: "Zulässige Nutzung",
+          p: "Du verpflichtest dich, keine illegalen, hasserfüllten oder gewaltverherrlichenden Inhalte hochzuladen und keine Dokumente mit personenbezogenen Daten anderer ohne deren Einverständnis. Du darfst unsere Schutzmechanismen nicht umgehen, den Dienst nicht überlasten und seine Inhalte nicht automatisiert auslesen.",
+        },
+        {
+          h: "Deine Inhalte",
+          p: "Alles, was du hochlädst, bleibt deins. Du gibst uns nur das Recht, dein Dokument so lange zu verarbeiten, wie es dauert, dir eine Erklärung zurückzugeben. Wir beanspruchen keine Rechte an deinem Stoff und nutzen ihn für nichts anderes.",
+        },
+        {
+          h: "Geistiges Eigentum von Forma",
+          p: "Der Name Forma AI, die Oberfläche, die Texte und die visuelle Identität gehören uns. Dein Konto gibt dir das Recht, den Dienst zu nutzen, nicht ihn zu kopieren oder weiterzuverkaufen.",
+        },
+        {
+          h: "Grenzen des Dienstes",
+          p: "Forma arbeitet mit künstlicher Intelligenz: Es kann sich irren, ein Dokument falsch lesen oder eine unvollständige Erklärung geben. Prüf eine wichtige Antwort immer, bevor du sie abgibst. Forma wird ohne Garantie auf schulischen Erfolg bereitgestellt.",
+        },
+        {
+          h: "Verfügbarkeit",
+          p: "Wir geben unser Bestes, Forma erreichbar zu halten. Der Dienst kann jedoch für Wartung, Updates oder aus technischen Gründen ohne Vorankündigung unterbrochen werden.",
+        },
+        {
+          h: "Sperrung und Beendigung",
+          p: "Wir können ein Konto sperren, das gegen diese Bedingungen verstößt, insbesondere bei Missbrauch. Du kannst die Nutzung jederzeit beenden und die Löschung deines Kontos verlangen.",
+        },
+        {
+          h: "Änderungen dieser Bedingungen",
+          p: "Diese Bedingungen können sich mit dem Produkt weiterentwickeln. Bei wichtigen Änderungen informieren wir dich in der App. Bei Fragen schreib an zevo.flcs@gmail.com.",
+        },
+      ],
+    },
+    privacy: {
+      title: "Datenschutzerklärung",
+      updated: "Zuletzt aktualisiert: Juli 2026",
+      sections: [
+        {
+          h: "Kurz gesagt",
+          p: "Dein Stoff gehört dir. Wir erheben nur das Nötigste, damit Forma funktioniert, verkaufen nichts an niemanden, und in der App steckt kein Werbetracker.",
+        },
+        {
+          h: "Welche Daten wir erheben",
+          p: "Deine E-Mail-Adresse und die Konto-ID, mit der du dich anmeldest. Vorname, Land und Stufe, die du in der Einführung angibst. Die Dokumente und Fotos, die du hochlädst, und den daraus gelesenen Text. Deine Gespräche mit dem Tutor. Die Noten, die du im Bereich Fortschritt einträgst.",
+        },
+        {
+          h: "Warum wir sie erheben",
+          p: "Um deine Dokumente zu analysieren und dir eine Erklärung zurückzugeben, damit du deinen Verlauf und deine Favoriten auf allen Geräten wiederfindest, und um den Ton der Erklärungen an dein Niveau anzupassen. Mehr nicht.",
+        },
+        {
+          h: "Wie die KI deine Dokumente verarbeitet",
+          p: "Wenn du ein Dokument hochlädst, wird sein Inhalt an unseren KI-Anbieter (Google Gemini, über das Lovable-AI-Gateway) übermittelt, solange die Analyse dauert. Diese Verarbeitung dient nur deiner Antwort. Deine Dokumente werden nicht zum Training von Modellen verwendet.",
+        },
+        {
+          h: "Rechtsgrundlage",
+          p: "Wir verarbeiten diese Daten, um den Dienst zu erbringen, den du mit der Kontoerstellung anforderst. Du kannst deine Zustimmung jederzeit zurückziehen, indem du deine Dokumente oder dein Konto löschen lässt.",
+        },
+        {
+          h: "Wie lange wir sie speichern",
+          p: "Deine Dokumente und Gespräche bleiben gespeichert, solange dein Konto besteht, damit du sie wiederfindest. Wenn ein bestimmtes Dokument oder dein ganzes Konto gelöscht werden soll, schreib an zevo.flcs@gmail.com: Wir bearbeiten die Anfrage innerhalb von 30 Tagen, und die Löschung ist endgültig.",
+        },
+        {
+          h: "Wer Zugriff hat",
+          p: "Du. Jeder Datensatz ist an dein Konto gebunden und auf Datenbankebene durch Sicherheitsregeln getrennt. Unser Team greift nur darauf zu, wenn ein technisches Problem es wirklich erfordert.",
+        },
+        {
+          h: "Deine Rechte",
+          p: "Du hast das Recht auf Auskunft, Berichtigung, Löschung, Datenübertragbarkeit (eine Kopie deiner Daten) und Widerspruch gegen die Verarbeitung. Um eines davon auszuüben, schreib an zevo.flcs@gmail.com: Wir antworten innerhalb von 30 Tagen.",
+        },
+        {
+          h: "Sicherheit",
+          p: "Die Übertragung ist verschlüsselt, der Datenzugriff ist pro Konto beschränkt, und Dateien sind nur über temporäre signierte Links erreichbar.",
+        },
+        {
+          h: "Beschwerden",
+          p: "Wenn dich eine Antwort nicht zufriedenstellt, kannst du dich an die Datenschutzaufsichtsbehörde deines Landes wenden.",
+        },
+      ],
+    },
+    cookies: {
+      title: "Cookie-Richtlinie",
+      updated: "Zuletzt aktualisiert: Juli 2026",
+      sections: [
+        {
+          h: "Was wir verwenden",
+          p: "Forma verwendet nur Cookies und lokalen Speicher, die für den Betrieb unbedingt nötig sind. Keine Werbecookies, keine Tracker von Dritten.",
+        },
+        {
+          h: "Angemeldet bleiben",
+          p: "Deine Sitzung wird auf deinem Gerät gespeichert, damit du dich nicht bei jedem Besuch neu anmelden musst. Ohne sie kann die App nicht erkennen, dass du es bist.",
+        },
+        {
+          h: "Deine Einstellungen",
+          p: "Auf deinem Gerät merken wir uns außerdem die gewählte Sprache, ob die Einführung schon erledigt ist, sowie Vorname und Land, die du angegeben hast, um dich passend zu begrüßen.",
+        },
+        {
+          h: "Reichweitenmessung",
+          p: "Keine. Forma bindet derzeit keine Analyse- oder Trackingwerkzeuge ein. Sollte sich das ändern, fragen wir dich vorher.",
+        },
+        {
+          h: "Deine Möglichkeiten",
+          p: "Du kannst diese Daten jederzeit in den Einstellungen deines Browsers löschen. Da sie für den Betrieb nötig sind, wirst du dadurch abgemeldet und deine Einstellungen werden zurückgesetzt.",
+        },
+      ],
+    },
+    contact: {
+      title: "Kontakt",
+      subtitle: "Wir lesen jede Nachricht.",
+      email: "zevo.flcs@gmail.com",
+      form: {
+        name: "Dein Vorname",
+        email: "Deine E-Mail",
+        message: "Was möchtest du uns sagen?",
+        send: "Nachricht senden",
+        sent: "Danke. Wir melden uns schnell.",
+      },
+    },
+  },
+};
