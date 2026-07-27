@@ -88,6 +88,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#f7f5ef" },
+      // Proves ownership of the site to Google Search Console. It lives in the
+      // root head so it is present on every page, which is what the check needs.
+      {
+        name: "google-site-verification",
+        content: "B8L8VZZntYxifueNBqfnvvYqf-c1xTQ9PzwTqSkODX0",
+      },
       { title: "Forma AI — Learn Better with AI" },
       {
         name: "description",
