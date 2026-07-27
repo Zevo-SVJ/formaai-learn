@@ -58,6 +58,12 @@ export const fr: Dict = {
   progress: {
     nav: "Progrès",
   },
+  consent: {
+    body: "Forma utilise la mesure d'audience pour comprendre ce qui aide vraiment les élèves. Tu peux refuser : l'application fonctionne exactement pareil.",
+    accept: "Accepter",
+    decline: "Refuser",
+    more: "En savoir plus",
+  },
   errorPages: {
     notFound: {
       title: "Cette page n'existe pas",
@@ -599,7 +605,7 @@ export const fr: Dict = {
       sections: [
         {
           h: "En résumé",
-          p: "Tes cours t'appartiennent. Nous collectons le minimum nécessaire pour faire fonctionner Forma, nous ne vendons rien à personne, et il n'y a aucun traceur publicitaire dans l'application.",
+          p: "Tes cours t'appartiennent. Nous collectons le minimum nécessaire pour faire fonctionner Forma, nous ne vendons rien à personne, et il n'y a aucun traceur publicitaire dans l'application. La mesure d'audience anonyme ne se déclenche que si tu l'acceptes.",
         },
         {
           h: "Les données que nous collectons",
@@ -657,7 +663,7 @@ export const fr: Dict = {
         },
         {
           h: "Mesure d'audience",
-          p: "Aucune. Forma n'intègre aujourd'hui aucun outil d'analyse d'audience ni de suivi comportemental. Si cela changeait, nous te demanderions ton accord avant.",
+          p: "Forma utilise Google Analytics pour compter les visites et voir quelles fonctionnalités servent vraiment. Il ne se lance que si tu l'acceptes quand on te le demande, tu peux refuser et l'application fonctionne pareil, et aucune donnée publicitaire ou de personnalisation n'est collectée.",
         },
         {
           h: "Tes choix",

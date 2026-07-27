@@ -21,6 +21,7 @@ import "@/i18n";
 import { getLocale } from "@/i18n";
 import { useI18n } from "@/hooks/useI18n";
 import { initAnalytics } from "@/lib/analytics";
+import { ConsentBanner } from "@/components/ConsentBanner";
 
 function NotFoundComponent() {
   const { t } = useI18n();
@@ -205,6 +206,7 @@ function RootComponent() {
           without touching layout for everyone else. */}
       <MotionConfig reducedMotion="user">
         <Outlet />
+        <ConsentBanner />
         <Toaster richColors position="top-center" />
       </MotionConfig>
     </QueryClientProvider>

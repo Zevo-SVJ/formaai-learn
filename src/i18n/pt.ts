@@ -59,6 +59,12 @@ export const pt: Dict = {
   progress: {
     nav: "Evolução",
   },
+  consent: {
+    body: "O Forma usa medição de audiência para perceber o que ajuda mesmo os alunos. Podes recusar: a aplicação funciona exatamente na mesma.",
+    accept: "Aceitar",
+    decline: "Recusar",
+    more: "Saber mais",
+  },
   errorPages: {
     notFound: {
       title: "Esta página não existe",
@@ -599,7 +605,7 @@ export const pt: Dict = {
       sections: [
         {
           h: "Em resumo",
-          p: "A tua matéria é tua. Recolhemos o mínimo necessário para o Forma funcionar, não vendemos nada a ninguém e não há qualquer rastreador publicitário na aplicação.",
+          p: "A tua matéria é tua. Recolhemos o mínimo necessário para o Forma funcionar, não vendemos nada a ninguém e não há qualquer rastreador publicitário na aplicação. A medição de audiência anónima só funciona se a aceitares.",
         },
         {
           h: "Que dados recolhemos",
@@ -657,7 +663,7 @@ export const pt: Dict = {
         },
         {
           h: "Medição de audiência",
-          p: "Nenhuma. Hoje o Forma não integra qualquer ferramenta de análise ou de seguimento de comportamento. Se isso mudar, pedimos-te autorização antes.",
+          p: "O Forma usa o Google Analytics para contar as visitas e ver que funcionalidades são mesmo usadas. Só funciona se aceitares quando te perguntamos, podes recusar e a aplicação funciona na mesma, e nunca são recolhidos dados publicitários ou de personalização.",
         },
         {
           h: "As tuas opções",

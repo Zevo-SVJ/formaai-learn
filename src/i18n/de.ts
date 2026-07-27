@@ -58,6 +58,12 @@ export const de: Dict = {
   progress: {
     nav: "Fortschritt",
   },
+  consent: {
+    body: "Forma nutzt Reichweitenmessung, um zu verstehen, was Lernenden wirklich hilft. Du kannst ablehnen: Die App funktioniert genauso.",
+    accept: "Akzeptieren",
+    decline: "Ablehnen",
+    more: "Mehr erfahren",
+  },
   errorPages: {
     notFound: {
       title: "Diese Seite gibt es nicht",
@@ -601,7 +607,7 @@ export const de: Dict = {
       sections: [
         {
           h: "Kurz gesagt",
-          p: "Dein Stoff gehört dir. Wir erheben nur das Nötigste, damit Forma funktioniert, verkaufen nichts an niemanden, und in der App steckt kein Werbetracker.",
+          p: "Dein Stoff gehört dir. Wir erheben nur das Nötigste, damit Forma funktioniert, verkaufen nichts an niemanden, und in der App steckt kein Werbetracker. Anonyme Reichweitenmessung läuft nur, wenn du zustimmst.",
         },
         {
           h: "Welche Daten wir erheben",
@@ -659,7 +665,7 @@ export const de: Dict = {
         },
         {
           h: "Reichweitenmessung",
-          p: "Keine. Forma bindet derzeit keine Analyse- oder Trackingwerkzeuge ein. Sollte sich das ändern, fragen wir dich vorher.",
+          p: "Forma nutzt Google Analytics, um Besuche zu zählen und zu sehen, welche Funktionen wirklich genutzt werden. Es läuft nur, wenn du zustimmst, du kannst ablehnen und die App funktioniert genauso, und es werden nie Werbe- oder Personalisierungsdaten erhoben.",
         },
         {
           h: "Deine Möglichkeiten",

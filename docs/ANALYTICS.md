@@ -1,48 +1,52 @@
 # Analytics
 
-Forma ships with a GA4 integration that is **installed but switched off**. With
-no measurement id configured, `src/lib/analytics.ts` loads nothing, sets no
-cookie and sends no request. That is the current state, and it is what keeps the
-cookie policy ("no analytics, no third-party trackers") accurate.
+Forma reports to GA4 property **G-K96ZD0VD5S**, and only after the student has
+actively accepted analytics.
 
-## Turning it on
+## How it is gated
 
-1. Create a GA4 property and copy its measurement id (`G-XXXXXXXXXX`).
-2. Set `VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX` in the deployment environment.
-3. Redeploy. `initAnalytics()` runs after hydration and starts reporting.
+Two conditions must both hold before `gtag.js` is even requested:
 
-### Before you do, read this
+1. a measurement id is configured (`VITE_GA_MEASUREMENT_ID`, defaulting to the
+   property above), and
+2. `getConsent() === "granted"` in `src/lib/consent.ts`.
 
-GA4 writes cookies that are **not** strictly necessary. Two things must happen
-at the same time, or Forma's own published policy becomes untrue:
+Until the student answers the banner, nothing loads, no cookie is written and no
+request leaves the browser. Declining is stored too, so the banner is asked once
+and never again. Consent is re-checked on every `track()` call, so a later
+decline takes effect immediately.
 
-- **Update the legal copy.** `legal.cookies` currently states there is no
-  audience measurement and promises "if that ever changes, we will ask for your
-  agreement first". `legal.privacy` says the same. Both must be updated in **all
-  six dictionaries** (`en, fr, es, de, pt, it`) — they are typed against `Dict`,
-  so tsc will not let one drift.
-- **Ask for consent first.** In the EU, non-essential cookies need consent
-  before they are set. Gate `initAnalytics()` behind that choice.
+Consent Mode is set explicitly: `analytics_storage` granted, and `ad_storage`,
+`ad_user_data`, `ad_personalization` **denied**. Forma collects audience
+measurement only, never advertising or personalisation data.
 
-Until both are done, leave the variable unset. Everything else already works.
+The banner (`src/components/ConsentBanner.tsx`) gives Accept and Decline the
+same visual weight, with nothing pre-selected — declining has to be as easy as
+accepting.
+
+## Keeping the legal pages honest
+
+`legal.cookies` and `legal.privacy` in all six dictionaries describe this setup:
+Analytics runs only on acceptance, declining changes nothing, and no advertising
+data is collected. If the analytics setup changes, those sections change with it.
 
 ## What is measured
 
 Ten events, chosen to answer three questions and nothing else: do visitors
 activate, where do they stop, and which features get used.
 
-| Event | Fires when | Answers |
-|---|---|---|
-| `onboarding_started` | student passes the intro screen | top of funnel |
-| `onboarding_completed` | onboarding is marked done | onboarding drop-off |
-| `account_created` | sign-up succeeds | activation |
-| `lesson_uploaded` | a document row is created (both upload paths) | core action |
-| `analysis_completed` | a document reaches `ready` | does the core loop work |
-| `analysis_failed` | a document reaches `failed` | reliability in the wild |
-| `tutor_opened` | the "ask about this analysis" CTA is used | feature usage |
-| `tutor_message_sent` | a question is sent to the tutor | depth of engagement |
-| `grade_added` | a grade is saved in Progress | second-feature adoption |
-| `feedback_opened` | the contact form is submitted | feedback volume |
+| Event                  | Fires when                                    | Answers                 |
+| ---------------------- | --------------------------------------------- | ----------------------- |
+| `onboarding_started`   | student passes the intro screen               | top of funnel           |
+| `onboarding_completed` | onboarding is marked done                     | onboarding drop-off     |
+| `account_created`      | sign-up succeeds                              | activation              |
+| `lesson_uploaded`      | a document row is created (both upload paths) | core action             |
+| `analysis_completed`   | a document reaches `ready`                    | does the core loop work |
+| `analysis_failed`      | a document reaches `failed`                   | reliability in the wild |
+| `tutor_opened`         | the "ask about this analysis" CTA is used     | feature usage           |
+| `tutor_message_sent`   | a question is sent to the tutor               | depth of engagement     |
+| `grade_added`          | a grade is saved in Progress                  | second-feature adoption |
+| `feedback_opened`      | the contact form is submitted                 | feedback volume         |
 
 `analysis_completed` carries the subject, `lesson_uploaded` carries the mime
 type. Nothing else is attached: no document ids, no titles, no file names, no

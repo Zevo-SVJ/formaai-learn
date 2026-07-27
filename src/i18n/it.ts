@@ -58,6 +58,12 @@ export const it: Dict = {
   progress: {
     nav: "Progressi",
   },
+  consent: {
+    body: "Forma usa la misurazione del traffico per capire cosa aiuta davvero gli studenti. Puoi rifiutare: l'app funziona esattamente allo stesso modo.",
+    accept: "Accetta",
+    decline: "Rifiuta",
+    more: "Scopri di più",
+  },
   errorPages: {
     notFound: {
       title: "Questa pagina non esiste",
@@ -601,7 +607,7 @@ export const it: Dict = {
       sections: [
         {
           h: "In breve",
-          p: "Le tue lezioni sono tue. Raccogliamo il minimo necessario per far funzionare Forma, non vendiamo nulla a nessuno e nell'applicazione non c'è alcun tracciatore pubblicitario.",
+          p: "Le tue lezioni sono tue. Raccogliamo il minimo necessario per far funzionare Forma, non vendiamo nulla a nessuno e nell'applicazione non c'è alcun tracciatore pubblicitario. La misurazione anonima del traffico si attiva solo se la accetti.",
         },
         {
           h: "Quali dati raccogliamo",
@@ -659,7 +665,7 @@ export const it: Dict = {
         },
         {
           h: "Misurazione del traffico",
-          p: "Nessuna. Oggi Forma non integra alcuno strumento di analisi o di tracciamento del comportamento. Se dovesse cambiare, te lo chiederemmo prima.",
+          p: "Forma usa Google Analytics per contare le visite e capire quali funzioni vengono davvero usate. Si attiva solo se lo accetti quando te lo chiediamo, puoi rifiutare e l'app funziona allo stesso modo, e non vengono mai raccolti dati pubblicitari o di personalizzazione.",
         },
         {
           h: "Le tue scelte",

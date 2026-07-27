@@ -56,6 +56,12 @@ export const en = {
   progress: {
     nav: "Progress",
   },
+  consent: {
+    body: "Forma uses audience measurement to understand what actually helps students. You can decline: the app works exactly the same.",
+    accept: "Accept",
+    decline: "Decline",
+    more: "Learn more",
+  },
   errorPages: {
     notFound: {
       title: "This page does not exist",
@@ -594,7 +600,7 @@ export const en = {
       sections: [
         {
           h: "In short",
-          p: "Your coursework is yours. We collect the minimum needed to run Forma, we sell nothing to anyone, and there is no advertising tracker in the app.",
+          p: "Your coursework is yours. We collect the minimum needed to run Forma, we sell nothing to anyone, and there is no advertising tracker in the app. Anonymous audience measurement runs only if you accept it.",
         },
         {
           h: "What we collect",
@@ -652,7 +658,7 @@ export const en = {
         },
         {
           h: "Analytics",
-          p: "None. Forma currently includes no audience analytics and no behavioural tracking. If that ever changes, we will ask for your agreement first.",
+          p: "Forma uses Google Analytics to count visits and see which features get used. It only runs if you accept it when asked, you can decline and the app works exactly the same, and no advertising or personalisation data is ever collected.",
         },
         {
           h: "Your choices",
