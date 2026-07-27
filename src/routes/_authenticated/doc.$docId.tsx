@@ -178,7 +178,13 @@ function DocPage() {
 
         {doc && (doc.status === "failed" || (pending && stalled)) && (
           <FailedView
-            error={doc.status === "failed" ? doc.error : t((d) => d.doc.stalled)}
+            error={
+              doc.status !== "failed"
+                ? t((d) => d.doc.stalled)
+                : doc.error === "FORMA_UNREADABLE" || !doc.error
+                  ? t((d) => d.doc.unreadable)
+                  : doc.error
+            }
             onRetry={async () => {
               setStalled(false);
               try {

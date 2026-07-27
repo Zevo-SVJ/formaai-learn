@@ -458,6 +458,8 @@ export const en = {
     working: "Working",
     workingHint: "Forma AI is really reading your document. This usually takes 5 to 15 seconds.",
     stalled: "This is taking longer than expected. The analysis may have been interrupted.",
+    unreadable:
+      "Forma could not read this document. Try a sharper photo, in good light, with the whole page visible.",
     askTitle: "Keep going with your tutor",
     askSubtitle: "You've got the answer. Now ask anything — Forma explains it step by step.",
     askCta: "Ask a question about this analysis",

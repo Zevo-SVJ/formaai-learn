@@ -22,34 +22,40 @@ export const analyzeDocument = createServerFn({ method: "POST" })
     if (docErr || !doc) throw new Error("Document not found");
 
     try {
-    await supabase.from("documents").update({ status: "extracting" }).eq("id", documentId);
+      await supabase.from("documents").update({ status: "extracting" }).eq("id", documentId);
 
-    // Download the file bytes via signed URL (RLS-safe path).
-    const { data: signed, error: signErr } = await supabase.storage
-      .from("documents")
-      .createSignedUrl(doc.storage_path, 60);
-    if (signErr || !signed) throw new Error("Could not read file");
+      // Download the file bytes via signed URL (RLS-safe path).
+      const { data: signed, error: signErr } = await supabase.storage
+        .from("documents")
+        .createSignedUrl(doc.storage_path, 60);
+      if (signErr || !signed) throw new Error("Could not read file");
 
-    const fileRes = await fetch(signed.signedUrl);
-    if (!fileRes.ok) throw new Error("Could not download file");
-    const buf = new Uint8Array(await fileRes.arrayBuffer());
-    let binary = "";
-    for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
-    const b64 = btoa(binary);
-    const mime = doc.mime || "application/octet-stream";
-    const dataUrl = `data:${mime};base64,${b64}`;
+      const fileRes = await fetch(signed.signedUrl);
+      if (!fileRes.ok) throw new Error("Could not download file");
+      const buf = new Uint8Array(await fileRes.arrayBuffer());
+      // Chunked rather than one concat per byte: at the 20 MB upload limit that
+      // loop runs twenty million times and is a real way to burn the worker's CPU
+      // budget before the analysis even starts.
+      let binary = "";
+      const CHUNK = 0x8000;
+      for (let i = 0; i < buf.length; i += CHUNK) {
+        binary += String.fromCharCode(...buf.subarray(i, i + CHUNK));
+      }
+      const b64 = btoa(binary);
+      const mime = doc.mime || "application/octet-stream";
+      const dataUrl = `data:${mime};base64,${b64}`;
 
-    await supabase.from("documents").update({ status: "analyzing" }).eq("id", documentId);
+      await supabase.from("documents").update({ status: "analyzing" }).eq("id", documentId);
 
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("Missing LOVABLE_API_KEY");
+      const key = process.env.LOVABLE_API_KEY;
+      if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
-    const isImage = mime.startsWith("image/");
-    const isPdf = mime === "application/pdf";
-    const contentBlocks: Array<Record<string, unknown>> = [
-      {
-        type: "text",
-        text: `You are Forma AI, a tutor for middle- and high-school students.
+      const isImage = mime.startsWith("image/");
+      const isPdf = mime === "application/pdf";
+      const contentBlocks: Array<Record<string, unknown>> = [
+        {
+          type: "text",
+          text: `You are Forma AI, a tutor for middle- and high-school students.
 Analyze the attached document and reply with ONLY a compact JSON object matching this shape (no markdown fences, no commentary):
 {
   "title": string (max 60 chars, human title of the lesson, in the document's own language),
@@ -84,102 +90,112 @@ Rules:
 - If the document is an exercise or worksheet, "answers" MUST list every final answer, one per question, and each answer must be as short as possible.
 - No introductions, no summaries in "answer" fields. Just the final result.
 - If the document is unreadable, set fields to "" or [] and put a short reason in extracted_text.`,
-      },
-    ];
-    if (isImage) {
-      contentBlocks.push({ type: "image_url", image_url: { url: dataUrl } });
-    } else if (isPdf) {
-      contentBlocks.push({
-        type: "file",
-        file: { filename: doc.title || "document.pdf", file_data: dataUrl },
-      });
-    } else {
-      const text = new TextDecoder().decode(buf).slice(0, 40000);
-      contentBlocks[0] = {
-        type: "text",
-        text: (contentBlocks[0] as { text: string }).text + "\n\nDocument text:\n" + text,
-      };
-    }
-
-    const gwRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": key,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [{ role: "user", content: contentBlocks }],
-      }),
-    });
-
-    if (!gwRes.ok) {
-      const errText = await gwRes.text();
-      // The catch below records this on the row; keep the detail in the message.
-      throw new Error(`AI ${gwRes.status}: ${errText.slice(0, 500)}`);
-    }
-    const payload = (await gwRes.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
-    };
-    const raw = payload.choices?.[0]?.message?.content ?? "";
-    let parsed: Record<string, unknown> | null = null;
-    try {
-      const match = raw.match(/\{[\s\S]*\}/);
-      parsed = match ? JSON.parse(match[0]) : null;
-    } catch {
-      parsed = null;
-    }
-    if (!parsed) {
-      throw new Error("Could not parse AI response");
-    }
-
-    const clean = (s: unknown) =>
-      String(s ?? "")
-        .replace(/\*\*/g, "")
-        .replace(/__/g, "")
-        .replace(/^#+\s*/gm, "")
-        .replace(/\s*—\s*/g, ", ")
-        .trim();
-
-    const explanation = (parsed.explanation as Record<string, unknown>) ?? {};
-    const rawAnswers = Array.isArray(parsed.answers) ? (parsed.answers as unknown[]) : [];
-    const answers = rawAnswers
-      .map((a) => {
-        const o = (a ?? {}) as Record<string, unknown>;
-        return {
-          label: clean(o.label),
-          question: clean(o.question),
-          answer: clean(o.answer),
-        };
-      })
-      .filter((a) => a.answer || a.label);
-
-    const { error: upErr } = await supabase
-      .from("documents")
-      .update({
-        title: clean(parsed.title) || doc.title || "Untitled lesson",
-        subject: clean(parsed.subject) || null,
-        level: clean(parsed.level) || null,
-        chapter: clean(parsed.chapter) || null,
-        concepts: (parsed.concepts as string[] | null) ?? null,
-        extracted_text: (parsed.extracted_text as string) || null,
-        explanation: {
-          is_exercise: Boolean(parsed.is_exercise) || answers.length > 0,
-          answers,
-          explanation: clean(explanation.explanation),
-          method: clean(explanation.method),
-          why: clean(explanation.why),
-          common_mistake: clean(explanation.common_mistake),
-          example: clean(explanation.example),
-          analogy: clean(explanation.analogy),
         },
-        status: "ready",
-        error: null,
-      })
-      .eq("id", documentId);
-    if (upErr) throw upErr;
+      ];
+      if (isImage) {
+        contentBlocks.push({ type: "image_url", image_url: { url: dataUrl } });
+      } else if (isPdf) {
+        contentBlocks.push({
+          type: "file",
+          file: { filename: doc.title || "document.pdf", file_data: dataUrl },
+        });
+      } else {
+        const text = new TextDecoder().decode(buf).slice(0, 40000);
+        contentBlocks[0] = {
+          type: "text",
+          text: (contentBlocks[0] as { text: string }).text + "\n\nDocument text:\n" + text,
+        };
+      }
 
-    return { ok: true };
+      const gwRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Lovable-API-Key": key,
+        },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [{ role: "user", content: contentBlocks }],
+        }),
+      });
+
+      if (!gwRes.ok) {
+        const errText = await gwRes.text();
+        // The catch below records this on the row; keep the detail in the message.
+        throw new Error(`AI ${gwRes.status}: ${errText.slice(0, 500)}`);
+      }
+      const payload = (await gwRes.json()) as {
+        choices?: Array<{ message?: { content?: string } }>;
+      };
+      const raw = payload.choices?.[0]?.message?.content ?? "";
+      let parsed: Record<string, unknown> | null = null;
+      try {
+        const match = raw.match(/\{[\s\S]*\}/);
+        parsed = match ? JSON.parse(match[0]) : null;
+      } catch {
+        parsed = null;
+      }
+      if (!parsed) {
+        throw new Error("Could not parse AI response");
+      }
+
+      const clean = (s: unknown) =>
+        String(s ?? "")
+          .replace(/\*\*/g, "")
+          .replace(/__/g, "")
+          .replace(/^#+\s*/gm, "")
+          .replace(/\s*—\s*/g, ", ")
+          .trim();
+
+      const explanation = (parsed.explanation as Record<string, unknown>) ?? {};
+      const rawAnswers = Array.isArray(parsed.answers) ? (parsed.answers as unknown[]) : [];
+      const answers = rawAnswers
+        .map((a) => {
+          const o = (a ?? {}) as Record<string, unknown>;
+          return {
+            label: clean(o.label),
+            question: clean(o.question),
+            answer: clean(o.answer),
+          };
+        })
+        .filter((a) => a.answer || a.label);
+
+      // The model is told to return empty fields and a reason when it cannot read
+      // the document, which a blurry photo triggers routinely. Saved as "ready"
+      // that produces an analysis page with every section falsy: the student
+      // waits through the ceremony and lands on nothing, with no way to tell what
+      // went wrong. Treat "no answers and no explanation" as a failure so the
+      // retry view appears, carrying the model's own reason when it gave one.
+      if (answers.length === 0 && !clean(explanation.explanation)) {
+        throw new Error(clean(parsed.extracted_text) || "FORMA_UNREADABLE");
+      }
+
+      const { error: upErr } = await supabase
+        .from("documents")
+        .update({
+          title: clean(parsed.title) || doc.title || "Untitled lesson",
+          subject: clean(parsed.subject) || null,
+          level: clean(parsed.level) || null,
+          chapter: clean(parsed.chapter) || null,
+          concepts: (parsed.concepts as string[] | null) ?? null,
+          extracted_text: (parsed.extracted_text as string) || null,
+          explanation: {
+            is_exercise: Boolean(parsed.is_exercise) || answers.length > 0,
+            answers,
+            explanation: clean(explanation.explanation),
+            method: clean(explanation.method),
+            why: clean(explanation.why),
+            common_mistake: clean(explanation.common_mistake),
+            example: clean(explanation.example),
+            analogy: clean(explanation.analogy),
+          },
+          status: "ready",
+          error: null,
+        })
+        .eq("id", documentId);
+      if (upErr) throw upErr;
+
+      return { ok: true };
     } catch (e) {
       // Every failure has to leave the row in a terminal state. Otherwise it
       // keeps its "extracting"/"analyzing" status, the document page polls it

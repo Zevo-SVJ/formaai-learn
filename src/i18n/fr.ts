@@ -462,6 +462,8 @@ export const fr: Dict = {
     working: "En cours",
     workingHint: "Forma lit vraiment ton document. Ça prend d'habitude 5 à 15 secondes.",
     stalled: "Ça prend plus de temps que prévu. L'analyse a peut-être été interrompue.",
+    unreadable:
+      "Forma n'a pas réussi à lire ce document. Réessaie avec une photo plus nette, bien éclairée, avec toute la page visible.",
     askTitle: "Continue avec ton tuteur",
     askSubtitle: "Tu as la réponse. Pose maintenant ta question — Forma t'explique pas à pas.",
     askCta: "Poser une question sur cette analyse",
