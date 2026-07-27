@@ -26,6 +26,7 @@ function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [kind, setKind] = useState<"general" | "problem" | "idea">("general");
 
   return (
     <div className="min-h-dvh bg-background">
@@ -76,9 +77,11 @@ function Contact() {
             // is no mail backend, so the message is handed to the user's own mail
             // client: it actually reaches us and needs no server.
             const to = t((d) => d.legal.contact.email);
-            const subject = `Forma — ${name || "message"}`;
+            // The kind travels in the subject so feedback can be triaged at a
+            // glance without any backend.
+            const subject = `Forma — ${t((d) => d.legal.contact.form.kinds[kind])}`;
             const body = `${message}\n\n---\n${name}\n${email}`;
-            track("feedback_opened");
+            track("feedback_opened", { kind });
             window.location.href =
               `mailto:${to}?subject=${encodeURIComponent(subject)}` +
               `&body=${encodeURIComponent(body)}`;
@@ -97,6 +100,25 @@ function Contact() {
             </div>
           ) : (
             <>
+              {/* Three quiet chips, so a tester's message arrives already
+                  sorted. Optional: "general" is the default. */}
+              <div className="flex flex-wrap gap-2 pb-1">
+                {(["general", "problem", "idea"] as const).map((k) => (
+                  <button
+                    key={k}
+                    type="button"
+                    onClick={() => setKind(k)}
+                    className={[
+                      "rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition",
+                      kind === k
+                        ? "border-emerald bg-emerald text-white"
+                        : "border-border bg-surface text-foreground hover:border-border-strong",
+                    ].join(" ")}
+                  >
+                    {t((d) => d.legal.contact.form.kinds[k])}
+                  </button>
+                ))}
+              </div>
               <input
                 required
                 value={name}

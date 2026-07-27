@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { classifyError } from "@/lib/error-message";
-import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -114,7 +113,6 @@ function Auth() {
           options: { emailRedirectTo: window.location.origin + "/home" },
         });
         if (error) throw error;
-        track("account_created");
         // Redemption needs a session. With email confirmation enabled signUp
         // returns none, so park the code and let the SIGNED_IN handler redeem
         // it once the user comes back through the confirmation link.

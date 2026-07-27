@@ -25,6 +25,10 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
 
   const handleFile = useCallback(
     async (file: File) => {
+      // Fired as soon as a file is chosen, before any check. Paired with
+      // lesson_uploaded this shows how many attempts never make it through
+      // (too large, dropped connection, sent to sign-in).
+      track("upload_started");
       if (file.size > MAX_MB * 1024 * 1024) {
         toast.error(t((d) => d.upload.fileTooLarge, { max: MAX_MB }));
         return;

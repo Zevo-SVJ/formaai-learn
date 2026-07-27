@@ -33,6 +33,7 @@ export type AnalyticsEvent =
   | "onboarding_started"
   | "onboarding_completed"
   | "account_created"
+  | "upload_started"
   | "lesson_uploaded"
   | "analysis_completed"
   | "analysis_failed"

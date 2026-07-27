@@ -278,6 +278,16 @@ function Home() {
             </div>
           </div>
         </motion.div>
+
+        {/* The only way into the app to report a problem: the site footer, and
+            with it the contact link, exists on the landing and legal pages
+            only. A tester who hits a bug here had nowhere to say so. Quiet on
+            purpose — a line, not a prompt. */}
+        <p className="mt-10 text-center text-[13px] text-muted-foreground">
+          <Link to="/contact" className="underline underline-offset-2 hover:text-foreground">
+            {t((d) => d.home.feedback)}
+          </Link>
+        </p>
       </main>
     </div>
   );
@@ -287,13 +297,7 @@ function capitalize(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function SectionTitle({
-  children,
-  right,
-}: {
-  children: React.ReactNode;
-  right?: React.ReactNode;
-}) {
+function SectionTitle({ children, right }: { children: React.ReactNode; right?: React.ReactNode }) {
   return (
     <div className="mb-3 mt-10 flex items-center justify-between first:mt-0">
       <h2 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -413,4 +417,3 @@ function StatusBadge({ status }: { status: string }) {
     </span>
   );
 }
-

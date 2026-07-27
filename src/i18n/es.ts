@@ -477,6 +477,7 @@ export const es: Dict = {
     recent: "Lecciones recientes",
     recentEmpty: "Aquí aparecerán tus lecciones recientes.",
     seeAll: "Ver todo",
+    feedback: "¿Algo no funciona o tienes una idea? Cuéntanoslo.",
     encourage: {
       title: "Un poco cada día.",
       body: "Los estudiantes que abren Forma aunque sean cinco minutos al día entienden el doble de lo que leen.",
@@ -675,6 +676,7 @@ export const es: Dict = {
       subtitle: "Leemos todos los mensajes.",
       email: "zevo.flcs@gmail.com",
       form: {
+        kinds: { general: "Opinión general", problem: "Un problema", idea: "Una idea" },
         name: "Tu nombre",
         email: "Tu correo",
         message: "¿Qué nos quieres contar?",

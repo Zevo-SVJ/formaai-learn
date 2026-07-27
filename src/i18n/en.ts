@@ -475,6 +475,7 @@ export const en = {
     recent: "Recent lessons",
     recentEmpty: "Your recent lessons will appear here.",
     seeAll: "See all",
+    feedback: "Something not working, or an idea? Tell us.",
     encourage: {
       title: "A little bit every day.",
       body: "Students who open Forma even five minutes a day understand two times more of what they read.",
@@ -671,6 +672,7 @@ export const en = {
       subtitle: "We read every message.",
       email: "zevo.flcs@gmail.com",
       form: {
+        kinds: { general: "General feedback", problem: "A problem", idea: "An idea" },
         name: "Your first name",
         email: "Your email",
         message: "What would you like to tell us?",

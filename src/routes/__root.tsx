@@ -20,7 +20,7 @@ import { takePendingReferral } from "@/lib/pending-referral";
 import "@/i18n";
 import { getLocale } from "@/i18n";
 import { useI18n } from "@/hooks/useI18n";
-import { initAnalytics } from "@/lib/analytics";
+import { initAnalytics, track } from "@/lib/analytics";
 import { ConsentBanner } from "@/components/ConsentBanner";
 
 function NotFoundComponent() {
@@ -186,6 +186,26 @@ function RootComponent() {
       // redirect or an email confirmation link. Redeeming is optional, so a
       // failure must never interrupt the sign-in it follows.
       if (event === "SIGNED_IN") {
+        // Sign-up is reported here rather than in the auth form: OAuth is a
+        // full-page redirect, so nothing after signInWithOAuth() ever runs and
+        // Google/Apple sign-ups were invisible. This is the first moment a
+        // session exists for every method. A freshly created account is one
+        // whose creation is seconds old; the guard keeps it to once per user.
+        void supabase.auth.getUser().then(({ data }) => {
+          const u = data.user;
+          if (!u?.created_at) return;
+          const ageMs = Date.now() - new Date(u.created_at).getTime();
+          if (ageMs > 5 * 60_000) return;
+          try {
+            const key = `forma:signupTracked:${u.id}`;
+            if (window.localStorage.getItem(key)) return;
+            window.localStorage.setItem(key, "1");
+          } catch {
+            // Without storage we may report twice; better than never.
+          }
+          track("account_created");
+        });
+
         const code = takePendingReferral();
         if (code) {
           Promise.resolve(redeem({ data: { code } }))
