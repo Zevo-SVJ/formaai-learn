@@ -109,12 +109,12 @@ export const fr: Dict = {
     photo: "Photo",
   },
   progressFeature: {
-    badge: "Nouveau",
     title: "Vois vraiment comment tu progresses.",
     body: "Ajoute une note avec sa matière, son coefficient et sa date. Forma transforme tes résultats en tableau de bord clair, pour comprendre ta progression dans le temps.",
     chips: ["Note", "Matière", "Coefficient", "Date", "Barème"],
     average: "Moyenne générale",
-    trend: "Ce trimestre",
+    months: ["Sept.", "Nov.", "Janv."],
+    subjects: ["Mathématiques", "Physique", "Histoire"],
   },
   compare: {
     eyebrow: "La différence",

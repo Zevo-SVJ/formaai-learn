@@ -108,12 +108,12 @@ export const en = {
     photo: "Photo",
   },
   progressFeature: {
-    badge: "New",
     title: "See how you are really progressing.",
     body: "Add a grade with its subject, coefficient and date. Forma turns your results into a clean dashboard, so you can understand your progress over time.",
     chips: ["Grade", "Subject", "Coefficient", "Date", "Scale"],
     average: "Overall average",
-    trend: "This term",
+    months: ["Sep", "Nov", "Jan"],
+    subjects: ["Mathematics", "Physics", "History"],
   },
   compare: {
     eyebrow: "The difference",

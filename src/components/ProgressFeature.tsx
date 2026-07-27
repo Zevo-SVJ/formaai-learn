@@ -5,6 +5,8 @@ import { useI18n } from "@/hooks/useI18n";
 
 // A gentle upward grade curve (out of 20) for the mock dashboard.
 const SERIES = [8.5, 9, 10, 9.5, 11.5, 12, 13.2, 14.2];
+// Per-subject averages, out of 20, shown under the curve.
+const SUBJECT_AVGS = [15.4, 13.8, 12.6];
 
 /**
  * A landing section that quietly signals Forma is an evolving product: it
@@ -15,6 +17,8 @@ const SERIES = [8.5, 9, 10, 9.5, 11.5, 12, 13.2, 14.2];
 export function ProgressFeature() {
   const { t, raw, locale } = useI18n();
   const chips = raw((d) => d.progressFeature.chips) as string[];
+  const months = raw((d) => d.progressFeature.months) as string[];
+  const subjects = raw((d) => d.progressFeature.subjects) as string[];
   const fr = locale.startsWith("fr");
   const avg = fr ? "14,2" : "14.2";
   const delta = fr ? "+1,8" : "+1.8";
@@ -42,11 +46,7 @@ export function ProgressFeature() {
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: EASE.out }}
         >
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald/30 bg-emerald-soft/60 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-emerald">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald" />
-            {t((d) => d.progressFeature.badge)}
-          </div>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {t((d) => d.progressFeature.title)}
           </h2>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-lg">
@@ -94,7 +94,7 @@ export function ProgressFeature() {
           <svg viewBox={`0 0 ${W} ${H}`} className="mt-4 w-full" aria-hidden>
             <defs>
               <linearGradient id="pf-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--color-emerald)" stopOpacity="0.22" />
+                <stop offset="0%" stopColor="var(--color-emerald)" stopOpacity="0.18" />
                 <stop offset="100%" stopColor="var(--color-emerald)" stopOpacity="0" />
               </linearGradient>
             </defs>
@@ -118,13 +118,51 @@ export function ProgressFeature() {
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-            {pts.map(([x, y], i) => (
-              <circle key={i} cx={x} cy={y} r={i === pts.length - 1 ? 4 : 2.5} fill="var(--color-emerald)" />
-            ))}
+            {/* Only the latest grade is marked — the eye follows the curve, not a
+                row of dots. A soft halo makes "where you are now" unmistakable. */}
+            <circle
+              cx={pts[pts.length - 1][0]}
+              cy={pts[pts.length - 1][1]}
+              r="7"
+              fill="var(--color-emerald)"
+              opacity="0.16"
+            />
+            <circle
+              cx={pts[pts.length - 1][0]}
+              cy={pts[pts.length - 1][1]}
+              r="3.5"
+              fill="var(--color-emerald)"
+              stroke="var(--color-card)"
+              strokeWidth="2"
+            />
           </svg>
 
-          <div className="mt-3 text-[12px] font-medium text-muted-foreground">
-            {t((d) => d.progressFeature.trend)}
+          {/* Time axis — the whole point of the feature is progress over time. */}
+          <div className="mt-1 flex justify-between px-1 text-[11px] font-medium text-muted-foreground">
+            {months.map((m) => (
+              <span key={m}>{m}</span>
+            ))}
+          </div>
+
+          {/* Per-subject breakdown — what makes this an academic dashboard
+              rather than a generic chart. Deliberately quiet. */}
+          <div className="mt-5 space-y-2.5 border-t border-border pt-4">
+            {subjects.map((s, i) => (
+              <div key={s} className="flex items-center gap-3">
+                <span className="w-[92px] shrink-0 truncate text-[12px] font-medium text-muted-foreground">
+                  {s}
+                </span>
+                <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-muted">
+                  <span
+                    className="block h-full rounded-full bg-emerald"
+                    style={{ width: `${(SUBJECT_AVGS[i] / 20) * 100}%` }}
+                  />
+                </span>
+                <span className="w-9 shrink-0 text-right text-[12px] font-semibold text-foreground tabular-nums">
+                  {fr ? String(SUBJECT_AVGS[i]).replace(".", ",") : SUBJECT_AVGS[i]}
+                </span>
+              </div>
+            ))}
           </div>
         </motion.div>
       </div>

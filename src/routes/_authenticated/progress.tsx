@@ -177,6 +177,7 @@ function ProgressPage() {
                       tickLine={false}
                       tickMargin={8}
                       minTickGap={24}
+                      tickFormatter={(v: string) => formatDay(v, locale)}
                     />
                     <YAxis
                       domain={[0, 20]}
@@ -197,6 +198,7 @@ function ProgressPage() {
                         padding: "8px 12px",
                       }}
                       labelStyle={{ color: "var(--muted-foreground)", marginBottom: 2 }}
+                      labelFormatter={(v) => formatDay(String(v), locale)}
                       formatter={(v) => [formatNum(Number(v), locale) + " / 20", ""]}
                     />
                     <Area
@@ -350,6 +352,16 @@ function weighted(items: Grade[]): number | null {
   }
   if (coefs === 0) return null;
   return sum / coefs;
+}
+
+/** "2026-07-20" → "20 juil." / "Jul 20". Raw ISO dates read like debug output. */
+function formatDay(iso: string, locale: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return new Intl.DateTimeFormat(locale.startsWith("fr") ? "fr-FR" : "en-US", {
+    day: "numeric",
+    month: "short",
+  }).format(d);
 }
 
 function formatNum(n: number, locale: string) {
