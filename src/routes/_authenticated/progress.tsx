@@ -9,6 +9,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { addGrade, deleteGrade, listGrades, updateGrade } from "@/lib/grades.functions";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
+import { classifyError } from "@/lib/error-message";
 import { Plus, Pencil, Trash2, X, Loader2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 
@@ -446,7 +447,7 @@ function GradeSheet({
       toast.success(t((d) => d.progressPage.saved));
       onSaved();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error");
+      toast.error(t((d) => d.errors[classifyError(err)]));
     } finally {
       setSaving(false);
     }

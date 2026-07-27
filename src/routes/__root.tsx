@@ -19,21 +19,24 @@ import { redeemReferralCode } from "@/lib/referral.functions";
 import { takePendingReferral } from "@/lib/pending-referral";
 import "@/i18n";
 import { getLocale } from "@/i18n";
+import { useI18n } from "@/hooks/useI18n";
 
 function NotFoundComponent() {
+  const { t } = useI18n();
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-6xl font-bold text-foreground">404</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
-          This page drifted off. Head back and start a new lesson.
+        <p className="mt-3 text-[15px] font-semibold text-foreground">
+          {t((d) => d.errorPages.notFound.title)}
         </p>
+        <p className="mt-2 text-sm text-muted-foreground">{t((d) => d.errorPages.notFound.body)}</p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5"
           >
-            Go home
+            {t((d) => d.errorPages.notFound.home)}
           </Link>
         </div>
       </div>
@@ -44,6 +47,7 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const { t } = useI18n();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
@@ -52,26 +56,24 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-dvh items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          Something went wrong
+          {t((d) => d.errorPages.crash.title)}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Try again — if it keeps failing, head back home.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">{t((d) => d.errorPages.crash.body)}</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background"
+            className="inline-flex items-center justify-center rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition hover:opacity-90"
           >
-            Try again
+            {t((d) => d.errorPages.crash.retry)}
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-semibold text-foreground"
+            className="inline-flex items-center justify-center rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-semibold text-foreground transition hover:border-border-strong"
           >
-            Go home
+            {t((d) => d.errorPages.crash.home)}
           </a>
         </div>
       </div>
@@ -100,9 +102,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Forma AI — Learn Better with AI" },
-      { name: "twitter:description", content: "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f3f813f2-97bb-4b5b-841e-23e5fcd7d875/id-preview-23442503--ff20e900-72ee-46ea-af34-54249137d40e.lovable.app-1784588761722.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f3f813f2-97bb-4b5b-841e-23e5fcd7d875/id-preview-23442503--ff20e900-72ee-46ea-af34-54249137d40e.lovable.app-1784588761722.png" },
+      {
+        name: "twitter:description",
+        content:
+          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f3f813f2-97bb-4b5b-841e-23e5fcd7d875/id-preview-23442503--ff20e900-72ee-46ea-af34-54249137d40e.lovable.app-1784588761722.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f3f813f2-97bb-4b5b-841e-23e5fcd7d875/id-preview-23442503--ff20e900-72ee-46ea-af34-54249137d40e.lovable.app-1784588761722.png",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

@@ -43,12 +43,7 @@ function Privacy() {
         >
           {t((d) => d.legal.privacy.title)}
         </motion.h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {t((d) => d.legal.privacy.updated)}
-        </p>
-        <div className="mt-4 rounded-2xl border border-dashed border-border bg-surface p-4 text-[13px] text-muted-foreground">
-          {t((d) => d.legal.privacy.draft)}
-        </div>
+        <p className="mt-2 text-sm text-muted-foreground">{t((d) => d.legal.privacy.updated)}</p>
         <div className="mt-10 space-y-8">
           {sections.map((s, i) => (
             <motion.section
@@ -59,9 +54,7 @@ function Privacy() {
               transition={{ duration: 0.3, delay: i * 0.04, ease: EASE.out }}
             >
               <h2 className="text-lg font-bold text-foreground">{s.h}</h2>
-              <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
-                {s.p}
-              </p>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{s.p}</p>
             </motion.section>
           ))}
         </div>

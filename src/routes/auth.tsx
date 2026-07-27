@@ -9,6 +9,7 @@ import { storePendingReferral } from "@/lib/pending-referral";
 import { toast } from "sonner";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
+import { classifyError } from "@/lib/error-message";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -92,7 +93,7 @@ function Auth() {
       redirect_uri: window.location.origin + "/auth",
     });
     if (res.error) {
-      toast.error(res.error.message || t((d) => d.auth.signInFailed));
+      toast.error(t((d) => d.errors[classifyError(res.error)]));
       setLoadingOAuth(null);
       return;
     }
@@ -128,7 +129,7 @@ function Auth() {
         navigate({ to: "/home" });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t((d) => d.auth.signInFailed));
+      toast.error(t((d) => d.errors[classifyError(err)]));
     } finally {
       setSubmitting(false);
     }
@@ -154,14 +155,10 @@ function Auth() {
         >
           <Logo size={40} withWordmark={false} />
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {mode === "signup"
-              ? t((d) => d.auth.createAccount)
-              : t((d) => d.auth.welcome)}
+            {mode === "signup" ? t((d) => d.auth.createAccount) : t((d) => d.auth.welcome)}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            {mode === "signup"
-              ? t((d) => d.auth.createTagline)
-              : t((d) => d.auth.tagline)}
+            {mode === "signup" ? t((d) => d.auth.createTagline) : t((d) => d.auth.tagline)}
           </p>
         </motion.div>
 
@@ -187,7 +184,11 @@ function Auth() {
             disabled={!!loadingOAuth}
             className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border bg-surface py-3.5 text-[15px] font-semibold text-foreground transition hover:border-border-strong disabled:opacity-60"
           >
-            {loadingOAuth === "google" ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
+            {loadingOAuth === "google" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <GoogleIcon />
+            )}
             {t((d) => d.auth.google)}
           </button>
           <button
@@ -195,7 +196,11 @@ function Auth() {
             disabled={!!loadingOAuth}
             className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border bg-foreground py-3.5 text-[15px] font-semibold text-background transition hover:opacity-90 disabled:opacity-60"
           >
-            {loadingOAuth === "apple" ? <Loader2 className="h-4 w-4 animate-spin" /> : <AppleIcon />}
+            {loadingOAuth === "apple" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <AppleIcon />
+            )}
             {t((d) => d.auth.apple)}
           </button>
 

@@ -6,6 +6,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { analyzeDocument } from "@/lib/documents.functions";
 import { useI18n } from "@/hooks/useI18n";
+import { classifyError } from "@/lib/error-message";
 
 const MAX_MB = 20;
 
@@ -84,7 +85,7 @@ export function useLessonUpload() {
         navigate({ to: "/doc/$docId", params: { docId: row.id } });
       } catch (e) {
         console.error(e);
-        toast.error(e instanceof Error ? e.message : t((d) => d.upload.uploadFailed));
+        toast.error(t((d) => d.errors[classifyError(e)]));
       } finally {
         setBusy(null);
       }

@@ -58,6 +58,31 @@ export const fr: Dict = {
   progress: {
     nav: "Progrès",
   },
+  errorPages: {
+    notFound: {
+      title: "Cette page n'existe pas",
+      body: "Le lien est peut-être ancien, ou l'adresse contient une erreur.",
+      home: "Retour à l'accueil",
+    },
+    crash: {
+      title: "Ça ne s'est pas passé comme prévu",
+      body: "Rien n'est perdu. Réessaie, et si ça continue, reviens à l'accueil.",
+      retry: "Réessayer",
+      home: "Retour à l'accueil",
+    },
+  },
+  errors: {
+    network: "Connexion interrompue. Vérifie ta connexion, puis réessaie.",
+    rate: "Beaucoup de demandes en même temps. Patiente un instant, puis réessaie.",
+    permission: "Tu n'as pas accès à ce contenu.",
+    notFound: "Ce contenu est introuvable. Il a peut-être été supprimé.",
+    server: "Forma a un souci de son côté. Réessaie dans un instant.",
+    generic: "Ça n'a pas fonctionné. Réessaie dans un instant.",
+    badCredentials: "E-mail ou mot de passe incorrect.",
+    emailInUse: "Un compte existe déjà avec cet e-mail. Connecte-toi.",
+    emailNotConfirmed: "Confirme ton adresse e-mail depuis ta boîte de réception.",
+    weakPassword: "Choisis un mot de passe d'au moins 8 caractères.",
+  },
   libraryPage: {
     subtitle: "Toutes tes leçons analysées, au même endroit.",
     empty: "Rien d'enregistré pour l'instant. Analyse ta première leçon et elle apparaîtra ici.",
@@ -525,63 +550,125 @@ export const fr: Dict = {
     terms: {
       title: "Conditions d'utilisation",
       updated: "Dernière mise à jour : juillet 2026",
-      draft:
-        "Ceci est un modèle de départ. Remplace-le par ton texte juridique définitif avant le lancement.",
       sections: [
         {
           h: "Qui nous sommes",
-          p: "Forma AI est un outil éducatif qui aide les élèves à comprendre leurs propres leçons.",
+          p: "Forma AI est un outil éducatif qui aide les élèves du collège et du lycée à comprendre leurs propres cours. En utilisant Forma, tu acceptes les conditions ci-dessous.",
         },
         {
-          h: "Comment utiliser Forma",
-          p: "Forma est fait pour enseigner, pas pour passer tes évaluations à ta place. Tu es responsable de la façon dont tu l'utilises à l'école.",
+          h: "Ce que Forma fait, et ne fait pas",
+          p: "Forma explique tes documents pour t'aider à apprendre. Ce n'est pas un service qui passe tes évaluations à ta place, et ce n'est pas un remplacement de tes professeurs. Tu restes responsable du respect des règles de ton établissement.",
+        },
+        {
+          h: "Ton compte",
+          p: "Tu dois avoir au moins 15 ans, ou l'accord d'un parent ou tuteur. Les informations que tu donnes doivent être exactes, et tu es responsable de la confidentialité de tes identifiants. Un compte est personnel et ne se partage pas.",
+        },
+        {
+          h: "Usage acceptable",
+          p: "Tu t'engages à ne pas déposer de contenu illégal, haineux ou violent, ni de documents contenant les données personnelles d'autres personnes sans leur accord. Tu ne dois pas tenter de contourner nos protections, surcharger le service, ni en extraire le contenu de façon automatisée.",
         },
         {
           h: "Tes contenus",
-          p: "Tu restes propriétaire de tout ce que tu déposes. Tu autorises Forma à traiter ton document dans le seul but de te renvoyer une explication.",
+          p: "Tu restes propriétaire de tout ce que tu déposes. Tu nous accordes uniquement le droit de traiter ton document le temps nécessaire pour te renvoyer une explication. Nous ne revendiquons aucun droit sur tes cours et ne les utilisons pas à d'autres fins.",
+        },
+        {
+          h: "Propriété intellectuelle de Forma",
+          p: "Le nom Forma AI, son interface, ses textes et son identité visuelle nous appartiennent. Ton compte te donne le droit d'utiliser le service, pas de le copier ou de le revendre.",
+        },
+        {
+          h: "Limites du service",
+          p: "Forma s'appuie sur une intelligence artificielle : elle peut se tromper, mal lire un document ou proposer une explication incomplète. Vérifie toujours une réponse importante avant de la rendre. Forma est fourni sans garantie de résultat scolaire.",
         },
         {
           h: "Disponibilité",
-          p: "Nous faisons de notre mieux pour garder Forma disponible. Le service peut être interrompu pour maintenance ou amélioration.",
+          p: "Nous faisons de notre mieux pour garder Forma accessible, mais le service peut être interrompu pour maintenance, mise à jour ou raison technique, sans préavis.",
         },
         {
-          h: "Modifications",
-          p: "Nous pouvons faire évoluer ces conditions. Si c'est le cas, un message s'affichera dans le produit.",
+          h: "Suspension et fermeture",
+          p: "Nous pouvons suspendre un compte qui ne respecte pas ces conditions, en particulier en cas d'usage abusif. De ton côté, tu peux arrêter d'utiliser Forma et demander la suppression de ton compte à tout moment.",
+        },
+        {
+          h: "Évolution des conditions",
+          p: "Ces conditions peuvent évoluer avec le produit. En cas de changement important, nous te préviendrons dans l'application. Pour toute question, écris-nous à zevo.flcs@gmail.com.",
         },
       ],
     },
     privacy: {
       title: "Politique de confidentialité",
       updated: "Dernière mise à jour : juillet 2026",
-      draft:
-        "Ceci est un modèle de départ. Remplace-le par ton texte définitif avant le lancement.",
       sections: [
         {
-          h: "Ce que nous stockons",
-          p: "Ton e-mail, les documents que tu déposes et les conversations que tu as avec Forma à leur sujet.",
+          h: "En résumé",
+          p: "Tes cours t'appartiennent. Nous collectons le minimum nécessaire pour faire fonctionner Forma, nous ne vendons rien à personne, et il n'y a aucun traceur publicitaire dans l'application.",
         },
         {
-          h: "Pourquoi",
-          p: "Pour te renvoyer tes explications, ton historique et tes favoris sur tous tes appareils.",
+          h: "Les données que nous collectons",
+          p: "Ton adresse e-mail et l'identifiant du compte utilisé pour te connecter. Le prénom, le pays et le niveau que tu indiques pendant l'introduction. Les documents et photos que tu déposes, ainsi que le texte qui en est extrait. Tes conversations avec le tuteur. Les notes que tu ajoutes dans la section Progrès.",
         },
         {
-          h: "Qui peut voir",
-          p: "Uniquement toi. Notre équipe n'accède aux données que si un problème technique l'exige.",
+          h: "Pourquoi nous les collectons",
+          p: "Pour analyser tes documents et te renvoyer une explication, pour retrouver ton historique et tes favoris sur tous tes appareils, et pour adapter le ton des explications à ton niveau. Rien de plus.",
         },
         {
-          h: "Suppression",
-          p: "Tu peux supprimer un document quand tu veux. Supprimer ton compte efface tes données.",
+          h: "Comment l'IA traite tes documents",
+          p: "Quand tu déposes un document, son contenu est envoyé à notre fournisseur d'IA (Google Gemini, via la passerelle Lovable AI) le temps de produire l'analyse. Ce traitement sert uniquement à te répondre. Tes documents ne servent pas à entraîner des modèles.",
         },
         {
-          h: "Contact",
-          p: "Toute question sur la vie privée peut être envoyée à hello@forma.ai.",
+          h: "Base légale",
+          p: "Nous traitons ces données pour exécuter le service que tu demandes en créant un compte. Tu peux retirer ton accord à tout moment en supprimant tes documents ou ton compte.",
+        },
+        {
+          h: "Combien de temps nous les gardons",
+          p: "Tes documents et conversations sont conservés tant que ton compte existe, pour que tu puisses les retrouver. Pour faire supprimer un document précis ou l'ensemble de ton compte, écris-nous à zevo.flcs@gmail.com : nous traitons la demande sous 30 jours, et la suppression est définitive.",
+        },
+        {
+          h: "Qui peut y accéder",
+          p: "Toi. Chaque donnée est rattachée à ton compte et isolée au niveau de la base par des règles de sécurité. Notre équipe n'y accède que si un problème technique l'exige réellement.",
+        },
+        {
+          h: "Tes droits",
+          p: "Tu disposes d'un droit d'accès à tes données, de rectification, de suppression, de portabilité (en recevoir une copie) et d'opposition au traitement. Pour exercer l'un de ces droits, écris à zevo.flcs@gmail.com : nous répondons sous 30 jours.",
+        },
+        {
+          h: "Sécurité",
+          p: "Les échanges sont chiffrés en transit, l'accès aux données est restreint par compte, et les fichiers ne sont accessibles que par des liens signés temporaires.",
+        },
+        {
+          h: "Réclamation",
+          p: "Si une réponse ne te convient pas, tu peux saisir la CNIL, l'autorité française de protection des données, sur cnil.fr.",
+        },
+      ],
+    },
+    cookies: {
+      title: "Politique cookies",
+      updated: "Dernière mise à jour : juillet 2026",
+      sections: [
+        {
+          h: "Ce que nous utilisons",
+          p: "Forma n'utilise que des cookies et un stockage local strictement nécessaires à son fonctionnement. Aucun cookie publicitaire, aucun traceur tiers.",
+        },
+        {
+          h: "Rester connecté",
+          p: "Ta session d'authentification est conservée sur ton appareil pour t'éviter de te reconnecter à chaque visite. Sans elle, l'application ne peut pas savoir que c'est bien toi.",
+        },
+        {
+          h: "Tes préférences",
+          p: "Nous gardons aussi sur ton appareil la langue choisie, le fait que l'introduction a déjà été faite, et le prénom et le pays que tu as indiqués, pour personnaliser l'accueil.",
+        },
+        {
+          h: "Mesure d'audience",
+          p: "Aucune. Forma n'intègre aujourd'hui aucun outil d'analyse d'audience ni de suivi comportemental. Si cela changeait, nous te demanderions ton accord avant.",
+        },
+        {
+          h: "Tes choix",
+          p: "Tu peux effacer ces données à tout moment depuis les réglages de ton navigateur. Comme elles sont nécessaires au fonctionnement, les effacer te déconnectera et remettra tes préférences à zéro.",
         },
       ],
     },
     contact: {
       title: "Contact",
       subtitle: "Nous lisons chaque message.",
-      email: "hello@forma.ai",
+      email: "zevo.flcs@gmail.com",
       form: {
         name: "Ton prénom",
         email: "Ton e-mail",

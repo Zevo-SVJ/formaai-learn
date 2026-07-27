@@ -56,6 +56,31 @@ export const en = {
   progress: {
     nav: "Progress",
   },
+  errorPages: {
+    notFound: {
+      title: "This page does not exist",
+      body: "The link may be old, or the address contains a mistake.",
+      home: "Back to home",
+    },
+    crash: {
+      title: "That did not go as planned",
+      body: "Nothing is lost. Try again, and if it keeps happening, head back home.",
+      retry: "Try again",
+      home: "Back to home",
+    },
+  },
+  errors: {
+    network: "Connection lost. Check your connection, then try again.",
+    rate: "A lot of requests at once. Wait a moment, then try again.",
+    permission: "You do not have access to this content.",
+    notFound: "This content could not be found. It may have been deleted.",
+    server: "Forma is having trouble on its side. Try again in a moment.",
+    generic: "That did not work. Try again in a moment.",
+    badCredentials: "Incorrect email or password.",
+    emailInUse: "An account already exists with this email. Sign in instead.",
+    emailNotConfirmed: "Confirm your email address from your inbox.",
+    weakPassword: "Choose a password of at least 8 characters.",
+  },
   libraryPage: {
     subtitle: "Every lesson you have analyzed, in one place.",
     empty: "Nothing saved yet. Analyze your first lesson and it will show up here.",
@@ -520,67 +545,131 @@ export const en = {
     terms: {
       title: "Terms of Service",
       updated: "Last updated: July 2026",
-      draft: "This is a starter template. Replace it with your final legal text before launch.",
       sections: [
         {
           h: "Who we are",
-          p: "Forma AI is an educational tool that helps students understand their own lessons.",
+          p: "Forma AI is an educational tool that helps middle- and high-school students understand their own coursework. By using Forma you agree to the terms below.",
         },
         {
-          h: "How you may use Forma",
-          p: "Forma is intended to teach, not to complete assessments on your behalf. You are responsible for how you use it in school.",
+          h: "What Forma does, and does not do",
+          p: "Forma explains your documents to help you learn. It is not a service that sits your assessments for you, and it is not a replacement for your teachers. You remain responsible for following your school's rules.",
+        },
+        {
+          h: "Your account",
+          p: "You must be at least 15, or have a parent or guardian's permission. The information you provide must be accurate, and you are responsible for keeping your credentials private. An account is personal and must not be shared.",
+        },
+        {
+          h: "Acceptable use",
+          p: "You agree not to upload illegal, hateful or violent content, or documents containing other people's personal data without their permission. You must not try to bypass our protections, overload the service, or extract its content automatically.",
         },
         {
           h: "Your content",
-          p: "You keep ownership of every document you upload. You grant Forma the right to process it for the sole purpose of returning an explanation to you.",
+          p: "You keep ownership of everything you upload. You grant us only the right to process your document for as long as it takes to return an explanation. We claim no rights over your coursework and do not use it for anything else.",
+        },
+        {
+          h: "Forma's intellectual property",
+          p: "The Forma AI name, interface, copy and visual identity belong to us. Your account gives you the right to use the service, not to copy or resell it.",
+        },
+        {
+          h: "Limits of the service",
+          p: "Forma relies on artificial intelligence: it can be wrong, misread a document, or give an incomplete explanation. Always check an important answer before handing it in. Forma is provided without any guarantee of academic results.",
         },
         {
           h: "Availability",
-          p: "We do our best to keep Forma running smoothly. Service may occasionally be interrupted for maintenance or improvements.",
+          p: "We do our best to keep Forma available, but the service may be interrupted for maintenance, updates or technical reasons, without notice.",
         },
         {
-          h: "Changes",
-          p: "We may update these terms. If we do, we will show a notice inside the product.",
+          h: "Suspension and closure",
+          p: "We may suspend an account that breaks these terms, in particular in cases of abuse. On your side, you can stop using Forma and request deletion of your account at any time.",
+        },
+        {
+          h: "Changes to these terms",
+          p: "These terms may change as the product evolves. If something important changes, we will tell you in the app. For any question, write to zevo.flcs@gmail.com.",
         },
       ],
     },
     privacy: {
       title: "Privacy Policy",
       updated: "Last updated: July 2026",
-      draft: "This is a starter template. Replace it with your final privacy text before launch.",
       sections: [
         {
-          h: "What we store",
-          p: "Your email, the documents you upload and the conversations you have with Forma about them.",
+          h: "In short",
+          p: "Your coursework is yours. We collect the minimum needed to run Forma, we sell nothing to anyone, and there is no advertising tracker in the app.",
         },
         {
-          h: "Why we store it",
-          p: "To give you your explanations, your history and your saved items across devices.",
+          h: "What we collect",
+          p: "Your email address and the account id used to sign in. The first name, country and level you give during the introduction. The documents and photos you upload, and the text extracted from them. Your conversations with the tutor. The grades you add in the Progress section.",
         },
         {
-          h: "Who can see it",
-          p: "Only you. Our team can access data only when required to fix a technical problem.",
+          h: "Why we collect it",
+          p: "To analyze your documents and return an explanation, to keep your history and favorites available across your devices, and to match the tone of explanations to your level. Nothing more.",
         },
         {
-          h: "Deletion",
-          p: "You can delete a document at any time. Deleting your account removes your data.",
+          h: "How the AI processes your documents",
+          p: "When you upload a document, its content is sent to our AI provider (Google Gemini, through the Lovable AI gateway) for as long as it takes to produce the analysis. This processing exists only to answer you. Your documents are not used to train models.",
         },
         {
-          h: "Contact",
-          p: "Questions about privacy can be sent to hello@forma.ai.",
+          h: "Legal basis",
+          p: "We process this data to deliver the service you ask for by creating an account. You can withdraw your agreement at any time by deleting your documents or your account.",
+        },
+        {
+          h: "How long we keep it",
+          p: "Your documents and conversations are kept while your account exists, so you can find them again. To have a specific document or your whole account deleted, write to zevo.flcs@gmail.com: we handle the request within 30 days, and deletion is permanent.",
+        },
+        {
+          h: "Who can access it",
+          p: "You. Every record is tied to your account and isolated at the database level by security rules. Our team only accesses it when a technical problem genuinely requires it.",
+        },
+        {
+          h: "Your rights",
+          p: "You have the right to access your data, correct it, delete it, receive a copy of it (portability) and object to its processing. To exercise any of these, write to zevo.flcs@gmail.com: we answer within 30 days.",
+        },
+        {
+          h: "Security",
+          p: "Traffic is encrypted in transit, data access is restricted per account, and files are only reachable through temporary signed links.",
+        },
+        {
+          h: "Complaints",
+          p: "If an answer does not satisfy you, you can contact your national data protection authority. In France this is the CNIL, at cnil.fr.",
+        },
+      ],
+    },
+    cookies: {
+      title: "Cookie Policy",
+      updated: "Last updated: July 2026",
+      sections: [
+        {
+          h: "What we use",
+          p: "Forma only uses cookies and local storage that are strictly necessary to run the service. No advertising cookies, no third-party trackers.",
+        },
+        {
+          h: "Keeping you signed in",
+          p: "Your authentication session is stored on your device so you do not have to sign in on every visit. Without it, the app cannot tell that it is you.",
+        },
+        {
+          h: "Your preferences",
+          p: "We also keep on your device the language you picked, whether the introduction has been completed, and the first name and country you gave, so the app can greet you properly.",
+        },
+        {
+          h: "Analytics",
+          p: "None. Forma currently includes no audience analytics and no behavioural tracking. If that ever changes, we will ask for your agreement first.",
+        },
+        {
+          h: "Your choices",
+          p: "You can clear this data at any time from your browser settings. Because it is necessary for the service to work, clearing it will sign you out and reset your preferences.",
         },
       ],
     },
     contact: {
       title: "Contact",
       subtitle: "We read every message.",
-      email: "hello@forma.ai",
+      email: "zevo.flcs@gmail.com",
       form: {
-        name: "Your name",
+        name: "Your first name",
         email: "Your email",
-        message: "What is on your mind?",
+        message: "What would you like to tell us?",
         send: "Send message",
-        sent: "Thank you. We will get back to you soon.",
+        sent: "Thank you. We will reply very soon.",
       },
     },
   },

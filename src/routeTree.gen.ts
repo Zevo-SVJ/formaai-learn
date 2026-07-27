@@ -13,6 +13,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CameraTestRouteImport } from './routes/camera-test'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -43,6 +44,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/camera-test': typeof CameraTestRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/camera-test': typeof CameraTestRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/camera-test': typeof CameraTestRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/camera-test'
     | '/contact'
+    | '/cookies'
     | '/onboarding'
     | '/privacy'
     | '/sitemap.xml'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/camera-test'
     | '/contact'
+    | '/cookies'
     | '/onboarding'
     | '/privacy'
     | '/sitemap.xml'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/camera-test'
     | '/contact'
+    | '/cookies'
     | '/onboarding'
     | '/privacy'
     | '/sitemap.xml'
@@ -209,6 +221,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CameraTestRoute: typeof CameraTestRoute
   ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -351,6 +371,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CameraTestRoute: CameraTestRoute,
   ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

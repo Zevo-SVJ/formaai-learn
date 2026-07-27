@@ -13,6 +13,7 @@ import { QuickActionsBar, useQuickActions } from "@/components/QuickActionsBar";
 import { EASE } from "@/lib/motion";
 import { pickGreeting } from "@/lib/greeting";
 import { useI18n } from "@/hooks/useI18n";
+import { classifyError } from "@/lib/error-message";
 import { ArrowLeft, Loader2, Send, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -81,7 +82,7 @@ function ChatPage() {
     id: docId,
     messages: seedMessages,
     transport,
-    onError: (e) => toast.error(e.message || "Chat error"),
+    onError: (e) => toast.error(t((d) => d.errors[classifyError(e)])),
   });
   const isBusy = status === "submitted" || status === "streaming";
 

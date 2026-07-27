@@ -15,6 +15,7 @@ import { AnswersPanel } from "@/components/AnswersPanel";
 import { RichAnswer } from "@/components/RichAnswer";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
+import { classifyError } from "@/lib/error-message";
 import {
   ArrowLeft,
   ArrowRight,
@@ -191,7 +192,7 @@ function DocPage() {
                 await retry({ data: { documentId: doc.id } });
                 refetch();
               } catch (e) {
-                toast.error(e instanceof Error ? e.message : "Retry failed");
+                toast.error(t((d) => d.errors[classifyError(e)]));
               }
             }}
           />

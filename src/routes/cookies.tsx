@@ -6,19 +6,19 @@ import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArrowLeft } from "lucide-react";
 
-export const Route = createFileRoute("/terms")({
+export const Route = createFileRoute("/cookies")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — Forma AI" },
-      { name: "description", content: "Terms of Service for Forma AI." },
+      { title: "Cookie Policy — Forma AI" },
+      { name: "description", content: "Cookie policy for Forma AI." },
     ],
   }),
-  component: Terms,
+  component: Cookies,
 });
 
-function Terms() {
+function Cookies() {
   const { t, raw } = useI18n();
-  const sections = raw((d) => d.legal.terms.sections);
+  const sections = raw((d) => d.legal.cookies.sections);
   return (
     <div className="min-h-dvh bg-background">
       <header className="safe-top sticky top-0 z-20 border-b border-border/60 bg-background/85 backdrop-blur">
@@ -41,9 +41,9 @@ function Terms() {
           transition={{ duration: 0.4, ease: EASE.out }}
           className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
         >
-          {t((d) => d.legal.terms.title)}
+          {t((d) => d.legal.cookies.title)}
         </motion.h1>
-        <p className="mt-2 text-sm text-muted-foreground">{t((d) => d.legal.terms.updated)}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{t((d) => d.legal.cookies.updated)}</p>
         <div className="mt-10 space-y-8">
           {sections.map((s, i) => (
             <motion.section

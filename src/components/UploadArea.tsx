@@ -9,6 +9,7 @@ import { analyzeDocument } from "@/lib/documents.functions";
 import { toast } from "sonner";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
+import { classifyError } from "@/lib/error-message";
 
 const ACCEPT = "image/*,application/pdf,.txt,.md";
 const MAX_MB = 20;
@@ -86,7 +87,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
         navigate({ to: "/doc/$docId", params: { docId: row.id } });
       } catch (e) {
         console.error(e);
-        toast.error(e instanceof Error ? e.message : t((d) => d.upload.uploadFailed));
+        toast.error(t((d) => d.errors[classifyError(e)]));
       } finally {
         setBusy(null);
       }

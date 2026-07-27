@@ -3,8 +3,7 @@ import { Instagram, Mail } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { useI18n } from "@/hooks/useI18n";
 
-const INSTAGRAM_URL =
-  "https://www.instagram.com/zevo.flcs?igsh=dGU2b29uYjYzN2Rt&utm_source=qr";
+const INSTAGRAM_URL = "https://www.instagram.com/zevo.flcs?igsh=dGU2b29uYjYzN2Rt&utm_source=qr";
 const CONTACT_EMAIL = "zevo.flcs@gmail.com";
 
 export function SiteFooter() {
@@ -23,9 +22,12 @@ export function SiteFooter() {
           <Link to="/terms" className="hover:text-foreground">
             {t((d) => d.footer.terms)}
           </Link>
-          <a href="/privacy" className="hover:text-foreground" aria-label="Cookies">
+          <Link to="/cookies" className="hover:text-foreground">
             {t((d) => d.footer.cookies)}
-          </a>
+          </Link>
+          <Link to="/contact" className="hover:text-foreground">
+            {t((d) => d.footer.contact)}
+          </Link>
 
           <a
             href={INSTAGRAM_URL}
