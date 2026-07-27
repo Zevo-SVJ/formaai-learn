@@ -20,6 +20,7 @@ import { takePendingReferral } from "@/lib/pending-referral";
 import "@/i18n";
 import { getLocale } from "@/i18n";
 import { useI18n } from "@/hooks/useI18n";
+import { initAnalytics } from "@/lib/analytics";
 
 function NotFoundComponent() {
   const { t } = useI18n();
@@ -161,6 +162,12 @@ function RootComponent() {
   // effect keeps it out of hydration, so it never causes a mismatch.
   useEffect(() => {
     document.documentElement.setAttribute("lang", getLocale());
+  }, []);
+
+  // Analytics loads after hydration and stays inert unless a measurement id is
+  // configured, so it never affects first paint.
+  useEffect(() => {
+    initAnalytics();
   }, []);
 
   useEffect(() => {

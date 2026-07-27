@@ -6,6 +6,7 @@ import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { COUNTRIES, countryName } from "@/lib/countries";
 import { CheckCircle2, Search, ChevronRight, BookOpen } from "lucide-react";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -16,7 +17,6 @@ export const Route = createFileRoute("/onboarding")({
   }),
   component: Onboarding,
 });
-
 
 type Answers = {
   name?: string;
@@ -59,13 +59,13 @@ function Onboarding() {
   const finish = () => {
     try {
       window.localStorage.setItem(STORAGE_KEY, "1");
+      track("onboarding_completed");
     } catch {
       // ignore
     }
     // Authentication happens at the very end of onboarding.
     navigate({ to: "/auth", search: { mode: "signup" } as never });
   };
-
 
   const totalSteps = 7; // Q1, insight1, Q2, Q3, insight2, Q4, loading
   return (
@@ -82,6 +82,7 @@ function Onboarding() {
                 initialName={answers.name}
                 onStart={(name) => {
                   persist({ ...answers, name });
+                  track("onboarding_started");
                   setIntro(false);
                 }}
               />
@@ -372,9 +373,10 @@ function CountryStep({ selected, onPick }: { selected?: string; onPick: (code: s
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
     if (!query) return COUNTRIES.slice(0, 8);
-    return COUNTRIES.filter((c) =>
-      countryName(c, locale).toLowerCase().includes(query),
-    ).slice(0, 12);
+    return COUNTRIES.filter((c) => countryName(c, locale).toLowerCase().includes(query)).slice(
+      0,
+      12,
+    );
   }, [q, locale]);
 
   return (
@@ -382,9 +384,7 @@ function CountryStep({ selected, onPick }: { selected?: string; onPick: (code: s
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         {t((d) => d.onboarding.q3.title)}
       </h1>
-      <p className="mt-2 text-[15px] text-muted-foreground">
-        {t((d) => d.onboarding.q3.subtitle)}
-      </p>
+      <p className="mt-2 text-[15px] text-muted-foreground">{t((d) => d.onboarding.q3.subtitle)}</p>
       <div className="mt-8">
         <div className="flex items-center gap-2 rounded-2xl border border-border bg-surface px-4 py-3 focus-within:border-emerald">
           <Search className="h-4 w-4 text-muted-foreground" />
@@ -450,9 +450,7 @@ function SubjectsStep({
       <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
         {t((d) => d.onboarding.q4.title)}
       </h1>
-      <p className="mt-2 text-[15px] text-muted-foreground">
-        {t((d) => d.onboarding.q4.subtitle)}
-      </p>
+      <p className="mt-2 text-[15px] text-muted-foreground">{t((d) => d.onboarding.q4.subtitle)}</p>
       <div className="mt-8 flex flex-wrap gap-2">
         {list.map((s) => {
           const active = picked.includes(s);

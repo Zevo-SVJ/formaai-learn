@@ -5,6 +5,7 @@ import { useI18n } from "@/hooks/useI18n";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArrowLeft } from "lucide-react";
+import { absoluteUrl } from "@/lib/site";
 
 export const Route = createFileRoute("/cookies")({
   head: () => ({
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/cookies")({
       { title: "Cookie Policy — Forma AI" },
       { name: "description", content: "Cookie policy for Forma AI." },
     ],
+    links: [{ rel: "canonical", href: absoluteUrl("/cookies") }],
   }),
   component: Cookies,
 });

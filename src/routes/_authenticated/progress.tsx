@@ -12,6 +12,7 @@ import { useI18n } from "@/hooks/useI18n";
 import { classifyError } from "@/lib/error-message";
 import { Plus, Pencil, Trash2, X, Loader2, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/progress")({
   component: ProgressPage,
@@ -444,6 +445,7 @@ function GradeSheet({
       };
       if (initial) await upd({ data: { ...payload, id: initial.id } });
       else await add({ data: payload });
+      track("grade_added");
       toast.success(t((d) => d.progressPage.saved));
       onSaved();
     } catch (err) {

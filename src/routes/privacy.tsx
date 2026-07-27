@@ -5,6 +5,7 @@ import { useI18n } from "@/hooks/useI18n";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArrowLeft } from "lucide-react";
+import { absoluteUrl } from "@/lib/site";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/privacy")({
       { title: "Privacy Policy — Forma AI" },
       { name: "description", content: "How Forma AI handles your data." },
     ],
+    links: [{ rel: "canonical", href: absoluteUrl("/privacy") }],
   }),
   component: Privacy,
 });

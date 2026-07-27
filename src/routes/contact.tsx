@@ -6,6 +6,8 @@ import { useI18n } from "@/hooks/useI18n";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArrowLeft, Mail, Send, CheckCircle2 } from "lucide-react";
+import { absoluteUrl } from "@/lib/site";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -13,6 +15,7 @@ export const Route = createFileRoute("/contact")({
       { title: "Contact — Forma AI" },
       { name: "description", content: "Get in touch with the Forma AI team." },
     ],
+    links: [{ rel: "canonical", href: absoluteUrl("/contact") }],
   }),
   component: Contact,
 });
@@ -20,6 +23,9 @@ export const Route = createFileRoute("/contact")({
 function Contact() {
   const { t } = useI18n();
   const [sent, setSent] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   return (
     <div className="min-h-dvh bg-background">
@@ -65,6 +71,17 @@ function Contact() {
           transition={{ duration: 0.4, delay: 0.1, ease: EASE.out }}
           onSubmit={(e) => {
             e.preventDefault();
+            // This form used to flip straight to "message sent" without sending
+            // anything, so every bug report a student wrote was discarded. There
+            // is no mail backend, so the message is handed to the user's own mail
+            // client: it actually reaches us and needs no server.
+            const to = t((d) => d.legal.contact.email);
+            const subject = `Forma — ${name || "message"}`;
+            const body = `${message}\n\n---\n${name}\n${email}`;
+            track("feedback_opened");
+            window.location.href =
+              `mailto:${to}?subject=${encodeURIComponent(subject)}` +
+              `&body=${encodeURIComponent(body)}`;
             setSent(true);
           }}
           className="mt-10 space-y-3 rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:p-6"
@@ -82,18 +99,24 @@ function Contact() {
             <>
               <input
                 required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder={t((d) => d.legal.contact.form.name)}
                 className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-[15px] outline-none placeholder:text-muted-foreground focus:border-emerald"
               />
               <input
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder={t((d) => d.legal.contact.form.email)}
                 className="w-full rounded-2xl border border-border bg-surface px-4 py-3 text-[15px] outline-none placeholder:text-muted-foreground focus:border-emerald"
               />
               <textarea
                 required
                 rows={5}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 placeholder={t((d) => d.legal.contact.form.message)}
                 className="w-full resize-none rounded-2xl border border-border bg-surface px-4 py-3 text-[15px] outline-none placeholder:text-muted-foreground focus:border-emerald"
               />

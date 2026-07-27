@@ -3,3 +3,6 @@ Allow: /
 Disallow: /auth
 Disallow: /library
 Disallow: /doc/
+Disallow: /onboarding
+
+Sitemap: https://getforma-ai.lovable.app/sitemap.xml

@@ -16,6 +16,7 @@ import { useI18n } from "@/hooks/useI18n";
 import { classifyError } from "@/lib/error-message";
 import { ArrowLeft, Loader2, Send, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/doc/$docId_/chat")({
   component: ChatPage,
@@ -134,6 +135,7 @@ function ChatPage() {
     const clean = text.trim();
     if (!clean || isBusy) return;
     setInput("");
+    track("tutor_message_sent");
     await sendMessage({ text: clean });
   };
 

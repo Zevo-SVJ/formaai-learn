@@ -30,6 +30,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/doc/$docId")({
   component: DocPage,
@@ -107,6 +108,20 @@ function DocPage() {
   }, [pending]);
 
   const showResults = !!doc && doc.status === "ready" && (!sawPending.current || ceremonyDone);
+
+  // Report the outcome of an analysis once per document, so the funnel shows
+  // how many uploads actually produce a usable result.
+  const reportedRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!doc || reportedRef.current === doc.id) return;
+    if (doc.status === "ready") {
+      reportedRef.current = doc.id;
+      track("analysis_completed", { subject: doc.subject ?? "unknown" });
+    } else if (doc.status === "failed") {
+      reportedRef.current = doc.id;
+      track("analysis_failed");
+    }
+  }, [doc]);
 
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   useEffect(() => {
@@ -326,6 +341,7 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
       <Link
         to="/doc/$docId/chat"
         params={{ docId: doc.id }}
+        onClick={() => track("tutor_opened")}
         className="group flex items-center gap-4 rounded-3xl border border-emerald/25 bg-card p-5 shadow-[var(--shadow-soft)] transition hover:border-emerald/40 hover:shadow-[var(--shadow-lift)]"
       >
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald text-white shadow-[var(--shadow-soft)]">

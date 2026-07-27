@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { classifyError } from "@/lib/error-message";
+import { track } from "@/lib/analytics";
 
 const ACCEPT = "image/*,application/pdf,.txt,.md";
 const MAX_MB = 20;
@@ -70,6 +71,7 @@ export function UploadArea({ compact = false }: { compact?: boolean }) {
           .select("id")
           .single();
         if (insErr || !row) throw insErr ?? new Error("insert failed");
+        track("lesson_uploaded", { mime: file.type || "unknown" });
 
         setBusy(t((d) => d.upload.readingDoc));
         analyze({ data: { documentId: row.id } }).catch(async (e) => {

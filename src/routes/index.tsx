@@ -15,6 +15,7 @@ import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { SiteFooter } from "@/components/SiteFooter";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
+import { absoluteUrl } from "@/lib/site";
 import {
   Accordion,
   AccordionContent,
@@ -38,7 +39,11 @@ export const Route = createFileRoute("/")({
           "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
       },
       { property: "og:type", content: "website" },
+      // og:url tells crawlers and social platforms which address is the real
+      // one, so shares from a preview host still resolve to production.
+      { property: "og:url", content: absoluteUrl("/") },
     ],
+    links: [{ rel: "canonical", href: absoluteUrl("/") }],
   }),
   component: Landing,
 });
@@ -62,8 +67,6 @@ function Landing() {
     </div>
   );
 }
-
-
 
 function Header() {
   const { t } = useI18n();
@@ -203,8 +206,6 @@ function PreFooterCTA() {
   );
 }
 
-
-
 function Section({
   eyebrow,
   title,
@@ -223,10 +224,7 @@ function Section({
   return (
     <section
       id={id}
-      className={[
-        "px-5 py-20 sm:py-28",
-        bg === "surface" ? "bg-surface-muted/50" : "",
-      ].join(" ")}
+      className={["px-5 py-20 sm:py-28", bg === "surface" ? "bg-surface-muted/50" : ""].join(" ")}
     >
       <div className="mx-auto max-w-6xl">
         <div className="mx-auto max-w-2xl text-center">
@@ -235,9 +233,7 @@ function Section({
               {eyebrow}
             </div>
           )}
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
-            {title}
-          </h2>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-5xl">{title}</h2>
           {subtitle && (
             <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-lg">
               {subtitle}
@@ -277,7 +273,6 @@ function Problem() {
     </Section>
   );
 }
-
 
 function HowItWorks() {
   const { t } = useI18n();

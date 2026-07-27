@@ -5,6 +5,7 @@ import { useI18n } from "@/hooks/useI18n";
 import { Logo } from "@/components/Logo";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ArrowLeft } from "lucide-react";
+import { absoluteUrl } from "@/lib/site";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/terms")({
       { title: "Terms of Service — Forma AI" },
       { name: "description", content: "Terms of Service for Forma AI." },
     ],
+    links: [{ rel: "canonical", href: absoluteUrl("/terms") }],
   }),
   component: Terms,
 });
