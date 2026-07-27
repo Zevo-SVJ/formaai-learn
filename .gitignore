@@ -30,3 +30,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment
+# .env is tracked on purpose: it holds only public values (project URL, the
+# publishable/anon key, project id) that ship to the browser anyway, and the
+# deploy reads it. Every OTHER env file is ignored, so a real secret
+# (service_role, LOVABLE_API_KEY, any sb_secret_*) can never be committed by
+# accident. Server secrets belong in the deployment environment, never here.
+.env.*
+!.env.example

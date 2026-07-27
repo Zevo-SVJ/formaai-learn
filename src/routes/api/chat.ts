@@ -4,6 +4,7 @@ import { convertToModelMessages, streamText, type UIMessage } from "ai";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { baseLocale, LANGUAGE_NAMES, sectionTitle, sectionTitleList } from "@/lib/answer-sections";
+import { consumeAiQuota } from "@/lib/ai-quota.server";
 
 type Body = { messages?: UIMessage[]; documentId?: string; locale?: string };
 
@@ -40,6 +41,13 @@ export const Route = createFileRoute("/api/chat")({
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
 
         const supabase = makeUserClient(token);
+
+        // Same cost guard as the analysis. 429 so the client shows the
+        // localised "too many requests" message.
+        if (!(await consumeAiQuota(supabase, "chat"))) {
+          return new Response("rate limit exceeded", { status: 429 });
+        }
+
         const { data: doc, error } = await supabase
           .from("documents")
           .select("id,user_id,title,subject,level,chapter,concepts,extracted_text,explanation")

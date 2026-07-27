@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { consumeAiQuota } from "@/lib/ai-quota.server";
 
 const AnalyzeInput = z.object({ documentId: z.string().uuid() });
 
@@ -12,6 +13,12 @@ export const analyzeDocument = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { documentId } = data;
+
+    // Cost guard before any AI work. "rate limit" in the message is what
+    // classifyError maps to the localised "too many requests" wording.
+    if (!(await consumeAiQuota(supabase, "analyze"))) {
+      throw new Error("rate limit exceeded");
+    }
 
     const { data: doc, error: docErr } = await supabase
       .from("documents")
