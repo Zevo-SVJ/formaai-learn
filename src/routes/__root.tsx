@@ -91,9 +91,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#f7f5ef" },
       // Proves ownership of the site to Google Search Console. It lives in the
       // root head so it is present on every page, which is what the check needs.
+      // Only one entry is possible: TanStack merges head meta by `name`, so a
+      // second google-site-verification would silently replace this one rather
+      // than sit beside it. Verifying another property needs a different method
+      // (DNS record or HTML file).
       {
         name: "google-site-verification",
-        content: "B8L8VZZntYxifueNBqfnvvYqf-c1xTQ9PzwTqSkODX0",
+        content: "2UVgvSV78rkNTjwChAR6q-7CmhiNwTFVey3Bx0tYtWc",
       },
       { title: "Forma AI — Learn Better with AI" },
       {
