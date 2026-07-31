@@ -33,6 +33,7 @@ import { toast } from "sonner";
 import { track } from "@/lib/analytics";
 import { ExplanationDeck } from "@/components/ExplanationDeck";
 import { DeckIntro } from "@/components/DeckIntro";
+import { ScrollingCardBody } from "@/components/ScrollingCardBody";
 
 export const Route = createFileRoute("/_authenticated/doc/$docId")({
   component: DocPage,
@@ -266,16 +267,28 @@ function DocumentViewer({ doc, fileUrl }: { doc: Doc; fileUrl: string | null }) 
   );
 }
 
+/**
+ * One explanation card.
+ *
+ * Two shapes, same content and same markup order. By default it is as tall as
+ * its text — the vertical stack from `sm` up. With `fill` it takes the height
+ * of whatever frame it is given, pins its header, and lets only its text
+ * scroll: that is what lets the deck keep every card exactly the same size no
+ * matter how long the explanation is. The shadow is left off in `fill`, since
+ * there the deck owns elevation and varies it by depth.
+ */
 function ExplanationCard({
   icon: Icon,
   title,
   children,
   tone = "default",
+  fill = false,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   children: React.ReactNode;
   tone?: "default" | "emerald" | "warn";
+  fill?: boolean;
 }) {
   const bg =
     tone === "emerald"
@@ -285,6 +298,27 @@ function ExplanationCard({
         : "bg-surface-muted";
   const color =
     tone === "emerald" ? "text-emerald" : tone === "warn" ? "text-amber-600" : "text-foreground";
+
+  const header = (
+    <div className={`flex items-center gap-2.5 ${fill ? "mb-3 shrink-0" : "mb-3"}`}>
+      <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${bg}`}>
+        <Icon className={`h-3.5 w-3.5 ${color}`} />
+      </div>
+      <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        {title}
+      </h3>
+    </div>
+  );
+
+  if (fill) {
+    return (
+      <div className="flex h-full flex-col rounded-3xl border border-border bg-card p-5">
+        {header}
+        <ScrollingCardBody>{children}</ScrollingCardBody>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
@@ -292,14 +326,7 @@ function ExplanationCard({
       transition={{ duration: 0.3, ease: EASE.out }}
       className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
     >
-      <div className="mb-3 flex items-center gap-2.5">
-        <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${bg}`}>
-          <Icon className={`h-3.5 w-3.5 ${color}`} />
-        </div>
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          {title}
-        </h3>
-      </div>
+      {header}
       <div className="space-y-2 text-[15px] leading-relaxed text-foreground">{children}</div>
     </motion.div>
   );
@@ -309,47 +336,54 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
   const { t } = useI18n();
   const exp = doc.explanation ?? {};
 
-  // The explanation cards, built once and rendered two ways: as a swipeable
-  // deck on mobile, and as the existing vertical stack from `sm` up, where
-  // there is room to see everything at once. Same elements, same order, same
-  // content — only the arrangement differs, exactly like the landing's deck.
-  const explanationCards: React.ReactNode[] = [
-    exp.explanation && (
-      <ExplanationCard
-        key="explanation"
-        icon={GraduationCap}
-        title={t((d) => d.doc.sections.explanation)}
-        tone="emerald"
-      >
-        <RichAnswer text={exp.explanation} />
+  // The explanation sections, listed once so the two arrangements below cannot
+  // drift apart: a swipeable deck on mobile, and the existing vertical stack
+  // from `sm` up, where there is room to see everything at once. Same sections,
+  // same order, same text — only the arrangement differs.
+  const sections = [
+    exp.explanation && {
+      key: "explanation",
+      icon: GraduationCap,
+      title: t((d) => d.doc.sections.explanation),
+      tone: "emerald" as const,
+      text: exp.explanation,
+    },
+    exp.why && {
+      key: "why",
+      icon: Lightbulb,
+      title: t((d) => d.doc.sections.why),
+      tone: "default" as const,
+      text: exp.why,
+    },
+    exp.common_mistake && {
+      key: "common_mistake",
+      icon: AlertTriangle,
+      title: t((d) => d.doc.sections.commonMistakes),
+      tone: "warn" as const,
+      text: exp.common_mistake,
+    },
+    exp.example && {
+      key: "example",
+      icon: BookOpen,
+      title: t((d) => d.doc.sections.example),
+      tone: "default" as const,
+      text: exp.example,
+    },
+    exp.analogy && {
+      key: "analogy",
+      icon: Shapes,
+      title: t((d) => d.doc.sections.analogy),
+      tone: "default" as const,
+      text: exp.analogy,
+    },
+  ].filter((s): s is Exclude<typeof s, false | undefined | ""> => Boolean(s));
+
+  const renderCards = (fill: boolean) =>
+    sections.map((s) => (
+      <ExplanationCard key={s.key} icon={s.icon} title={s.title} tone={s.tone} fill={fill}>
+        <RichAnswer text={s.text} />
       </ExplanationCard>
-    ),
-    exp.why && (
-      <ExplanationCard key="why" icon={Lightbulb} title={t((d) => d.doc.sections.why)}>
-        <RichAnswer text={exp.why} />
-      </ExplanationCard>
-    ),
-    exp.common_mistake && (
-      <ExplanationCard
-        key="common_mistake"
-        icon={AlertTriangle}
-        title={t((d) => d.doc.sections.commonMistakes)}
-        tone="warn"
-      >
-        <RichAnswer text={exp.common_mistake} />
-      </ExplanationCard>
-    ),
-    exp.example && (
-      <ExplanationCard key="example" icon={BookOpen} title={t((d) => d.doc.sections.example)}>
-        <RichAnswer text={exp.example} />
-      </ExplanationCard>
-    ),
-    exp.analogy && (
-      <ExplanationCard key="analogy" icon={Shapes} title={t((d) => d.doc.sections.analogy)}>
-        <RichAnswer text={exp.analogy} />
-      </ExplanationCard>
-    ),
-  ].filter(Boolean);
+    ));
 
   return (
     <div className="flex flex-col gap-4">
@@ -371,14 +405,14 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
 
       {/* Mobile: one card at a time, the rest peeking behind. Desktop keeps the
           full stack. A single card needs no deck, so it just renders. */}
-      {explanationCards.length > 1 ? (
+      {sections.length > 1 ? (
         <>
-          <ExplanationDeck cards={explanationCards} />
-          <div className="hidden flex-col gap-4 sm:flex">{explanationCards}</div>
+          <ExplanationDeck cards={renderCards(true)} />
+          <div className="hidden flex-col gap-4 sm:flex">{renderCards(false)}</div>
           <DeckIntro />
         </>
       ) : (
-        <div className="flex flex-col gap-4">{explanationCards}</div>
+        <div className="flex flex-col gap-4">{renderCards(false)}</div>
       )}
 
       {/* Conversation CTA — the natural next step after reading the answer.
