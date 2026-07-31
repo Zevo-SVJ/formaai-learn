@@ -500,6 +500,14 @@ export const fr: Dict = {
     askSubtitle: "Tu as la réponse. Pose maintenant ta question — Forma t'explique pas à pas.",
     askCta: "Poser une question sur cette analyse",
     askPlaceholder: "Pose ta question sur cette analyse",
+    deck: {
+      progress: "{{current}} sur {{total}}",
+      next: "Carte suivante",
+      previous: "Carte précédente",
+      introTitle: "Tes explications sont en cartes",
+      introBody: "Fais glisser une carte sur le côté pour les parcourir, une étape à la fois.",
+      introCta: "J'ai compris",
+    },
     quickActions: {
       simpler: "Explique plus simplement",
       example: "Donne un exemple",

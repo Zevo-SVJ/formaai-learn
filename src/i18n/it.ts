@@ -502,6 +502,14 @@ export const it: Dict = {
       "Hai la risposta. Ora chiedi quello che vuoi, Forma te lo spiega passo dopo passo.",
     askCta: "Fai una domanda su questa analisi",
     askPlaceholder: "Chiedi quello che vuoi su questa analisi",
+    deck: {
+      progress: "{{current}} di {{total}}",
+      next: "Scheda successiva",
+      previous: "Scheda precedente",
+      introTitle: "Le tue spiegazioni sono in schede",
+      introBody: "Fai scorrere una scheda di lato per passarle in rassegna, un passo alla volta.",
+      introCta: "Ho capito",
+    },
     quickActions: {
       simpler: "Spiega più semplice",
       example: "Fammi un esempio",

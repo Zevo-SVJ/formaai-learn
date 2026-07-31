@@ -496,6 +496,14 @@ export const en = {
     askSubtitle: "You've got the answer. Now ask anything — Forma explains it step by step.",
     askCta: "Ask a question about this analysis",
     askPlaceholder: "Ask anything about this analysis",
+    deck: {
+      progress: "{{current}} of {{total}}",
+      next: "Next card",
+      previous: "Previous card",
+      introTitle: "Your explanations come as cards",
+      introBody: "Slide a card aside to move through them, one step at a time.",
+      introCta: "Got it",
+    },
     quickActions: {
       simpler: "Explain more simply",
       example: "Give an example",

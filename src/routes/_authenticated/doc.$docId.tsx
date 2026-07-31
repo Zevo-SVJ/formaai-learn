@@ -31,6 +31,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { track } from "@/lib/analytics";
+import { ExplanationDeck } from "@/components/ExplanationDeck";
+import { DeckIntro } from "@/components/DeckIntro";
 
 export const Route = createFileRoute("/_authenticated/doc/$docId")({
   component: DocPage,
@@ -307,6 +309,48 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
   const { t } = useI18n();
   const exp = doc.explanation ?? {};
 
+  // The explanation cards, built once and rendered two ways: as a swipeable
+  // deck on mobile, and as the existing vertical stack from `sm` up, where
+  // there is room to see everything at once. Same elements, same order, same
+  // content — only the arrangement differs, exactly like the landing's deck.
+  const explanationCards: React.ReactNode[] = [
+    exp.explanation && (
+      <ExplanationCard
+        key="explanation"
+        icon={GraduationCap}
+        title={t((d) => d.doc.sections.explanation)}
+        tone="emerald"
+      >
+        <RichAnswer text={exp.explanation} />
+      </ExplanationCard>
+    ),
+    exp.why && (
+      <ExplanationCard key="why" icon={Lightbulb} title={t((d) => d.doc.sections.why)}>
+        <RichAnswer text={exp.why} />
+      </ExplanationCard>
+    ),
+    exp.common_mistake && (
+      <ExplanationCard
+        key="common_mistake"
+        icon={AlertTriangle}
+        title={t((d) => d.doc.sections.commonMistakes)}
+        tone="warn"
+      >
+        <RichAnswer text={exp.common_mistake} />
+      </ExplanationCard>
+    ),
+    exp.example && (
+      <ExplanationCard key="example" icon={BookOpen} title={t((d) => d.doc.sections.example)}>
+        <RichAnswer text={exp.example} />
+      </ExplanationCard>
+    ),
+    exp.analogy && (
+      <ExplanationCard key="analogy" icon={Shapes} title={t((d) => d.doc.sections.analogy)}>
+        <RichAnswer text={exp.analogy} />
+      </ExplanationCard>
+    ),
+  ].filter(Boolean);
+
   return (
     <div className="flex flex-col gap-4">
       {/* Mobile favorite bar */}
@@ -325,14 +369,16 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
         </button>
       </div>
 
-      {exp.explanation && (
-        <ExplanationCard
-          icon={GraduationCap}
-          title={t((d) => d.doc.sections.explanation)}
-          tone="emerald"
-        >
-          <RichAnswer text={exp.explanation} />
-        </ExplanationCard>
+      {/* Mobile: one card at a time, the rest peeking behind. Desktop keeps the
+          full stack. A single card needs no deck, so it just renders. */}
+      {explanationCards.length > 1 ? (
+        <>
+          <ExplanationDeck cards={explanationCards} />
+          <div className="hidden flex-col gap-4 sm:flex">{explanationCards}</div>
+          <DeckIntro />
+        </>
+      ) : (
+        <div className="flex flex-col gap-4">{explanationCards}</div>
       )}
 
       {/* Conversation CTA — the natural next step after reading the answer.
@@ -357,33 +403,6 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
         </div>
         <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-emerald" />
       </Link>
-
-      {/* Reference sections — available for students who want to go deeper,
-          after the conversation invitation. */}
-      {exp.why && (
-        <ExplanationCard icon={Lightbulb} title={t((d) => d.doc.sections.why)}>
-          <RichAnswer text={exp.why} />
-        </ExplanationCard>
-      )}
-      {exp.common_mistake && (
-        <ExplanationCard
-          icon={AlertTriangle}
-          title={t((d) => d.doc.sections.commonMistakes)}
-          tone="warn"
-        >
-          <RichAnswer text={exp.common_mistake} />
-        </ExplanationCard>
-      )}
-      {exp.example && (
-        <ExplanationCard icon={BookOpen} title={t((d) => d.doc.sections.example)}>
-          <RichAnswer text={exp.example} />
-        </ExplanationCard>
-      )}
-      {exp.analogy && (
-        <ExplanationCard icon={Shapes} title={t((d) => d.doc.sections.analogy)}>
-          <RichAnswer text={exp.analogy} />
-        </ExplanationCard>
-      )}
     </div>
   );
 }
