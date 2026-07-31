@@ -13,11 +13,9 @@ import {
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { RichAnswer } from "@/components/RichAnswer";
-import { ScrollingCardBody } from "@/components/ScrollingCardBody";
+import { CardPreviewBody } from "@/components/CardPreviewBody";
 import { ExplanationDeck } from "@/components/ExplanationDeck";
 import { CardDetail, type DetailCard } from "@/components/CardDetail";
-import { Hint, useHint } from "@/components/Hint";
-import { HINTS } from "@/lib/hints";
 import { useCollections } from "@/hooks/useCollections";
 import { saveAnalysis, saveCard, removeCard, type CollectionSource } from "@/lib/collections";
 
@@ -69,20 +67,6 @@ export function AnalysisCards({
   const collections = useCollections();
   const stored = collections.find((c) => c.id === source.id) ?? null;
 
-  const saveCardHint = useHint(HINTS.saveCard);
-  const saveAllHint = useHint(HINTS.saveAnalysis);
-  // Progressive, not all at once: keeping a lesson is only worth mentioning
-  // once moving through it and opening a card are behind you. Two hints on
-  // screen together read as instructions; one reads as a nudge.
-  //
-  // Those two are taught by the deck, which a single-card lesson never shows,
-  // so there the queue is empty from the start. The deck is also mobile-only —
-  // from `sm` up the hint is released by CSS below rather than by this flag,
-  // which would otherwise never clear on a desktop and hide the hint forever.
-  const swipeHint = useHint(HINTS.swipe);
-  const openHint = useHint(HINTS.openCard);
-  const earlierHintsDone = sections.length <= 1 || (!swipeHint.show && !openHint.show);
-
   const isSaved = (key: string) => Boolean(stored?.cards.some((c) => c.key === key));
   const allSaved = sections.length > 0 && sections.every((s) => isSaved(s.key));
 
@@ -105,13 +89,11 @@ export function AnalysisCards({
 
   const toggleCard = () => {
     if (!open) return;
-    saveCardHint.dismiss();
     if (isSaved(open.key)) removeCard(source.id, open.key);
     else saveCard(source, { key: open.key, title: open.title, tone: open.tone, text: open.text });
   };
 
   const keepAll = () => {
-    saveAllHint.dismiss();
     saveAnalysis(
       source,
       sections.map((s) => ({ key: s.key, title: s.title, tone: s.tone, text: s.text })),
@@ -132,8 +114,10 @@ export function AnalysisCards({
         <div className="flex flex-col gap-4">{renderCards(false)}</div>
       )}
 
-      {/* Keeping the lesson: deliberately quiet, and it says what it did. */}
-      <div className="flex flex-col items-center gap-2">
+      {/* Keeping the lesson: deliberately quiet, and it says what it did. How
+          the cards work is taught once, in onboarding — nothing here repeats
+          it. */}
+      <div className="flex justify-center">
         <button
           onClick={keepAll}
           disabled={allSaved}
@@ -155,20 +139,11 @@ export function AnalysisCards({
             {allSaved ? t((d) => d.doc.deck.analysisSaved) : t((d) => d.doc.deck.saveAnalysis)}
           </motion.span>
         </button>
-
-        <Hint
-          show={saveAllHint.show && !allSaved}
-          motionKind="none"
-          className={earlierHintsDone ? "" : "max-sm:hidden"}
-        >
-          {t((d) => d.doc.deck.hintSaveAnalysis)}
-        </Hint>
       </div>
 
       <CardDetail
         card={detail}
         saved={open ? isSaved(open.key) : false}
-        hint={saveCardHint.show ? t((d) => d.doc.deck.hintSaveCard) : null}
         onSave={toggleCard}
         onClose={() => setOpenIndex(null)}
       />
@@ -181,10 +156,11 @@ export function AnalysisCards({
  *
  * Two shapes, same content and same markup order. By default it is as tall as
  * its text — the vertical stack from `sm` up. With `fill` it takes the height
- * of whatever frame it is given, pins its header, and lets only its text
- * scroll: that is what lets the deck keep every card exactly the same size no
- * matter how long the explanation is. The shadow is left off in `fill`, since
- * there the deck owns elevation and varies it by depth.
+ * of whatever frame it is given and pins its header, showing as much of the
+ * text as fits and fading out the rest — that is what lets the deck keep every
+ * card exactly the same size no matter how long the explanation is. The shadow
+ * is left off in `fill`, since there the deck owns elevation and varies it by
+ * depth.
  */
 function ExplanationCard({
   icon: Icon,
@@ -225,7 +201,7 @@ function ExplanationCard({
       {onOpen && (
         <button
           onClick={onOpen}
-          aria-label={t((d) => d.doc.deck.hintOpen)}
+          aria-label={t((d) => d.doc.deck.openCard)}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-surface-muted hover:text-foreground"
         >
           <Maximize2 className="h-3.5 w-3.5" />
@@ -238,7 +214,7 @@ function ExplanationCard({
     return (
       <div className="flex h-full flex-col rounded-3xl border border-border bg-card p-5">
         {header}
-        <ScrollingCardBody>{children}</ScrollingCardBody>
+        <CardPreviewBody>{children}</CardPreviewBody>
       </div>
     );
   }

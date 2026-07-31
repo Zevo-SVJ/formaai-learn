@@ -1,7 +1,10 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { TrendingUp, Check } from "lucide-react";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
+
+// The chart plays once, when the section has properly arrived on screen.
+const CHART_VIEW = { once: true, margin: "-80px" } as const;
 
 // A gentle upward grade curve (out of 20) for the mock dashboard.
 const SERIES = [8.5, 9, 10, 9.5, 11.5, 12, 13.2, 14.2];
@@ -16,6 +19,7 @@ const SUBJECT_AVGS = [15.4, 13.8, 12.6];
  */
 export function ProgressFeature() {
   const { t, raw, locale } = useI18n();
+  const reduceMotion = useReducedMotion();
   const chips = raw((d) => d.progressFeature.chips) as string[];
   const months = raw((d) => d.progressFeature.months) as string[];
   const subjects = raw((d) => d.progressFeature.subjects) as string[];
@@ -116,32 +120,58 @@ export function ProgressFeature() {
                 strokeWidth="1"
               />
             ))}
-            <path d={area} fill="url(#pf-fill)" />
-            <path
+            {/* The curve draws itself once the section is reached, then the
+                shading settles under it and the marker lands. Progress is the
+                claim this section makes, so the chart states it by moving
+                rather than by being there already. It plays once, and not at
+                all for anyone who asked for less motion. */}
+            <motion.path
+              d={area}
+              fill="url(#pf-fill)"
+              initial={reduceMotion ? false : { opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={CHART_VIEW}
+              transition={{ duration: 0.6, delay: 0.45, ease: EASE.out }}
+            />
+            <motion.path
               d={line}
               fill="none"
               stroke="var(--color-emerald)"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
+              initial={reduceMotion ? false : { pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={CHART_VIEW}
+              transition={{ duration: 1.1, ease: EASE.out }}
             />
             {/* Only the latest grade is marked — the eye follows the curve, not a
                 row of dots. A soft halo makes "where you are now" unmistakable. */}
-            <circle
-              cx={pts[pts.length - 1][0]}
-              cy={pts[pts.length - 1][1]}
-              r="7"
-              fill="var(--color-emerald)"
-              opacity="0.16"
-            />
-            <circle
-              cx={pts[pts.length - 1][0]}
-              cy={pts[pts.length - 1][1]}
-              r="3.5"
-              fill="var(--color-emerald)"
-              stroke="var(--color-card)"
-              strokeWidth="2"
-            />
+            <motion.g
+              initial={reduceMotion ? false : { opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={CHART_VIEW}
+              transition={{ duration: 0.4, delay: 1, ease: EASE.out }}
+              style={{
+                transformOrigin: `${pts[pts.length - 1][0]}px ${pts[pts.length - 1][1]}px`,
+              }}
+            >
+              <circle
+                cx={pts[pts.length - 1][0]}
+                cy={pts[pts.length - 1][1]}
+                r="7"
+                fill="var(--color-emerald)"
+                opacity="0.16"
+              />
+              <circle
+                cx={pts[pts.length - 1][0]}
+                cy={pts[pts.length - 1][1]}
+                r="3.5"
+                fill="var(--color-emerald)"
+                stroke="var(--color-card)"
+                strokeWidth="2"
+              />
+            </motion.g>
           </svg>
 
           {/* Time axis — the whole point of the feature is progress over time. */}

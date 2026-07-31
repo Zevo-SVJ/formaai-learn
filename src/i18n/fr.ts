@@ -445,6 +445,14 @@ export const fr: Dict = {
       caption:
         "Forma lit ta vraie leçon avant de répondre. Chaque explication est ancrée dans ton propre document.",
     },
+    cards: {
+      title: "Tes explications sont des cartes",
+      swipe: "Fais glisser sur le côté pour les parcourir",
+      open: "Touche une carte pour la lire en entier",
+      keepCard: "Garde une carte pour la retrouver plus tard",
+      keepAll: "Ou garde toute l'analyse d'un coup",
+      cta: "J'ai compris",
+    },
     loading: {
       title: "On prépare ta Forma",
       caption: "Tout est personnalisé à ta façon d'apprendre.",
@@ -515,10 +523,7 @@ export const fr: Dict = {
       progress: "{{current}} sur {{total}}",
       next: "Carte suivante",
       previous: "Carte précédente",
-      hintSwipe: "Fais glisser pour voir la carte suivante",
-      hintOpen: "Touche une carte pour la lire en entier",
-      hintSaveCard: "Garde cette carte pour plus tard",
-      hintSaveAnalysis: "Garde toute l'analyse",
+      openCard: "Ouvrir la carte",
       saveCard: "Garder cette carte",
       cardSaved: "Gardée",
       saveAnalysis: "Enregistrer cette analyse",

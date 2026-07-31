@@ -28,39 +28,68 @@ export type DetailCard = {
 export function CardDetail({
   card,
   saved,
-  hint,
   onSave,
   onClose,
 }: {
   card: DetailCard | null;
   saved: boolean;
-  /** One line above the action, shown only until a card has been kept once. */
-  hint?: string | null;
   onSave: () => void;
   onClose: () => void;
 }) {
   const { t } = useI18n();
   const Icon = card?.icon;
+  // The effects below depend on whether the sheet is open, not on which card is
+  // in it: `card` is rebuilt on every render, so depending on it would tear the
+  // lock down and put it back up continuously, and moving between cards would
+  // throw the page back to the top.
+  const isOpen = Boolean(card);
 
   // Escape closes it, as any dialog should.
   useEffect(() => {
-    if (!card) return;
+    if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [card, onClose]);
+  }, [isOpen, onClose]);
 
-  // The page behind must not scroll while the sheet is over it.
+  // The page behind must not move at all while the sheet is over it.
+  //
+  // `overflow: hidden` alone does not hold on iOS — the page still rubber-bands
+  // and scrolls under the sheet. Pinning the body at its current offset does,
+  // and the offset is put back on the way out so closing the sheet returns you
+  // exactly where you were rather than at the top of the page.
   useEffect(() => {
-    if (!card) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previous;
+    if (!isOpen) return;
+    const y = window.scrollY;
+    const body = document.body;
+    const previous = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
     };
-  }, [card]);
+    body.style.position = "fixed";
+    body.style.top = `-${y}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    return () => {
+      Object.assign(body.style, previous);
+      // While the body was pinned the document had no height to scroll, so the
+      // offset has to be put back only once the page is laid out again —
+      // otherwise the browser clamps it to zero and closing a card throws you
+      // to the top. Reading a layout property forces that recalculation now.
+      void body.offsetHeight;
+      // Explicitly instant: the app sets smooth scrolling globally, and a
+      // restore that animates would look like the page jumping on its own.
+      window.scrollTo({ top: y, left: 0, behavior: "instant" });
+    };
+  }, [isOpen]);
 
   const onDragEnd = (_: unknown, info: PanInfo) => {
     if (info.offset.y > 120 || info.velocity.y > 600) onClose();
@@ -136,16 +165,6 @@ export function CardDetail({
             </div>
 
             <div className="shrink-0 px-6 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-4">
-              {hint && !saved && (
-                <motion.p
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.25, ease: EASE.out }}
-                  className="mb-2 text-center text-[12.5px] font-medium text-muted-foreground"
-                >
-                  {hint}
-                </motion.p>
-              )}
               <SaveButton saved={saved} onSave={onSave} />
             </div>
           </motion.div>

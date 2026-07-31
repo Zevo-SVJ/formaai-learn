@@ -446,6 +446,14 @@ export const it: Dict = {
       caption:
         "Forma legge la tua lezione prima di rispondere. Ogni spiegazione parte dal tuo documento.",
     },
+    cards: {
+      title: "Le tue spiegazioni sono carte",
+      swipe: "Scorri di lato per sfogliarle",
+      open: "Tocca una carta per leggerla tutta",
+      keepCard: "Tieni una carta per ritrovarla più tardi",
+      keepAll: "Oppure tieni tutta l'analisi in una volta",
+      cta: "Ho capito",
+    },
     loading: {
       title: "Sto preparando il tuo Forma",
       caption: "Sto adattando tutto al tuo modo di studiare.",
@@ -517,10 +525,7 @@ export const it: Dict = {
       progress: "{{current}} di {{total}}",
       next: "Scheda successiva",
       previous: "Scheda precedente",
-      hintSwipe: "Scorri per vedere la carta successiva",
-      hintOpen: "Tocca una carta per leggerla tutta",
-      hintSaveCard: "Tieni questa carta per dopo",
-      hintSaveAnalysis: "Tieni tutta l'analisi",
+      openCard: "Apri la carta",
       saveCard: "Tieni questa carta",
       cardSaved: "Tenuta",
       saveAnalysis: "Salva questa analisi",

@@ -5,7 +5,16 @@ import { Logo } from "@/components/Logo";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { COUNTRIES, countryName } from "@/lib/countries";
-import { CheckCircle2, Search, ChevronRight, BookOpen } from "lucide-react";
+import {
+  CheckCircle2,
+  Search,
+  ChevronRight,
+  BookOpen,
+  MoveHorizontal,
+  Hand,
+  Bookmark,
+  FolderPlus,
+} from "lucide-react";
 import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/onboarding")({
@@ -67,7 +76,7 @@ function Onboarding() {
     navigate({ to: "/auth", search: { mode: "signup" } as never });
   };
 
-  const totalSteps = 7; // Q1, insight1, Q2, Q3, insight2, Q4, loading
+  const totalSteps = 8; // Q1, insight1, Q2, Q3, insight2, Q4, loading, cards
   return (
     <div className="safe-top min-h-dvh bg-background">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-5 py-4 sm:py-5">
@@ -162,11 +171,131 @@ function Onboarding() {
           )}
           {step === 6 && (
             <Step key="loading">
-              <LoadingStep onDone={finish} />
+              <LoadingStep onDone={() => setStep(7)} />
+            </Step>
+          )}
+          {step === 7 && (
+            <Step key="cards">
+              <CardsStep onDone={finish} />
             </Step>
           )}
         </AnimatePresence>
       </main>
+    </div>
+  );
+}
+
+/**
+ * How the cards work, taught once and in one place.
+ *
+ * It sits at the end of onboarding, immediately before the account screen, so a
+ * student meets the gestures just before the first analysis they will use them
+ * on — and never meets them again. The results page used to carry little lines
+ * of explanation under the deck; this replaces them, rather than joining them.
+ *
+ * The shape is deliberately the one iOS uses for a "what's new" screen: a live
+ * demo, then a short row per gesture, then one way forward. Each row is an
+ * icon, three or four words, and nothing else.
+ */
+function CardsStep({ onDone }: { onDone: () => void }) {
+  const { t } = useI18n();
+  const reduceMotion = useReducedMotion();
+
+  const rows = [
+    { icon: MoveHorizontal, label: t((d) => d.onboarding.cards.swipe) },
+    { icon: Hand, label: t((d) => d.onboarding.cards.open) },
+    { icon: Bookmark, label: t((d) => d.onboarding.cards.keepCard) },
+    { icon: FolderPlus, label: t((d) => d.onboarding.cards.keepAll) },
+  ];
+
+  return (
+    <div className="mx-auto flex max-w-md flex-col items-center">
+      <CardsDemo reduceMotion={!!reduceMotion} />
+
+      <h1 className="mt-8 text-center text-[26px] font-bold leading-tight tracking-tight text-foreground sm:text-[30px]">
+        {t((d) => d.onboarding.cards.title)}
+      </h1>
+
+      <ul className="mt-7 flex w-full flex-col gap-4">
+        {rows.map((row, i) => (
+          <motion.li
+            key={row.label}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.15 + i * 0.09, ease: EASE.out }}
+            className="flex items-center gap-3.5"
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-soft">
+              <row.icon className="h-4 w-4 text-emerald" strokeWidth={2} />
+            </div>
+            <span className="text-[15px] leading-snug text-foreground">{row.label}</span>
+          </motion.li>
+        ))}
+      </ul>
+
+      <button
+        onClick={onDone}
+        className="mt-9 inline-flex w-full items-center justify-center rounded-2xl bg-foreground py-3.5 text-[15px] font-semibold text-background transition hover:opacity-90"
+      >
+        {t((d) => d.onboarding.cards.cta)}
+      </button>
+    </div>
+  );
+}
+
+/**
+ * The gesture, not a description of it: a small deck whose top card is carried
+ * off to the left on a loop while the one behind steps up to take its place.
+ */
+function CardsDemo({ reduceMotion }: { reduceMotion: boolean }) {
+  const ranks = [0, 1, 2];
+  const LOOP = 3.2;
+  const PEEK_X = 13;
+  const PEEK_Y = 6;
+  const PEEK_SCALE = 0.06;
+
+  return (
+    <div aria-hidden className="relative h-[128px] w-[188px]">
+      {ranks.map((rank) => (
+        <motion.div
+          key={rank}
+          className="absolute left-0 top-0 flex h-[112px] w-[156px] flex-col justify-center gap-2 rounded-2xl border border-border bg-card px-4 shadow-[var(--shadow-soft)]"
+          style={{ zIndex: 3 - rank }}
+          initial={false}
+          animate={
+            reduceMotion
+              ? { x: rank * PEEK_X, y: rank * PEEK_Y, scale: 1 - rank * PEEK_SCALE, opacity: 1 }
+              : {
+                  x: [rank * PEEK_X, rank * PEEK_X, -168, (rank + 2) * PEEK_X, (rank + 2) * PEEK_X],
+                  y: [rank * PEEK_Y, rank * PEEK_Y, 0, (rank + 2) * PEEK_Y, (rank + 2) * PEEK_Y],
+                  scale: [
+                    1 - rank * PEEK_SCALE,
+                    1 - rank * PEEK_SCALE,
+                    1,
+                    1 - (rank + 2) * PEEK_SCALE,
+                    1 - (rank + 2) * PEEK_SCALE,
+                  ],
+                  opacity: [1, 1, 0, 0, 1],
+                }
+          }
+          transition={
+            reduceMotion
+              ? { duration: 0 }
+              : {
+                  duration: LOOP,
+                  times: [0, 0.3, 0.55, 0.6, 0.72],
+                  repeat: Infinity,
+                  repeatDelay: LOOP * (2 - rank),
+                  delay: LOOP * rank,
+                  ease: EASE.inOut,
+                }
+          }
+        >
+          <span className="h-1.5 w-9 rounded-full bg-emerald/70" />
+          <span className="h-1.5 w-full rounded-full bg-border-strong/60" />
+          <span className="h-1.5 w-4/5 rounded-full bg-border-strong/60" />
+        </motion.div>
+      ))}
     </div>
   );
 }

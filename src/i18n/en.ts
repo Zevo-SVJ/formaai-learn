@@ -442,6 +442,14 @@ export const en = {
       caption:
         "Forma reads your actual lesson before answering. Every explanation is grounded in your own document.",
     },
+    cards: {
+      title: "Your explanations come as cards",
+      swipe: "Slide sideways to move through them",
+      open: "Tap a card to read all of it",
+      keepCard: "Keep a card to find it again later",
+      keepAll: "Or keep the whole analysis at once",
+      cta: "Got it",
+    },
     loading: {
       title: "Preparing your Forma",
       caption: "Personalising everything to how you study.",
@@ -511,10 +519,7 @@ export const en = {
       progress: "{{current}} of {{total}}",
       next: "Next card",
       previous: "Previous card",
-      hintSwipe: "Slide to see the next card",
-      hintOpen: "Tap a card to read it in full",
-      hintSaveCard: "Keep this card for later",
-      hintSaveAnalysis: "Keep the whole analysis",
+      openCard: "Open card",
       saveCard: "Keep this card",
       cardSaved: "Kept",
       saveAnalysis: "Save this analysis",
