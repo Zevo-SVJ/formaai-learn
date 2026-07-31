@@ -24,6 +24,7 @@ import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedDocDocIdRouteImport } from './routes/_authenticated/doc.$docId'
+import { Route as AuthenticatedCollectionIdRouteImport } from './routes/_authenticated/collection.$id'
 import { Route as AuthenticatedDocDocIdChatRouteImport } from './routes/_authenticated/doc.$docId_.chat'
 
 const TermsRoute = TermsRouteImport.update({
@@ -100,6 +101,12 @@ const AuthenticatedDocDocIdRoute = AuthenticatedDocDocIdRouteImport.update({
   path: '/doc/$docId',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCollectionIdRoute =
+  AuthenticatedCollectionIdRouteImport.update({
+    id: '/collection/$id',
+    path: '/collection/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDocDocIdChatRoute =
   AuthenticatedDocDocIdChatRouteImport.update({
     id: '/doc/$docId_/chat',
@@ -121,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/library': typeof AuthenticatedLibraryRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/api/chat': typeof ApiChatRoute
+  '/collection/$id': typeof AuthenticatedCollectionIdRoute
   '/doc/$docId': typeof AuthenticatedDocDocIdRoute
   '/doc/$docId/chat': typeof AuthenticatedDocDocIdChatRoute
 }
@@ -138,6 +146,7 @@ export interface FileRoutesByTo {
   '/library': typeof AuthenticatedLibraryRoute
   '/progress': typeof AuthenticatedProgressRoute
   '/api/chat': typeof ApiChatRoute
+  '/collection/$id': typeof AuthenticatedCollectionIdRoute
   '/doc/$docId': typeof AuthenticatedDocDocIdRoute
   '/doc/$docId/chat': typeof AuthenticatedDocDocIdChatRoute
 }
@@ -157,6 +166,7 @@ export interface FileRoutesById {
   '/_authenticated/library': typeof AuthenticatedLibraryRoute
   '/_authenticated/progress': typeof AuthenticatedProgressRoute
   '/api/chat': typeof ApiChatRoute
+  '/_authenticated/collection/$id': typeof AuthenticatedCollectionIdRoute
   '/_authenticated/doc/$docId': typeof AuthenticatedDocDocIdRoute
   '/_authenticated/doc/$docId_/chat': typeof AuthenticatedDocDocIdChatRoute
 }
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/progress'
     | '/api/chat'
+    | '/collection/$id'
     | '/doc/$docId'
     | '/doc/$docId/chat'
   fileRoutesByTo: FileRoutesByTo
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/library'
     | '/progress'
     | '/api/chat'
+    | '/collection/$id'
     | '/doc/$docId'
     | '/doc/$docId/chat'
   id:
@@ -211,6 +223,7 @@ export interface FileRouteTypes {
     | '/_authenticated/library'
     | '/_authenticated/progress'
     | '/api/chat'
+    | '/_authenticated/collection/$id'
     | '/_authenticated/doc/$docId'
     | '/_authenticated/doc/$docId_/chat'
   fileRoutesById: FileRoutesById
@@ -336,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDocDocIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/collection/$id': {
+      id: '/_authenticated/collection/$id'
+      path: '/collection/$id'
+      fullPath: '/collection/$id'
+      preLoaderRoute: typeof AuthenticatedCollectionIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/doc/$docId_/chat': {
       id: '/_authenticated/doc/$docId_/chat'
       path: '/doc/$docId/chat'
@@ -350,6 +370,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedLibraryRoute: typeof AuthenticatedLibraryRoute
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
+  AuthenticatedCollectionIdRoute: typeof AuthenticatedCollectionIdRoute
   AuthenticatedDocDocIdRoute: typeof AuthenticatedDocDocIdRoute
   AuthenticatedDocDocIdChatRoute: typeof AuthenticatedDocDocIdChatRoute
 }
@@ -358,6 +379,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedLibraryRoute: AuthenticatedLibraryRoute,
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
+  AuthenticatedCollectionIdRoute: AuthenticatedCollectionIdRoute,
   AuthenticatedDocDocIdRoute: AuthenticatedDocDocIdRoute,
   AuthenticatedDocDocIdChatRoute: AuthenticatedDocDocIdChatRoute,
 }

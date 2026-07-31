@@ -8,7 +8,8 @@ import { AppHeader } from "@/components/AppHeader";
 import { EASE } from "@/lib/motion";
 import { subjectIcon } from "@/lib/subject-icon";
 import { useI18n } from "@/hooks/useI18n";
-import { Loader2, Star, CheckCircle2, AlertCircle, ArrowRight, Home } from "lucide-react";
+import { Loader2, Star, CheckCircle2, AlertCircle, ArrowRight, Home, Layers } from "lucide-react";
+import { useCollections } from "@/hooks/useCollections";
 
 export const Route = createFileRoute("/_authenticated/library")({
   component: Library,
@@ -31,6 +32,7 @@ function Library() {
   const fav = useServerFn(toggleFavorite);
   const qc = useQueryClient();
   const navigate = useNavigate();
+  const collections = useCollections();
 
   const { data, isLoading } = useQuery({
     queryKey: ["documents"],
@@ -62,6 +64,74 @@ function Library() {
           </h1>
           <p className="text-[15px] text-muted-foreground">{t((d) => d.libraryPage.subtitle)}</p>
         </div>
+
+        {/* Kept lessons come first: they are the ones the student chose, so
+            they should not be looked for underneath everything ever analysed.
+            The shelf appears only once something is on it — an empty shelf
+            above an empty library would just be two ways of saying nothing. */}
+        {collections.length > 0 && (
+          <section className="mb-10">
+            <div className="mb-4 flex flex-col gap-0.5">
+              <h2 className="text-[19px] font-bold tracking-tight text-foreground">
+                {t((d) => d.collections.title)}
+              </h2>
+              <p className="text-[13.5px] text-muted-foreground">
+                {t((d) => d.collections.subtitle)}
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {collections.map((c, i) => (
+                <motion.div
+                  key={c.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: i * 0.02, ease: EASE.out }}
+                  whileHover={{ y: -2 }}
+                  className="group relative overflow-hidden rounded-3xl border border-emerald/25 bg-card p-5 shadow-[var(--shadow-soft)] transition-colors hover:border-emerald/40"
+                >
+                  <Link
+                    to="/collection/$id"
+                    params={{ id: c.id }}
+                    className="absolute inset-0"
+                    aria-label={t((d2) => d2.collections.open)}
+                  />
+                  <div className="relative flex items-start justify-between gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-soft">
+                      <Layers className="h-5 w-5 text-emerald" strokeWidth={1.9} />
+                    </div>
+                    <span className="rounded-full bg-surface-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
+                      {c.cards.length === 1
+                        ? t((d2) => d2.collections.oneCard)
+                        : t((d2) => d2.collections.cards, { count: c.cards.length })}
+                    </span>
+                  </div>
+                  <h3 className="relative mt-4 line-clamp-2 text-[16px] font-bold text-foreground">
+                    {c.title}
+                  </h3>
+                  <div className="relative mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+                    {c.subject && <span>{c.subject}</span>}
+                    {c.subject && c.level && <span>·</span>}
+                    {c.level && <span>{c.level}</span>}
+                  </div>
+                  <div className="relative mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <span>
+                      {relativeTime(c.savedAt, {
+                        justNow: t((d2) => d2.common.justNow),
+                        min: t((d2) => d2.common.minutesAgo),
+                        h: t((d2) => d2.common.hoursAgo),
+                        d: t((d2) => d2.common.daysAgo),
+                      })}
+                    </span>
+                    <span className="inline-flex items-center gap-1 font-semibold text-foreground opacity-0 transition-opacity group-hover:opacity-100">
+                      {t((d2) => d2.common.continue)}
+                      <ArrowRight className="h-3 w-3" />
+                    </span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {isLoading && (
           <div className="flex items-center justify-center py-14 text-muted-foreground">

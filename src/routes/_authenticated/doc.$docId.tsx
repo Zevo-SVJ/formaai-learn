@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import {
   getDocument,
   getSignedFileUrl,
@@ -12,28 +11,20 @@ import {
 import { Logo } from "@/components/Logo";
 import { AnalysisCeremony } from "@/components/AnalysisCeremony";
 import { AnswersPanel } from "@/components/AnswersPanel";
-import { RichAnswer } from "@/components/RichAnswer";
-import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { classifyError } from "@/lib/error-message";
 import {
   ArrowLeft,
   ArrowRight,
   Loader2,
-  GraduationCap,
-  BookOpen,
-  Lightbulb,
   AlertTriangle,
-  Shapes,
   RefreshCw,
   Star,
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { track } from "@/lib/analytics";
-import { ExplanationDeck } from "@/components/ExplanationDeck";
-import { DeckIntro } from "@/components/DeckIntro";
-import { ScrollingCardBody } from "@/components/ScrollingCardBody";
+import { AnalysisCards, type Section } from "@/components/AnalysisCards";
 
 export const Route = createFileRoute("/_authenticated/doc/$docId")({
   component: DocPage,
@@ -267,123 +258,46 @@ function DocumentViewer({ doc, fileUrl }: { doc: Doc; fileUrl: string | null }) 
   );
 }
 
-/**
- * One explanation card.
- *
- * Two shapes, same content and same markup order. By default it is as tall as
- * its text — the vertical stack from `sm` up. With `fill` it takes the height
- * of whatever frame it is given, pins its header, and lets only its text
- * scroll: that is what lets the deck keep every card exactly the same size no
- * matter how long the explanation is. The shadow is left off in `fill`, since
- * there the deck owns elevation and varies it by depth.
- */
-function ExplanationCard({
-  icon: Icon,
-  title,
-  children,
-  tone = "default",
-  fill = false,
-}: {
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  children: React.ReactNode;
-  tone?: "default" | "emerald" | "warn";
-  fill?: boolean;
-}) {
-  const bg =
-    tone === "emerald"
-      ? "bg-emerald-soft"
-      : tone === "warn"
-        ? "bg-amber-500/10"
-        : "bg-surface-muted";
-  const color =
-    tone === "emerald" ? "text-emerald" : tone === "warn" ? "text-amber-600" : "text-foreground";
-
-  const header = (
-    <div className={`flex items-center gap-2.5 ${fill ? "mb-3 shrink-0" : "mb-3"}`}>
-      <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${bg}`}>
-        <Icon className={`h-3.5 w-3.5 ${color}`} />
-      </div>
-      <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-        {title}
-      </h3>
-    </div>
-  );
-
-  if (fill) {
-    return (
-      <div className="flex h-full flex-col rounded-3xl border border-border bg-card p-5">
-        {header}
-        <ScrollingCardBody>{children}</ScrollingCardBody>
-      </div>
-    );
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: EASE.out }}
-      className="rounded-3xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]"
-    >
-      {header}
-      <div className="space-y-2 text-[15px] leading-relaxed text-foreground">{children}</div>
-    </motion.div>
-  );
-}
-
 function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => void }) {
   const { t } = useI18n();
   const exp = doc.explanation ?? {};
 
-  // The explanation sections, listed once so the two arrangements below cannot
-  // drift apart: a swipeable deck on mobile, and the existing vertical stack
-  // from `sm` up, where there is room to see everything at once. Same sections,
-  // same order, same text — only the arrangement differs.
-  const sections = [
+  // The explanation sections, in the order the analysis produced them. The
+  // cards, the reader and the two ways to keep them all live in AnalysisCards,
+  // so a saved collection replays exactly this experience rather than a copy of
+  // it that has to be kept in step.
+  const sections: Section[] = [
     exp.explanation && {
       key: "explanation",
-      icon: GraduationCap,
       title: t((d) => d.doc.sections.explanation),
       tone: "emerald" as const,
       text: exp.explanation,
     },
     exp.why && {
       key: "why",
-      icon: Lightbulb,
       title: t((d) => d.doc.sections.why),
       tone: "default" as const,
       text: exp.why,
     },
     exp.common_mistake && {
       key: "common_mistake",
-      icon: AlertTriangle,
       title: t((d) => d.doc.sections.commonMistakes),
       tone: "warn" as const,
       text: exp.common_mistake,
     },
     exp.example && {
       key: "example",
-      icon: BookOpen,
       title: t((d) => d.doc.sections.example),
       tone: "default" as const,
       text: exp.example,
     },
     exp.analogy && {
       key: "analogy",
-      icon: Shapes,
       title: t((d) => d.doc.sections.analogy),
       tone: "default" as const,
       text: exp.analogy,
     },
-  ].filter((s): s is Exclude<typeof s, false | undefined | ""> => Boolean(s));
-
-  const renderCards = (fill: boolean) =>
-    sections.map((s) => (
-      <ExplanationCard key={s.key} icon={s.icon} title={s.title} tone={s.tone} fill={fill}>
-        <RichAnswer text={s.text} />
-      </ExplanationCard>
-    ));
+  ].filter((s): s is Section => Boolean(s));
 
   return (
     <div className="flex flex-col gap-4">
@@ -403,17 +317,18 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
         </button>
       </div>
 
-      {/* Mobile: one card at a time, the rest peeking behind. Desktop keeps the
-          full stack. A single card needs no deck, so it just renders. */}
-      {sections.length > 1 ? (
-        <>
-          <ExplanationDeck cards={renderCards(true)} />
-          <div className="hidden flex-col gap-4 sm:flex">{renderCards(false)}</div>
-          <DeckIntro />
-        </>
-      ) : (
-        <div className="flex flex-col gap-4">{renderCards(false)}</div>
-      )}
+      <AnalysisCards
+        sections={sections}
+        source={{
+          id: doc.id,
+          title: doc.title,
+          subject: doc.subject,
+          level: doc.level,
+          chapter: doc.chapter,
+          concepts: doc.concepts,
+        }}
+        answer={exp.explanation ?? null}
+      />
 
       {/* Conversation CTA — the natural next step after reading the answer.
           Opens a dedicated, full-height conversation for this analysis instead
