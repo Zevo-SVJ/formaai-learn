@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, type PanInfo } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { EASE } from "@/lib/motion";
@@ -80,6 +80,30 @@ export function ExplanationDeck({
     else if (info.offset.x > 90 || info.velocity.x > 450) step(-1);
   };
 
+  // Opening is decided from the pointer itself rather than from a tap gesture.
+  // A swipe ends with the finger back over the card — it snapped home, or it
+  // was let go mid-slide — and anything that only asks "did the press start and
+  // end on this card?" reads that as a tap and opens it. So the press is
+  // measured instead: move further than a thumb's wobble, or dwell long enough
+  // to be a hold, and it is not an open. That is the rule iOS applies, and it
+  // makes the sideways gesture unconditionally the deck's.
+  const press = useRef<{ x: number; y: number; t: number } | null>(null);
+  const TAP_SLOP = 10; // px of drift still forgiven as a tap
+  const TAP_TIME = 500; // ms after which a press is a hold, not a tap
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    press.current = { x: e.clientX, y: e.clientY, t: Date.now() };
+  };
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    const start = press.current;
+    press.current = null;
+    if (!start || !onOpenCard) return;
+    const moved = Math.hypot(e.clientX - start.x, e.clientY - start.y);
+    if (moved > TAP_SLOP || Date.now() - start.t > TAP_TIME) return;
+    onOpenCard(index);
+  };
+
   return (
     <div className="sm:hidden">
       <div
@@ -159,7 +183,9 @@ export function ExplanationDeck({
               dragElastic={0.55}
               onDragEnd={isFront ? onDragEnd : undefined}
               whileDrag={{ cursor: "grabbing" }}
-              onTap={isFront && onOpenCard ? () => onOpenCard(index) : undefined}
+              onPointerDown={isFront && onOpenCard ? onPointerDown : undefined}
+              onPointerUp={isFront && onOpenCard ? onPointerUp : undefined}
+              onPointerCancel={() => (press.current = null)}
               aria-hidden={!isFront}
               {...(isFront && onOpenCard
                 ? {

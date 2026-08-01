@@ -99,6 +99,9 @@ export const fr: Dict = {
     answer: "Réponse",
     remove: "Retirer des collections",
     open: "Ouvrir la collection",
+    tabCards: "Cartes enregistrées",
+    cardsEmpty: "Aucune carte gardée seule pour l'instant. Ouvre une carte et garde-la pour la retrouver ici.",
+    allAnalyses: "Toutes tes analyses",
   },
   libraryPage: {
     subtitle: "Toutes tes leçons analysées, au même endroit.",

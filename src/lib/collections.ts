@@ -23,6 +23,13 @@ export type SavedCard = {
   title: string;
   tone: "default" | "emerald" | "warn";
   text: string;
+  /**
+   * Kept on its own from the reader, rather than swept up by saving the whole
+   * lesson. It is what separates the two shelves in the library: a card the
+   * student singled out belongs under "saved cards" even once the rest of the
+   * lesson is kept too.
+   */
+  alone?: boolean;
 };
 
 export type Collection = {
@@ -127,7 +134,7 @@ export function saveCard(source: CollectionSource, card: SavedCard) {
     subject: source.subject,
     level: source.level,
     answer: existing?.answer ?? null,
-    cards: [...(existing?.cards ?? []).filter((c) => c.key !== card.key), card],
+    cards: [...(existing?.cards ?? []).filter((c) => c.key !== card.key), { ...card, alone: true }],
     savedAt: new Date().toISOString(),
   }));
 }
@@ -147,17 +154,38 @@ export function removeCard(id: string, cardKey: string) {
 
 /** Keep the whole lesson: its answer and every card, in the order shown. */
 export function saveAnalysis(source: CollectionSource, cards: SavedCard[], answer: string | null) {
-  upsert(source, () => ({
+  upsert(source, (existing) => ({
     id: source.id,
     title: collectionTitle(source),
     subject: source.subject,
     level: source.level,
     answer,
-    cards,
+    // Sweeping up the lesson must not quietly un-single a card the student
+    // had already picked out on its own.
+    cards: cards.map((c) => ({
+      ...c,
+      alone: existing?.cards.some((e) => e.key === c.key && e.alone) || undefined,
+    })),
     savedAt: new Date().toISOString(),
   }));
 }
 
 export function removeCollection(id: string) {
   write(read().filter((c) => c.id !== id));
+}
+
+/** The whole lessons: those kept with their answer, newest first. */
+export function listAnalyses(all: Collection[]): Collection[] {
+  return all.filter((c) => c.answer !== null && c.cards.length > 0);
+}
+
+/** Every card kept on its own, with the lesson it came from. */
+export type LooseCard = SavedCard & { collectionId: string; collectionTitle: string };
+
+export function listLooseCards(all: Collection[]): LooseCard[] {
+  return all.flatMap((c) =>
+    c.cards
+      .filter((card) => card.alone)
+      .map((card) => ({ ...card, collectionId: c.id, collectionTitle: c.title })),
+  );
 }

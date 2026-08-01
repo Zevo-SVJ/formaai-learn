@@ -97,6 +97,9 @@ export const en = {
     answer: "Answer",
     remove: "Remove from collections",
     open: "Open collection",
+    tabCards: "Saved cards",
+    cardsEmpty: "No single cards kept yet. Open a card and keep it to find it here.",
+    allAnalyses: "All your analyses",
   },
   libraryPage: {
     subtitle: "Every lesson you have analyzed, in one place.",

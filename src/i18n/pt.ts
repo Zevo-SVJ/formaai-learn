@@ -100,6 +100,9 @@ export const pt: Dict = {
     answer: "Resposta",
     remove: "Remover das coleções",
     open: "Abrir a coleção",
+    tabCards: "Cartões guardados",
+    cardsEmpty: "Ainda não guardaste cartões soltos. Abre um cartão e guarda-o para o encontrares aqui.",
+    allAnalyses: "Todas as tuas análises",
   },
   libraryPage: {
     subtitle: "Todas as matérias que analisaste, no mesmo sítio.",

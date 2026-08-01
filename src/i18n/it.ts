@@ -99,6 +99,9 @@ export const it: Dict = {
     answer: "Risposta",
     remove: "Rimuovi dalle raccolte",
     open: "Apri la raccolta",
+    tabCards: "Carte salvate",
+    cardsEmpty: "Nessuna carta tenuta da sola per ora. Apri una carta e tienila per ritrovarla qui.",
+    allAnalyses: "Tutte le tue analisi",
   },
   libraryPage: {
     subtitle: "Tutte le lezioni che hai analizzato, in un unico posto.",

@@ -296,6 +296,26 @@ function CardsDemo({ reduceMotion }: { reduceMotion: boolean }) {
           <span className="h-1.5 w-4/5 rounded-full bg-border-strong/60" />
         </motion.div>
       ))}
+
+      {/* The hand doing it. It presses, carries the top card away on exactly the
+          same timing, then lifts off — so the card is not moving on its own, it
+          is being moved. That is the whole lesson, and it needs no words. */}
+      {!reduceMotion && (
+        <motion.span
+          className="pointer-events-none absolute left-[84px] top-[54px] block h-8 w-8 rounded-full bg-foreground/10 ring-1 ring-foreground/15"
+          animate={{
+            x: [14, 0, 0, -150, -150, 14],
+            scale: [1, 0.85, 0.85, 0.85, 1, 1],
+            opacity: [0, 1, 1, 1, 0, 0],
+          }}
+          transition={{
+            duration: LOOP,
+            times: [0, 0.22, 0.3, 0.55, 0.66, 1],
+            repeat: Infinity,
+            ease: EASE.inOut,
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -2,12 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import {
-  getDocument,
-  getSignedFileUrl,
-  analyzeDocument,
-  toggleFavorite,
-} from "@/lib/documents.functions";
+import { getDocument, getSignedFileUrl, analyzeDocument } from "@/lib/documents.functions";
 import { Logo } from "@/components/Logo";
 import { AnalysisCeremony } from "@/components/AnalysisCeremony";
 import { AnswersPanel } from "@/components/AnswersPanel";
@@ -19,7 +14,6 @@ import {
   Loader2,
   AlertTriangle,
   RefreshCw,
-  Star,
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -62,7 +56,6 @@ function DocPage() {
   const getDoc = useServerFn(getDocument);
   const signFile = useServerFn(getSignedFileUrl);
   const retry = useServerFn(analyzeDocument);
-  const fav = useServerFn(toggleFavorite);
   const qc = useQueryClient();
 
   const [stalled, setStalled] = useState(false);
@@ -125,15 +118,6 @@ function DocPage() {
       .catch(() => setFileUrl(null));
   }, [doc?.storage_path, signFile]);
 
-  const onFavToggle = async () => {
-    if (!doc) return;
-    const next = !doc.favorite;
-    await fav({ data: { id: doc.id, favorite: next } });
-    toast.success(next ? t((d) => d.doc.favoriteToast) : t((d) => d.doc.unfavoriteToast));
-    qc.invalidateQueries({ queryKey: ["document", docId] });
-    qc.invalidateQueries({ queryKey: ["documents"] });
-  };
-
   return (
     <div className="min-h-dvh bg-background">
       <header className="safe-top sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur">
@@ -158,20 +142,6 @@ function DocPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {doc?.status === "ready" && (
-              <button
-                onClick={onFavToggle}
-                className={[
-                  "hidden items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold transition sm:inline-flex",
-                  doc.favorite
-                    ? "border-amber-500/30 bg-amber-500/10 text-amber-600"
-                    : "border-border bg-surface text-muted-foreground hover:text-foreground",
-                ].join(" ")}
-              >
-                <Star className={`h-3.5 w-3.5 ${doc.favorite ? "fill-current" : ""}`} />
-                {doc.favorite ? t((d) => d.doc.favoriteRemove) : t((d) => d.doc.favoriteAdd)}
-              </button>
-            )}
             <Link to="/home" className="hidden sm:block">
               <Logo />
             </Link>
@@ -225,7 +195,7 @@ function DocPage() {
             )}
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
               <DocumentViewer doc={doc} fileUrl={fileUrl} />
-              <ExplanationPanel doc={doc} onFavToggle={onFavToggle} />
+              <ExplanationPanel doc={doc} />
             </div>
           </div>
         )}
@@ -258,7 +228,7 @@ function DocumentViewer({ doc, fileUrl }: { doc: Doc; fileUrl: string | null }) 
   );
 }
 
-function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => void }) {
+function ExplanationPanel({ doc }: { doc: Doc }) {
   const { t } = useI18n();
   const exp = doc.explanation ?? {};
 
@@ -301,22 +271,6 @@ function ExplanationPanel({ doc, onFavToggle }: { doc: Doc; onFavToggle: () => v
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Mobile favorite bar */}
-      <div className="flex items-center gap-2 sm:hidden">
-        <button
-          onClick={onFavToggle}
-          className={[
-            "inline-flex min-h-[40px] items-center gap-1.5 rounded-full border px-3.5 py-2 text-xs font-semibold transition",
-            doc.favorite
-              ? "border-amber-500/30 bg-amber-500/10 text-amber-600"
-              : "border-border bg-surface text-muted-foreground",
-          ].join(" ")}
-        >
-          <Star className={`h-3.5 w-3.5 ${doc.favorite ? "fill-current" : ""}`} />
-          {doc.favorite ? t((d) => d.doc.favoriteRemove) : t((d) => d.doc.favoriteAdd)}
-        </button>
-      </div>
-
       <AnalysisCards
         sections={sections}
         source={{
