@@ -212,18 +212,9 @@ export const de: Dict = {
     otherTitle: "Andere KI-Tools",
     typical: "Üblich",
     forma: [
-      "Erklärt jede Antwort Schritt für Schritt",
       "Passt sich deiner Klasse und deinem Niveau an",
       "Erstellt dir Lernmaterial",
-      "Hilft dir zu verstehen, nicht nur zu lösen",
       "Behält deinen gesamten Lernverlauf",
-    ],
-    other: [
-      "Gibt dir nur das Endergebnis",
-      "Dieselbe Antwort für alle, ohne Anpassung",
-      "Keine Lernzettel, keine Merkhilfen",
-      "Gebaut zum Lösen, nicht zum Erklären",
-      "Vergisst deine Arbeit, sobald du den Tab schließt",
     ],
   },
   liveCounters: {

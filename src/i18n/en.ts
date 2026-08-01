@@ -208,18 +208,9 @@ export const en = {
     otherTitle: "Other AI tools",
     typical: "Typical",
     forma: [
-      "Explains every answer step by step",
       "Adapts to your grade and level",
       "Creates revision material for you",
-      "Helps you understand, not just solve",
       "Keeps your learning history in one place",
-    ],
-    other: [
-      "Only gives you the final answer",
-      "Same reply for everyone, no adaptation",
-      "No revision sheets or memory aids",
-      "Built to solve, not to teach",
-      "Forgets your work as soon as you close the tab",
     ],
   },
   liveCounters: {

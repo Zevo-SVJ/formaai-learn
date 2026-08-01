@@ -210,18 +210,9 @@ export const fr: Dict = {
     otherTitle: "Autres outils d'IA",
     typical: "Habituel",
     forma: [
-      "Explique chaque réponse étape par étape",
       "S'adapte à ton niveau et à ta classe",
       "Crée tes fiches de révision",
-      "Aide à comprendre, pas seulement à résoudre",
       "Garde tout ton historique d'apprentissage",
-    ],
-    other: [
-      "Donne uniquement la réponse finale",
-      "Même réponse pour tout le monde, sans adaptation",
-      "Aucune fiche de révision ni aide mémoire",
-      "Fait pour résoudre, pas pour enseigner",
-      "Oublie ton travail dès que tu fermes l'onglet",
     ],
   },
   liveCounters: {

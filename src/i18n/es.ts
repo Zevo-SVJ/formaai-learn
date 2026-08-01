@@ -210,18 +210,9 @@ export const es: Dict = {
     otherTitle: "Otras herramientas de IA",
     typical: "Lo habitual",
     forma: [
-      "Explica cada respuesta paso a paso",
       "Se adapta a tu curso y a tu nivel",
       "Te prepara material de repaso",
-      "Te ayuda a entender, no solo a resolver",
       "Guarda todo tu historial de aprendizaje",
-    ],
-    other: [
-      "Solo te da la respuesta final",
-      "La misma respuesta para todos, sin adaptarse",
-      "Sin fichas de repaso ni ayudas de memoria",
-      "Hecho para resolver, no para enseñar",
-      "Olvida tu trabajo en cuanto cierras la pestaña",
     ],
   },
   liveCounters: {

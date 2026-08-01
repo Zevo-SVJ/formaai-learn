@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { HeroActions } from "@/components/HeroActions";
 import { LessonToCards } from "@/components/LessonToCards";
+import { TheChain } from "@/components/TheChain";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
@@ -231,42 +232,18 @@ function Section({
 }
 
 function Problem() {
-  const { t, raw } = useI18n();
-  const items = raw((d) => d.problem.items);
+  const { t } = useI18n();
   return (
     <Section
       eyebrow={t((d) => d.problem.eyebrow)}
       title={t((d) => d.problem.title)}
       subtitle={t((d) => d.problem.subtitle)}
     >
-      <div className="mx-auto grid max-w-3xl gap-3">
-        {items.map((line, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.4, delay: i * 0.05, ease: EASE.out }}
-            className="rounded-2xl border border-border bg-surface px-5 py-4 text-[15px] text-foreground shadow-[var(--shadow-soft)]"
-          >
-            <span className="mr-3 font-semibold text-emerald">0{i + 1}</span>
-            {line}
-          </motion.div>
-        ))}
-      </div>
+      <TheChain />
     </Section>
   );
 }
 
-/**
- * The one section that shows rather than tells.
- *
- * It keeps only its eyebrow and title; the three paragraphs that used to
- * describe the process are now the captions of the demonstration itself, which
- * runs on the scroll. The heading sits in the normal page rhythm and the track
- * that follows is full-bleed, because the demonstration needs a viewport of its
- * own to hold the stage still while the story moves.
- */
 function HowItWorks() {
   const { t } = useI18n();
   return (
