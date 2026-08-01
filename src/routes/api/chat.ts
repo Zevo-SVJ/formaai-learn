@@ -70,7 +70,13 @@ export const Route = createFileRoute("/api/chat")({
             : `Always answer in ${LANGUAGE_NAMES[base] ?? "English"}, whatever language the question is written in.`;
 
         const formatRules = isFr
-          ? `RÈGLES DE FORMAT (obligatoires) :
+          ? `CHOISIR LA FORME (avant tout le reste) :
+- Question simple ou factuelle, ou simple échange : réponds normalement, en une ou deux phrases, SANS aucun titre de section.
+- Demande de résumé : un court paragraphe ou une liste, SANS titre de section.
+- Demande d'explication, de méthode, ou exercice à résoudre : utilise les sections ci-dessous.
+- Dans le doute, choisis la réponse simple. Les sections servent à enseigner, pas à décorer.
+
+RÈGLES DE FORMAT (obligatoires) :
 - Aucun markdown, aucun # ni ##, aucune syntaxe de gras (** ou __), aucune italique.
 - N'utilise jamais le tiret cadratin (—). Utilise une virgule ou un point.
 - Aucune longue introduction. La réponse arrive tout de suite.
@@ -87,7 +93,13 @@ B) ...
 C) ...
 D) ...
 - Utilise des paragraphes courts. Va droit au but. Une idée par paragraphe.`
-          : `FORMAT RULES (mandatory):
+          : `CHOOSING THE SHAPE (before anything else):
+- A simple or factual question, or ordinary back-and-forth: answer normally, in a sentence or two, with NO section titles at all.
+- A request for a summary: a short paragraph or a list, with NO section titles.
+- A request for an explanation or a method, or an exercise to solve: use the sections below.
+- When in doubt, choose the plain answer. Sections are for teaching, not for decoration.
+
+FORMAT RULES (mandatory):
 - No markdown. No # or ##. No bold syntax (** or __). No italics.
 - Never use the em dash character. Use a comma or a period.
 - No unnecessary introduction. The answer comes first.

@@ -26,10 +26,20 @@ export function AnswerRenderer({ text, compact = false }: { text: string; compac
   const { locale, t } = useI18n();
   const parsed = parseAnswer(text, locale);
 
-  if (parsed.raw || parsed.sections.length === 0) {
-    // No structured sections detected — render the answer as Markdown so lists,
-    // emphasis and maths notation come through instead of raw syntax.
-    return <RichAnswer text={parsed.raw || text} />;
+  // What came back decides how it is shown. Sections are scaffolding for
+  // teaching: they earn their chrome when there are several of them, or when
+  // there is enough to say that a reader needs signposting. A one-line reply to
+  // a plain question wearing a titled card reads as a form, not an answer — so
+  // anything that short is rendered as what it is, prose.
+  const body = parsed.sections.flatMap((s) => s.paragraphs).join("\n\n");
+  const hasChoices = parsed.sections.some((s) => (s.choices?.length ?? 0) > 0);
+  const tooSlightForSections =
+    !hasChoices && (parsed.sections.length < 2 || body.trim().length < 280);
+
+  if (parsed.raw || parsed.sections.length === 0 || tooSlightForSections) {
+    // Markdown either way, so lists, emphasis and maths notation come through
+    // instead of raw syntax.
+    return <RichAnswer text={parsed.raw || body || text} />;
   }
 
   return (
@@ -59,9 +69,7 @@ export function AnswerRenderer({ text, compact = false }: { text: string; compac
             ].join(" ")}
           >
             <header className="mb-3 flex items-center gap-2.5">
-              <div
-                className={`flex h-7 w-7 items-center justify-center rounded-lg ${tone.bg}`}
-              >
+              <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${tone.bg}`}>
                 <Icon className={`h-3.5 w-3.5 ${tone.text}`} />
               </div>
               <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
