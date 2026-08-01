@@ -54,8 +54,8 @@ export const en = {
       "Upload a lesson, worksheet or a photo of your notes. Forma reads it, understands it, and teaches it back in words that actually make sense.",
     cta: "Try it free",
     ctaHint: "No card. No signup wall.",
-    midTitle: "Your learning companion",
-    midBody: "Forma explains your courses, and tracks your grades and progress over time.",
+    midTitle: "Understand, then improve.",
+    midBody: "Forma explains your lessons and tracks your grades. All in one place.",
     menu: {
       upload: "Analyze my course",
       see: "See how it works",
@@ -233,45 +233,26 @@ export const en = {
   problem: {
     eyebrow: "The problem",
     title: "Answers are not the same as understanding.",
-    subtitle:
-      "Most AI tools solve your homework for you. Forma does the opposite: it helps you actually learn the lesson.",
+    subtitle: "Other AIs do the work for you. Forma teaches you to do it.",
     items: [
-      "You stare at the lesson and none of it clicks.",
+      "You open your lesson. Nothing goes in.",
       "You ask an AI. It gives you the answer, not the idea.",
-      "Next week the test comes and you still do not understand.",
-    ],
-  },
-  solution: {
-    eyebrow: "The solution",
-    title: "A tutor that understands your lesson, not just your questions.",
-    items: [
-      {
-        title: "It understands your lesson",
-        body: "Send it your course. Photo, PDF or worksheet: Forma reads your document, even in handwriting.",
-      },
-      {
-        title: "It really explains",
-        body: "Not just the answer. It walks you through the reasoning, the mistakes to avoid, and shows a simple example.",
-      },
-      {
-        title: "It stays grounded in your course",
-        body: "Forma relies on your document, so explanations never drift off topic.",
-      },
+      "The test arrives. You still have not understood.",
     ],
   },
   how: {
     eyebrow: "How it works",
-    title: "Three steps. No busywork.",
+    title: "Your lesson becomes cards.",
     swipeHint: "Swipe to explore",
     steps: [
-      { t: "Upload anything", d: "A photo, PDF or a screenshot of your worksheet." },
+      { t: "Drop your lesson", d: "A photo, a PDF, a screenshot. Handwriting included." },
       {
-        t: "Forma reads it",
-        d: "It picks up the subject, the level and the ideas that actually matter.",
+        t: "Forma actually reads it",
+        d: "It picks up the subject, your level, and the idea that matters.",
       },
       {
-        t: "You understand it",
-        d: "A clear explanation with examples and a chat that already knows the lesson.",
+        t: "You get your cards",
+        d: "The explanation, the method, the mistakes to avoid, an example. One card at a time.",
       },
     ],
   },
@@ -357,6 +338,10 @@ export const en = {
     title: "Everything, answered.",
     items: [
       {
+        q: "Do I have to pay?",
+        a: "Not to start. You can drop your first lesson without an account and without a card.",
+      },
+      {
         q: "Does Forma AI just give me the answer?",
         a: "No. Forma is designed to teach. It breaks down the concept, shows why it matters, points out common mistakes and gives a simple example. You can always ask it to go deeper.",
       },
@@ -377,7 +362,6 @@ export const en = {
   finalCta: {
     title: "Start understanding today.",
     subtitle: "Upload your first lesson. No forms, no fluff.",
-    cta: "Get started",
   },
   footer: {
     tagline: "Made for students who actually want to learn.",

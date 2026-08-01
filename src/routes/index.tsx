@@ -1,11 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { HeroActions } from "@/components/HeroActions";
 import { HowItWorksCarousel } from "@/components/HowItWorksCarousel";
-import { SolutionStory } from "@/components/SolutionStory";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
@@ -54,14 +52,12 @@ function Landing() {
       <Header />
       <Hero />
       <Problem />
-      <SolutionStory />
       <HowItWorks />
-      <ProgressFeature />
       <CompareSection />
+      <ProgressFeature />
       <MidCTA />
       <ReviewsSection />
       <FAQSection />
-      <PreFooterCTA />
       <FinalCTA />
       <SiteFooter />
     </div>
@@ -188,16 +184,7 @@ function MidCTA() {
         <div className="mt-8">
           <HeroActions secondary={false} />
         </div>
-      </div>
-    </section>
-  );
-}
-
-function PreFooterCTA() {
-  return (
-    <section className="px-5 pb-4 pt-2">
-      <div className="mx-auto max-w-md">
-        <HeroActions secondary={false} />
+        <p className="mt-3 text-[12px] text-muted-foreground">{t((d) => d.hero.ctaHint)}</p>
       </div>
     </section>
   );
@@ -336,15 +323,13 @@ function FinalCTA() {
         <p className="mx-auto mt-3 max-w-md text-[15px] leading-relaxed text-background/70">
           {t((d) => d.finalCta.subtitle)}
         </p>
-        <div className="mt-8 flex justify-center">
-          <Link
-            to="/auth"
-            className="inline-flex items-center gap-2 rounded-full bg-background px-6 py-3 text-sm font-semibold text-foreground transition-transform hover:-translate-y-0.5"
-          >
-            {t((d) => d.finalCta.cta)}
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+        <div className="mt-8">
+          <HeroActions secondary={false} />
         </div>
+        {/* La gratuité est le levier le plus fort sur ce public, et elle
+            n'apparaissait qu'une fois, en 12 px sous le hero. Elle est
+            désormais rappelée à chaque moment de décision. */}
+        <p className="mt-3 text-[12px] text-background/60">{t((d) => d.hero.ctaHint)}</p>
       </div>
     </section>
   );

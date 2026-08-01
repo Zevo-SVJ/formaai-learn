@@ -56,9 +56,8 @@ export const pt: Dict = {
       "Carrega uma matéria, um exercício ou uma foto dos teus apontamentos. O Forma lê, percebe e explica-te por palavras que fazem mesmo sentido.",
     cta: "Experimentar grátis",
     ctaHint: "Sem cartão. Sem registo obrigatório.",
-    midTitle: "O teu companheiro de estudo",
-    midBody:
-      "O Forma explica a matéria e acompanha as tuas notas e a tua evolução ao longo do tempo.",
+    midTitle: "Compreender, depois progredir.",
+    midBody: "A Forma explica as tuas aulas e acompanha as tuas notas. Tudo no mesmo sítio.",
     menu: {
       upload: "Analisar a minha matéria",
       see: "Ver como funciona",
@@ -235,45 +234,23 @@ export const pt: Dict = {
   problem: {
     eyebrow: "O problema",
     title: "Ter a resposta não é perceber.",
-    subtitle:
-      "A maioria das IA faz os trabalhos por ti. O Forma faz o contrário: ajuda-te mesmo a aprender a matéria.",
+    subtitle: "As outras IA fazem o trabalho por ti. A Forma ensina-te a fazê-lo.",
     items: [
-      "Abres a matéria e não te entra nada.",
+      "Abres a tua lição. Não entra nada.",
       "Perguntas a uma IA. Dá-te a resposta, não a ideia.",
-      "Chega a semana do teste e continuas sem perceber.",
-    ],
-  },
-  solution: {
-    eyebrow: "A solução",
-    title: "Um explicador que percebe a tua matéria, não só as tuas perguntas.",
-    items: [
-      {
-        title: "Percebe a tua matéria",
-        body: "Envia-lhe os teus apontamentos. Foto, PDF ou exercício: o Forma lê o teu documento, mesmo escrito à mão.",
-      },
-      {
-        title: "Explica-te mesmo",
-        body: "Não é só a resposta. Explica o raciocínio, os erros a evitar e mostra um exemplo simples.",
-      },
-      {
-        title: "Baseia-se no teu material",
-        body: "O Forma apoia-se no teu documento, por isso as explicações nunca fogem do tema.",
-      },
+      "Chega o teste. Continuas sem perceber.",
     ],
   },
   how: {
     eyebrow: "Como funciona",
-    title: "Três passos. Sem rodeios.",
+    title: "A tua lição vira cartões.",
     swipeHint: "Desliza para explorar",
     steps: [
-      { t: "Carrega o que quiseres", d: "Uma foto, um PDF ou uma captura do teu exercício." },
+      { t: "Envia a tua lição", d: "Uma foto, um PDF ou uma captura. Mesmo escrita à mão." },
+      { t: "A Forma lê mesmo", d: "Identifica a disciplina, o teu nível e a ideia que conta." },
       {
-        t: "O Forma lê tudo",
-        d: "Identifica a disciplina, o nível e as ideias que realmente contam.",
-      },
-      {
-        t: "Finalmente percebes",
-        d: "Uma explicação clara com exemplos e um chat que já conhece a tua matéria.",
+        t: "Recebes os teus cartões",
+        d: "A explicação, o método, os erros a evitar, um exemplo. Um cartão de cada vez.",
       },
     ],
   },
@@ -358,6 +335,10 @@ export const pt: Dict = {
     title: "Tudo esclarecido.",
     items: [
       {
+        q: "Tenho de pagar?",
+        a: "Para começar, não. Podes enviar a tua primeira lição sem conta e sem cartão.",
+      },
+      {
         q: "O Forma AI dá-me só a resposta?",
         a: "Não. O Forma foi feito para ensinar. Divide o conceito, mostra porque importa, aponta os erros mais comuns e dá um exemplo simples. Podes sempre pedir para aprofundar.",
       },
@@ -378,7 +359,6 @@ export const pt: Dict = {
   finalCta: {
     title: "Começa a perceber hoje.",
     subtitle: "Carrega a tua primeira matéria. Sem formulários, sem rodeios.",
-    cta: "Começar",
   },
   footer: {
     tagline: "Feito para alunos que querem mesmo aprender.",

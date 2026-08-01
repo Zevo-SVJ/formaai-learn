@@ -56,8 +56,8 @@ export const de: Dict = {
       "Lade eine Lektion, eine Aufgabe oder ein Foto deiner Notizen hoch. Forma liest sie, versteht sie und erklärt sie dir so, dass es wirklich klick macht.",
     cta: "Kostenlos testen",
     ctaHint: "Keine Karte. Keine Anmeldepflicht.",
-    midTitle: "Dein Lernbegleiter",
-    midBody: "Forma erklärt deinen Stoff und behält deine Noten und Fortschritte im Blick.",
+    midTitle: "Verstehen, dann besser werden.",
+    midBody: "Forma erklärt deine Lektionen und verfolgt deine Noten. Alles an einem Ort.",
     menu: {
       upload: "Meine Lektion analysieren",
       see: "Ansehen, wie es funktioniert",
@@ -238,44 +238,29 @@ export const de: Dict = {
     eyebrow: "Das Problem",
     title: "Die Lösung zu haben heißt nicht, es verstanden zu haben.",
     subtitle:
-      "Die meisten KI-Tools machen deine Hausaufgaben. Forma macht das Gegenteil: Es hilft dir, den Stoff wirklich zu lernen.",
+      "Andere KIs erledigen die Arbeit für dich. Forma bringt dir bei, sie selbst zu machen.",
     items: [
-      "Du schaust auf die Lektion und nichts davon macht klick.",
-      "Du fragst eine KI. Sie gibt dir die Lösung, nicht die Idee.",
-      "Nächste Woche ist die Arbeit und du verstehst es immer noch nicht.",
-    ],
-  },
-  solution: {
-    eyebrow: "Die Lösung",
-    title: "Ein Tutor, der deinen Stoff versteht, nicht nur deine Fragen.",
-    items: [
-      {
-        title: "Er versteht deine Lektion",
-        body: "Schick ihm deinen Stoff. Foto, PDF oder Arbeitsblatt: Forma liest dein Dokument, auch handschriftlich.",
-      },
-      {
-        title: "Er erklärt es wirklich",
-        body: "Nicht nur die Lösung. Er führt dich durch den Gedankengang, zeigt typische Fehler und ein einfaches Beispiel.",
-      },
-      {
-        title: "Er bleibt bei deinem Material",
-        body: "Forma stützt sich auf dein Dokument, damit die Erklärungen nie am Thema vorbeigehen.",
-      },
+      "Du schlägst dein Heft auf. Nichts bleibt hängen.",
+      "Du fragst eine KI. Sie gibt dir die Antwort, nicht den Gedanken.",
+      "Die Klassenarbeit kommt. Verstanden hast du es immer noch nicht.",
     ],
   },
   how: {
     eyebrow: "So funktioniert es",
-    title: "Drei Schritte. Kein Drumherum.",
+    title: "Deine Lektion wird zu Karten.",
     swipeHint: "Wischen zum Entdecken",
     steps: [
-      { t: "Lade alles hoch", d: "Ein Foto, ein PDF oder einen Screenshot deiner Aufgabe." },
       {
-        t: "Forma liest alles",
-        d: "Es erkennt das Fach, die Stufe und die Ideen, auf die es ankommt.",
+        t: "Lade deine Lektion hoch",
+        d: "Ein Foto, ein PDF, ein Screenshot. Auch handschriftlich.",
       },
       {
-        t: "Du verstehst es",
-        d: "Eine klare Erklärung mit Beispielen und ein Chat, der deine Lektion schon kennt.",
+        t: "Forma liest sie wirklich",
+        d: "Es erkennt das Fach, dein Niveau und den Kern der Sache.",
+      },
+      {
+        t: "Du bekommst deine Karten",
+        d: "Erklärung, Methode, typische Fehler, ein Beispiel. Eine Karte nach der anderen.",
       },
     ],
   },
@@ -361,6 +346,10 @@ export const de: Dict = {
     title: "Alles, beantwortet.",
     items: [
       {
+        q: "Muss ich bezahlen?",
+        a: "Zum Starten nicht. Du kannst deine erste Lektion ohne Konto und ohne Karte hochladen.",
+      },
+      {
         q: "Gibt Forma AI mir einfach die Lösung?",
         a: "Nein. Forma ist zum Erklären gebaut. Es schlüsselt das Konzept auf, zeigt, warum es zählt, weist auf typische Fehler hin und gibt ein einfaches Beispiel. Du kannst jederzeit nachhaken.",
       },
@@ -381,7 +370,6 @@ export const de: Dict = {
   finalCta: {
     title: "Fang heute an zu verstehen.",
     subtitle: "Lade deine erste Lektion hoch. Keine Formulare, kein Drumherum.",
-    cta: "Loslegen",
   },
   footer: {
     tagline: "Für alle, die wirklich lernen wollen.",

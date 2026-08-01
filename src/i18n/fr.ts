@@ -56,8 +56,8 @@ export const fr: Dict = {
       "Dépose une leçon, un exercice ou une photo de tes notes. Forma lit, comprend et te réexplique le cours avec des mots qui parlent vraiment.",
     cta: "Essayer gratuitement",
     ctaHint: "Sans carte. Sans mur d'inscription.",
-    midTitle: "Ton compagnon d'apprentissage",
-    midBody: "Forma explique tes cours, et suit tes notes et ta progression dans le temps.",
+    midTitle: "Comprendre, puis progresser.",
+    midBody: "Forma t'explique tes cours et suit tes notes. Tout au même endroit.",
     menu: {
       upload: "Analyser mon cours",
       see: "Voir comment ça marche",
@@ -235,45 +235,23 @@ export const fr: Dict = {
   problem: {
     eyebrow: "Le problème",
     title: "Avoir la réponse ne veut pas dire comprendre.",
-    subtitle:
-      "La plupart des IA font tes devoirs à ta place. Forma fait l'inverse : elle t'aide vraiment à comprendre la leçon.",
+    subtitle: "Les autres IA font le travail à ta place. Forma t'apprend à le faire.",
     items: [
-      "Tu ouvres la leçon, rien ne rentre.",
+      "Tu ouvres ton cours. Rien ne rentre.",
       "Tu demandes à une IA. Elle te donne la réponse, pas l'idée.",
-      "La semaine du contrôle arrive, et tu n'as toujours pas compris.",
-    ],
-  },
-  solution: {
-    eyebrow: "La solution",
-    title: "Un tuteur qui comprend ton cours, pas juste tes questions.",
-    items: [
-      {
-        title: "Il comprend ta leçon",
-        body: "Tu lui envoies ton cours. Photo, PDF ou exercice : Forma analyse ton document, même avec une écriture manuscrite.",
-      },
-      {
-        title: "Il t'explique vraiment",
-        body: "Pas juste la réponse. Il t'explique le raisonnement, les erreurs à éviter et te montre un exemple simple.",
-      },
-      {
-        title: "Il reste basé sur ton cours",
-        body: "Forma s'appuie sur ton document pour éviter les explications hors sujet.",
-      },
+      "Le contrôle arrive. Tu n'as toujours pas compris.",
     ],
   },
   how: {
     eyebrow: "Comment ça marche",
-    title: "Trois étapes. Pas de blabla.",
+    title: "Ton cours devient des cartes.",
     swipeHint: "Glisse pour explorer",
     steps: [
-      { t: "Dépose n'importe quoi", d: "Une photo, un PDF ou une capture de ton exercice." },
+      { t: "Dépose ton cours", d: "Photo, PDF ou capture. Même écrit à la main." },
+      { t: "Forma le lit vraiment", d: "Il repère la matière, ton niveau et l'idée qui compte." },
       {
-        t: "Forma lit tout",
-        d: "Il repère la matière, le niveau et les idées qui comptent vraiment.",
-      },
-      {
-        t: "Tu comprends enfin",
-        d: "Une explication claire avec exemples et un chat qui connaît déjà ta leçon.",
+        t: "Tu reçois tes cartes",
+        d: "L'explication, la méthode, les erreurs à éviter, un exemple. Une carte à la fois.",
       },
     ],
   },
@@ -358,6 +336,10 @@ export const fr: Dict = {
     title: "Toutes les réponses.",
     items: [
       {
+        q: "Est-ce que je dois payer ?",
+        a: "Non pour commencer. Tu déposes ta première leçon sans créer de compte et sans carte bancaire.",
+      },
+      {
         q: "Est-ce que Forma AI me donne juste la réponse ?",
         a: "Non. Forma est fait pour enseigner. Elle décompose la notion, explique pourquoi c'est important, pointe les erreurs classiques et te donne un exemple simple. Tu peux toujours lui demander d'aller plus loin.",
       },
@@ -378,7 +360,6 @@ export const fr: Dict = {
   finalCta: {
     title: "Commence à comprendre dès aujourd'hui.",
     subtitle: "Dépose ta première leçon. Zéro formulaire, zéro blabla.",
-    cta: "Commencer",
   },
   footer: {
     tagline: "Fait pour les élèves qui veulent vraiment apprendre.",

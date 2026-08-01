@@ -56,8 +56,8 @@ export const es: Dict = {
       "Sube una lección, un ejercicio o una foto de tus apuntes. Forma lo lee, lo entiende y te lo explica con palabras que de verdad se entienden.",
     cta: "Probar gratis",
     ctaHint: "Sin tarjeta. Sin registro obligatorio.",
-    midTitle: "Tu compañero de estudio",
-    midBody: "Forma te explica tus clases y sigue tus notas y tu progreso con el tiempo.",
+    midTitle: "Entender, y luego progresar.",
+    midBody: "Forma te explica tus clases y sigue tus notas. Todo en un mismo sitio.",
     menu: {
       upload: "Analizar mi lección",
       see: "Ver cómo funciona",
@@ -235,45 +235,23 @@ export const es: Dict = {
   problem: {
     eyebrow: "El problema",
     title: "Tener la respuesta no es entenderlo.",
-    subtitle:
-      "La mayoría de las IA te hacen los deberes. Forma hace justo lo contrario: te ayuda a aprender la lección.",
+    subtitle: "Las otras IA hacen el trabajo por ti. Forma te enseña a hacerlo.",
     items: [
-      "Abres la lección y no te entra nada.",
-      "Se lo preguntas a una IA. Te da la respuesta, no la idea.",
-      "Llega la semana del examen y sigues sin entenderlo.",
-    ],
-  },
-  solution: {
-    eyebrow: "La solución",
-    title: "Un tutor que entiende tu lección, no solo tus preguntas.",
-    items: [
-      {
-        title: "Entiende tu lección",
-        body: "Envíale tus apuntes. Foto, PDF o ejercicio: Forma lee tu documento, incluso escrito a mano.",
-      },
-      {
-        title: "Te lo explica de verdad",
-        body: "No solo la respuesta. Te explica el razonamiento, los errores que evitar y te enseña un ejemplo sencillo.",
-      },
-      {
-        title: "Se apoya en tu material",
-        body: "Forma parte de tu documento, así las explicaciones nunca se van por las ramas.",
-      },
+      "Abres tu lección. No entra nada.",
+      "Le preguntas a una IA. Te da la respuesta, no la idea.",
+      "Llega el examen. Sigues sin entender.",
     ],
   },
   how: {
     eyebrow: "Cómo funciona",
-    title: "Tres pasos. Sin rodeos.",
+    title: "Tu lección se convierte en tarjetas.",
     swipeHint: "Desliza para explorar",
     steps: [
-      { t: "Sube lo que sea", d: "Una foto, un PDF o una captura de tu ejercicio." },
+      { t: "Sube tu lección", d: "Una foto, un PDF o una captura. Incluso escrita a mano." },
+      { t: "Forma la lee de verdad", d: "Detecta la asignatura, tu nivel y la idea que importa." },
       {
-        t: "Forma lo lee todo",
-        d: "Detecta la asignatura, el nivel y las ideas que de verdad importan.",
-      },
-      {
-        t: "Por fin lo entiendes",
-        d: "Una explicación clara con ejemplos y un chat que ya conoce tu lección.",
+        t: "Recibes tus tarjetas",
+        d: "La explicación, el método, los errores a evitar, un ejemplo. Una tarjeta a la vez.",
       },
     ],
   },
@@ -358,6 +336,10 @@ export const es: Dict = {
     title: "Todo, resuelto.",
     items: [
       {
+        q: "¿Tengo que pagar?",
+        a: "Para empezar, no. Puedes subir tu primera lección sin cuenta y sin tarjeta.",
+      },
+      {
         q: "¿Forma AI solo me da la respuesta?",
         a: "No. Forma está hecho para enseñar. Desglosa el concepto, explica por qué importa, señala los errores más comunes y da un ejemplo sencillo. Siempre puedes pedirle que profundice.",
       },
@@ -378,7 +360,6 @@ export const es: Dict = {
   finalCta: {
     title: "Empieza a entender hoy.",
     subtitle: "Sube tu primera lección. Sin formularios, sin rodeos.",
-    cta: "Empezar",
   },
   footer: {
     tagline: "Hecho para estudiantes que quieren aprender de verdad.",
