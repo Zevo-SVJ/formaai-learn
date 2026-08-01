@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { HeroActions } from "@/components/HeroActions";
-import { HowItWorksCarousel } from "@/components/HowItWorksCarousel";
+import { LessonToCards } from "@/components/LessonToCards";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
@@ -258,12 +258,31 @@ function Problem() {
   );
 }
 
+/**
+ * The one section that shows rather than tells.
+ *
+ * It keeps only its eyebrow and title; the three paragraphs that used to
+ * describe the process are now the captions of the demonstration itself, which
+ * runs on the scroll. The heading sits in the normal page rhythm and the track
+ * that follows is full-bleed, because the demonstration needs a viewport of its
+ * own to hold the stage still while the story moves.
+ */
 function HowItWorks() {
   const { t } = useI18n();
   return (
-    <Section id="how" eyebrow={t((d) => d.how.eyebrow)} title={t((d) => d.how.title)}>
-      <HowItWorksCarousel />
-    </Section>
+    <section id="how" className="px-5 pt-20 sm:pt-28">
+      <div className="mx-auto max-w-2xl text-center">
+        <div className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-emerald">
+          {t((d) => d.how.eyebrow)}
+        </div>
+        <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
+          {t((d) => d.how.title)}
+        </h2>
+      </div>
+      <div className="-mx-5">
+        <LessonToCards />
+      </div>
+    </section>
   );
 }
 
