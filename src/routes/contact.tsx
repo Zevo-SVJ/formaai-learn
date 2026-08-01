@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useCanGoBack, useRouter } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { EASE } from "@/lib/motion";
@@ -22,6 +22,8 @@ export const Route = createFileRoute("/contact")({
 
 function Contact() {
   const { t } = useI18n();
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
   const [sent, setSent] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -39,12 +41,17 @@ function Contact() {
       </header>
 
       <main className="mx-auto max-w-2xl px-5 py-12 sm:py-16">
-        <Link
-          to="/"
+        {/* Back means back, not "to the landing page". Someone who came here
+            from inside the app to report a bug — and who may have stepped out
+            to their mail app in between — has to return to the screen they
+            were on. Only a visitor who arrived here cold gets sent to the
+            landing page. */}
+        <button
+          onClick={() => (canGoBack ? router.history.back() : router.navigate({ to: "/" }))}
           className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" /> {t((d) => d.common.back)}
-        </Link>
+        </button>
 
         <motion.h1
           initial={{ opacity: 0, y: 6 }}

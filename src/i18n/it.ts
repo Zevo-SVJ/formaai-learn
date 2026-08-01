@@ -456,6 +456,9 @@ export const it: Dict = {
       keepCard: "Tieni una carta per ritrovarla più tardi",
       keepAll: "Oppure tieni tutta l'analisi in una volta",
       cta: "Ho capito",
+      d1: "Per risolvere, isola l'incognita e dividi entrambi i lati.",
+      d2: "Vale per ogni equazione di primo grado.",
+      d3: "Se 2x + 3 = 11, allora x = 4.",
     },
     loading: {
       title: "Sto preparando il tuo Forma",

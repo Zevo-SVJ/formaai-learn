@@ -44,7 +44,7 @@ export function AppHeader({ back }: { back?: React.ReactNode }) {
               without changing the layout (the negative margin cancels the
               padding). */}
           <Link to="/home" className="-m-2 flex shrink-0 items-center p-2">
-            <Logo />
+            <Logo withMark={false} />
           </Link>
         </div>
         <nav className="flex items-center gap-1">

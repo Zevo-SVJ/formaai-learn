@@ -452,6 +452,9 @@ export const en = {
       keepCard: "Keep a card to find it again later",
       keepAll: "Or keep the whole analysis at once",
       cta: "Got it",
+      d1: "To solve this, isolate the unknown, then divide both sides.",
+      d2: "It works for every first-degree equation.",
+      d3: "If 2x + 3 = 11, then x = 4.",
     },
     loading: {
       title: "Preparing your Forma",

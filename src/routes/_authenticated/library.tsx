@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
@@ -15,7 +15,6 @@ import {
   CheckCircle2,
   AlertCircle,
   ArrowRight,
-  Home,
   Layers,
   Bookmark,
 } from "lucide-react";
@@ -46,7 +45,6 @@ function Library() {
   const list = useServerFn(listDocuments);
   const fav = useServerFn(toggleFavorite);
   const qc = useQueryClient();
-  const navigate = useNavigate();
   const collections = useCollections();
   const [tab, setTab] = useState<Tab>("analyses");
   const [openCard, setOpenCard] = useState<LooseCard | null>(null);
@@ -69,17 +67,9 @@ function Library() {
 
   return (
     <div className="min-h-dvh bg-background">
-      <AppHeader
-        back={
-          <button
-            onClick={() => navigate({ to: "/home" })}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface hover:border-border-strong"
-            aria-label={t((d) => d.common.home)}
-          >
-            <Home className="h-4 w-4" />
-          </button>
-        }
-      />
+      {/* No back button: the library is a place the nav goes to, not a detour
+          off somewhere else, and the nav is already in this header. */}
+      <AppHeader />
 
       <main className="mx-auto max-w-5xl px-5 py-8 sm:py-12">
         <div className="mb-6 flex flex-col gap-1">

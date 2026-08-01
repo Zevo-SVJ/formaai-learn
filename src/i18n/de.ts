@@ -457,6 +457,9 @@ export const de: Dict = {
       keepCard: "Behalte eine Karte, um sie später wiederzufinden",
       keepAll: "Oder behalte die ganze Analyse auf einmal",
       cta: "Verstanden",
+      d1: "Zum Lösen die Unbekannte isolieren, dann beide Seiten teilen.",
+      d2: "Das gilt für jede Gleichung ersten Grades.",
+      d3: "Wenn 2x + 3 = 11, dann x = 4.",
     },
     loading: {
       title: "Dein Forma wird vorbereitet",

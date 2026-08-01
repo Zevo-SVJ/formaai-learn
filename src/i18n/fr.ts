@@ -455,6 +455,9 @@ export const fr: Dict = {
       keepCard: "Garde une carte pour la retrouver plus tard",
       keepAll: "Ou garde toute l'analyse d'un coup",
       cta: "J'ai compris",
+      d1: "Pour résoudre, isole l'inconnue puis divise des deux côtés.",
+      d2: "Ça marche pour toute équation du premier degré.",
+      d3: "Si 2x + 3 = 11, alors x = 4.",
     },
     loading: {
       title: "On prépare ta Forma",

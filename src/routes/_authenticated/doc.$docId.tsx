@@ -207,13 +207,37 @@ function DocPage() {
 function DocumentViewer({ doc, fileUrl }: { doc: Doc; fileUrl: string | null }) {
   const isImage = doc.mime.startsWith("image/");
   const isPdf = doc.mime === "application/pdf";
+  // The signed URL is fetched after the lesson itself, so on an already
+  // analysed document the explanations are ready long before the picture. Two
+  // things keep that from looking like a page assembling itself out of order:
+  // the frame holds its size from the first paint, so nothing around it moves;
+  // and the image is revealed only once it has decoded, so it arrives whole
+  // instead of painting in bands over the placeholder.
+  const [shown, setShown] = useState(false);
+
   return (
     <div className="rounded-3xl border border-border bg-card p-3 shadow-[var(--shadow-soft)] lg:sticky lg:top-20 lg:h-[calc(100vh-6.5rem)]">
-      <div className="flex h-full items-center justify-center overflow-hidden rounded-2xl bg-surface-muted">
-        {!fileUrl ? (
+      <div className="relative flex h-full min-h-[42svh] items-center justify-center overflow-hidden rounded-2xl bg-surface-muted lg:min-h-0">
+        {isImage ? (
+          <>
+            {fileUrl && (
+              <img
+                src={fileUrl}
+                alt={doc.title}
+                decoding="async"
+                onLoad={() => setShown(true)}
+                className="max-h-full max-w-full object-contain transition-opacity duration-300"
+                style={{ opacity: shown ? 1 : 0 }}
+              />
+            )}
+            {!shown && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              </div>
+            )}
+          </>
+        ) : !fileUrl ? (
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-        ) : isImage ? (
-          <img src={fileUrl} alt={doc.title} className="max-h-full max-w-full object-contain" />
         ) : isPdf ? (
           <iframe src={fileUrl} title={doc.title} className="h-full w-full" />
         ) : (

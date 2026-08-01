@@ -162,7 +162,7 @@ export function AnalysisCards({
  * is left off in `fill`, since there the deck owns elevation and varies it by
  * depth.
  */
-function ExplanationCard({
+export function ExplanationCard({
   icon: Icon,
   title,
   children,

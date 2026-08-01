@@ -16,6 +16,7 @@ import {
   FolderPlus,
 } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { CardsTour } from "@/components/CardsTour";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -210,7 +211,7 @@ function CardsStep({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="mx-auto flex max-w-md flex-col items-center">
-      <CardsDemo reduceMotion={!!reduceMotion} />
+      <CardsTour />
 
       <h1 className="mt-8 text-center text-[26px] font-bold leading-tight tracking-tight text-foreground sm:text-[30px]">
         {t((d) => d.onboarding.cards.title)}
@@ -239,83 +240,6 @@ function CardsStep({ onDone }: { onDone: () => void }) {
       >
         {t((d) => d.onboarding.cards.cta)}
       </button>
-    </div>
-  );
-}
-
-/**
- * The gesture, not a description of it: a small deck whose top card is carried
- * off to the left on a loop while the one behind steps up to take its place.
- */
-function CardsDemo({ reduceMotion }: { reduceMotion: boolean }) {
-  const ranks = [0, 1, 2];
-  const LOOP = 3.2;
-  const PEEK_X = 13;
-  const PEEK_Y = 6;
-  const PEEK_SCALE = 0.06;
-
-  return (
-    <div aria-hidden className="relative h-[128px] w-[188px]">
-      {ranks.map((rank) => (
-        <motion.div
-          key={rank}
-          className="absolute left-0 top-0 flex h-[112px] w-[156px] flex-col justify-center gap-2 rounded-2xl border border-border bg-card px-4 shadow-[var(--shadow-soft)]"
-          style={{ zIndex: 3 - rank }}
-          initial={false}
-          animate={
-            reduceMotion
-              ? { x: rank * PEEK_X, y: rank * PEEK_Y, scale: 1 - rank * PEEK_SCALE, opacity: 1 }
-              : {
-                  x: [rank * PEEK_X, rank * PEEK_X, -168, (rank + 2) * PEEK_X, (rank + 2) * PEEK_X],
-                  y: [rank * PEEK_Y, rank * PEEK_Y, 0, (rank + 2) * PEEK_Y, (rank + 2) * PEEK_Y],
-                  scale: [
-                    1 - rank * PEEK_SCALE,
-                    1 - rank * PEEK_SCALE,
-                    1,
-                    1 - (rank + 2) * PEEK_SCALE,
-                    1 - (rank + 2) * PEEK_SCALE,
-                  ],
-                  opacity: [1, 1, 0, 0, 1],
-                }
-          }
-          transition={
-            reduceMotion
-              ? { duration: 0 }
-              : {
-                  duration: LOOP,
-                  times: [0, 0.3, 0.55, 0.6, 0.72],
-                  repeat: Infinity,
-                  repeatDelay: LOOP * (2 - rank),
-                  delay: LOOP * rank,
-                  ease: EASE.inOut,
-                }
-          }
-        >
-          <span className="h-1.5 w-9 rounded-full bg-emerald/70" />
-          <span className="h-1.5 w-full rounded-full bg-border-strong/60" />
-          <span className="h-1.5 w-4/5 rounded-full bg-border-strong/60" />
-        </motion.div>
-      ))}
-
-      {/* The hand doing it. It presses, carries the top card away on exactly the
-          same timing, then lifts off — so the card is not moving on its own, it
-          is being moved. That is the whole lesson, and it needs no words. */}
-      {!reduceMotion && (
-        <motion.span
-          className="pointer-events-none absolute left-[84px] top-[54px] block h-8 w-8 rounded-full bg-foreground/10 ring-1 ring-foreground/15"
-          animate={{
-            x: [14, 0, 0, -150, -150, 14],
-            scale: [1, 0.85, 0.85, 0.85, 1, 1],
-            opacity: [0, 1, 1, 1, 0, 0],
-          }}
-          transition={{
-            duration: LOOP,
-            times: [0, 0.22, 0.3, 0.55, 0.66, 1],
-            repeat: Infinity,
-            ease: EASE.inOut,
-          }}
-        />
-      )}
     </div>
   );
 }
