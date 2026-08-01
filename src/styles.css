@@ -123,9 +123,22 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    scroll-behavior: smooth;
     /* No grey flash on tap — taps should feel native, not web. */
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /*
+   * Smooth scrolling belongs to links that move you within a page, never to the
+   * page you have just opened.
+   *
+   * Declared on `html` it also governed the jump the router makes on every
+   * navigation, so a new section painted at the previous page's scroll offset
+   * and then visibly travelled up to the top — which read as the app losing its
+   * place. The landing's in-page anchors are the only thing that wanted it, and
+   * they ask for it themselves.
+   */
+  html {
+    scroll-behavior: auto;
   }
 
   /* On touch devices, iOS Safari zooms the page when a control smaller than

@@ -90,16 +90,13 @@ function Header() {
         <Link to="/">
           <Logo />
         </Link>
+        {/* Smooth is asked for here rather than left on `html`: there it also
+            governed the router's jump between pages, which made every new
+            section glide up from the last one's scroll position. */}
         <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
-          <a href="#how" className="hover:text-foreground">
-            {t((d) => d.nav.how)}
-          </a>
-          <a href="#reviews" className="hover:text-foreground">
-            {t((d) => d.nav.reviews)}
-          </a>
-          <a href="#faq" className="hover:text-foreground">
-            {t((d) => d.nav.faq)}
-          </a>
+          <AnchorLink id="how">{t((d) => d.nav.how)}</AnchorLink>
+          <AnchorLink id="reviews">{t((d) => d.nav.reviews)}</AnchorLink>
+          <AnchorLink id="faq">{t((d) => d.nav.faq)}</AnchorLink>
         </nav>
         <div className="flex items-center gap-2">
           <Link
@@ -350,5 +347,23 @@ function FinalCTA() {
         </div>
       </div>
     </section>
+  );
+}
+
+/** An in-page link that glides, while navigation between pages does not. */
+function AnchorLink({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={`#${id}`}
+      className="hover:text-foreground"
+      onClick={(e) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        e.preventDefault();
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }}
+    >
+      {children}
+    </a>
   );
 }
