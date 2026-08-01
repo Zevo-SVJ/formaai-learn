@@ -18,6 +18,8 @@ import { ExplanationDeck } from "@/components/ExplanationDeck";
 import { CardDetail, type DetailCard } from "@/components/CardDetail";
 import { useCollections } from "@/hooks/useCollections";
 import { saveAnalysis, saveCard, removeCard, type CollectionSource } from "@/lib/collections";
+import { useResources } from "@/hooks/useResources";
+import { decksForSource } from "@/lib/resources";
 
 export type Section = {
   /** Stable across a save, so a stored card can find its icon again. */
@@ -67,11 +69,28 @@ export function AnalysisCards({
   const collections = useCollections();
   const stored = collections.find((c) => c.id === source.id) ?? null;
 
+  // A lesson can end up with more than one deck: the one built from the
+  // analysis, and any the tutor made afterwards. They do not compete for the
+  // same space — there is one deck area, and a row above it says which deck is
+  // in it. The analysis deck is always first and cannot be taken away, so
+  // nothing the chat makes can displace what the lesson itself said.
+  const extraDecks = decksForSource(useResources(), source.id);
+  const [deckId, setDeckId] = useState<string | null>(null);
+  const activeDeck = extraDecks.find((d) => d.id === deckId) ?? null;
+  const shown: Section[] = activeDeck
+    ? (activeDeck.cards ?? []).map((c, i) => ({
+        key: `x${i}`,
+        title: c.title || t((d) => d.resources.deck),
+        tone: "default" as const,
+        text: c.text,
+      }))
+    : sections;
+
   const isSaved = (key: string) => Boolean(stored?.cards.some((c) => c.key === key));
   const allSaved = sections.length > 0 && sections.every((s) => isSaved(s.key));
 
   const renderCards = (fill: boolean) =>
-    sections.map((s, i) => (
+    shown.map((s, i) => (
       <ExplanationCard
         key={s.key}
         icon={sectionIcon(s.key)}
@@ -84,7 +103,7 @@ export function AnalysisCards({
       </ExplanationCard>
     ));
 
-  const open = openIndex === null ? null : sections[openIndex];
+  const open = openIndex === null ? null : shown[openIndex];
   const detail: DetailCard | null = open ? { ...open, icon: sectionIcon(open.key) } : null;
 
   const toggleCard = () => {
@@ -103,9 +122,33 @@ export function AnalysisCards({
 
   return (
     <>
+      {extraDecks.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-1.5">
+          <DeckChip
+            active={!activeDeck}
+            label={t((d) => d.resources.analysisDeck)}
+            onPick={() => {
+              setDeckId(null);
+              setOpenIndex(null);
+            }}
+          />
+          {extraDecks.map((d) => (
+            <DeckChip
+              key={d.id}
+              active={activeDeck?.id === d.id}
+              label={d.title}
+              onPick={() => {
+                setDeckId(d.id);
+                setOpenIndex(null);
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Mobile: one card at a time, the rest peeking behind. Desktop keeps the
           full stack. A single card needs no deck, so it just renders. */}
-      {sections.length > 1 ? (
+      {shown.length > 1 ? (
         <>
           <ExplanationDeck cards={renderCards(true)} onOpenCard={setOpenIndex} />
           <div className="hidden flex-col gap-4 sm:flex">{renderCards(false)}</div>
@@ -114,32 +157,40 @@ export function AnalysisCards({
         <div className="flex flex-col gap-4">{renderCards(false)}</div>
       )}
 
-      {/* Keeping the lesson: deliberately quiet, and it says what it did. How
+      {!activeDeck && (
+        <>
+          {/* Keeping the lesson: deliberately quiet, and it says what it did. How
           the cards work is taught once, in onboarding — nothing here repeats
           it. */}
-      <div className="flex justify-center">
-        <button
-          onClick={keepAll}
-          disabled={allSaved}
-          className={[
-            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[13.5px] font-semibold transition",
-            allSaved
-              ? "border-emerald/30 bg-emerald-soft text-emerald"
-              : "border-border bg-surface text-muted-foreground hover:border-border-strong hover:text-foreground",
-          ].join(" ")}
-        >
-          <motion.span
-            key={allSaved ? "saved" : "save"}
-            initial={{ scale: 0.6, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", damping: 18, stiffness: 420 }}
-            className="flex items-center gap-2"
-          >
-            {allSaved ? <Check className="h-3.5 w-3.5" /> : <FolderPlus className="h-3.5 w-3.5" />}
-            {allSaved ? t((d) => d.doc.deck.analysisSaved) : t((d) => d.doc.deck.saveAnalysis)}
-          </motion.span>
-        </button>
-      </div>
+          <div className="flex justify-center">
+            <button
+              onClick={keepAll}
+              disabled={allSaved}
+              className={[
+                "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[13.5px] font-semibold transition",
+                allSaved
+                  ? "border-emerald/30 bg-emerald-soft text-emerald"
+                  : "border-border bg-surface text-muted-foreground hover:border-border-strong hover:text-foreground",
+              ].join(" ")}
+            >
+              <motion.span
+                key={allSaved ? "saved" : "save"}
+                initial={{ scale: 0.6, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: "spring", damping: 18, stiffness: 420 }}
+                className="flex items-center gap-2"
+              >
+                {allSaved ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : (
+                  <FolderPlus className="h-3.5 w-3.5" />
+                )}
+                {allSaved ? t((d) => d.doc.deck.analysisSaved) : t((d) => d.doc.deck.saveAnalysis)}
+              </motion.span>
+            </button>
+          </div>
+        </>
+      )}
 
       <CardDetail
         card={detail}
@@ -229,5 +280,31 @@ export function ExplanationCard({
       {header}
       <div className="space-y-2 text-[15px] leading-relaxed text-foreground">{children}</div>
     </motion.div>
+  );
+}
+
+/** Which deck is in the deck area. */
+function DeckChip({
+  active,
+  label,
+  onPick,
+}: {
+  active: boolean;
+  label: string;
+  onPick: () => void;
+}) {
+  return (
+    <button
+      onClick={onPick}
+      aria-pressed={active}
+      className={[
+        "rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition",
+        active
+          ? "border-emerald/30 bg-emerald-soft text-emerald"
+          : "border-border bg-surface text-muted-foreground hover:border-border-strong hover:text-foreground",
+      ].join(" ")}
+    >
+      {label}
+    </button>
   );
 }

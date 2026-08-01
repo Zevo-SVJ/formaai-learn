@@ -22,10 +22,22 @@ import { useCollections } from "@/hooks/useCollections";
 import { listAnalyses, listLooseCards, removeCard, type LooseCard } from "@/lib/collections";
 import { CardDetail, type DetailCard } from "@/components/CardDetail";
 import { sectionIcon } from "@/components/AnalysisCards";
+import { useResources } from "@/hooks/useResources";
+import { type ResourceKind } from "@/lib/resources";
+import { ListChecks, ClipboardList } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/library")({
   component: Library,
 });
+
+const RESOURCE_ICONS: Record<
+  ResourceKind,
+  React.ComponentType<{ className?: string; strokeWidth?: number }>
+> = {
+  quiz: ListChecks,
+  sheet: ClipboardList,
+  deck: Layers,
+};
 
 type Doc = {
   id: string;
@@ -38,7 +50,7 @@ type Doc = {
   created_at: string;
 };
 
-type Tab = "analyses" | "cards";
+type Tab = "analyses" | "cards" | "resources";
 
 function Library() {
   const { t } = useI18n();
@@ -51,6 +63,7 @@ function Library() {
 
   const analyses = listAnalyses(collections);
   const cards = listLooseCards(collections);
+  const resources = useResources();
 
   const { data, isLoading } = useQuery({
     queryKey: ["documents"],
@@ -87,8 +100,13 @@ function Library() {
           labels={{
             analyses: t((d) => d.collections.title),
             cards: t((d) => d.collections.tabCards),
+            resources: t((d) => d.resources.title),
           }}
-          counts={{ analyses: analyses.length, cards: cards.length }}
+          counts={{
+            analyses: analyses.length,
+            cards: cards.length,
+            resources: resources.length,
+          }}
         />
 
         {tab === "analyses" ? (
@@ -190,6 +208,40 @@ function Library() {
               </div>
             )}
           </div>
+        ) : tab === "resources" ? (
+          <div className="mt-7">
+            {resources.length === 0 ? (
+              <Empty message={t((d) => d.resources.empty)} />
+            ) : (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {resources.map((r, i) => {
+                  const Icon = RESOURCE_ICONS[r.kind];
+                  return (
+                    <Tile key={r.id} index={i} accent>
+                      <Link
+                        to="/resource/$id"
+                        params={{ id: r.id }}
+                        className="absolute inset-0"
+                        aria-label={r.title}
+                      />
+                      <div className="relative flex items-start justify-between gap-3">
+                        <Badge>
+                          <Icon className="h-5 w-5 text-emerald" strokeWidth={1.9} />
+                        </Badge>
+                        <span className="rounded-full bg-surface-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
+                          {t((d2) => d2.resources[r.kind])}
+                        </span>
+                      </div>
+                      <h3 className="relative mt-4 line-clamp-2 text-[16px] font-bold text-foreground">
+                        {r.title}
+                      </h3>
+                      <Footer when={r.createdAt} />
+                    </Tile>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         ) : (
           <div className="mt-7">
             {cards.length === 0 ? (
@@ -256,7 +308,7 @@ function Segmented({
   labels: Record<Tab, string>;
   counts: Record<Tab, number>;
 }) {
-  const tabs: Tab[] = ["analyses", "cards"];
+  const tabs: Tab[] = ["analyses", "cards", "resources"];
   return (
     <div
       role="tablist"
@@ -270,7 +322,7 @@ function Segmented({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(key)}
-            className="relative flex-1 rounded-xl px-3 py-2.5 text-[13.5px] font-semibold transition-colors"
+            className="relative flex-1 rounded-xl px-2 py-2.5 text-[12.5px] font-semibold transition-colors sm:px-3 sm:text-[13.5px]"
           >
             {/* The moving pill, not two swapped backgrounds: the selection
                 slides between the halves the way iOS does. */}

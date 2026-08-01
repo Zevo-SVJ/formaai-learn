@@ -23,6 +23,7 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
 import { Route as AuthenticatedLibraryRouteImport } from './routes/_authenticated/library'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
+import { Route as AuthenticatedResourceIdRouteImport } from './routes/_authenticated/resource.$id'
 import { Route as AuthenticatedDocDocIdRouteImport } from './routes/_authenticated/doc.$docId'
 import { Route as AuthenticatedCollectionIdRouteImport } from './routes/_authenticated/collection.$id'
 import { Route as AuthenticatedDocDocIdChatRouteImport } from './routes/_authenticated/doc.$docId_.chat'
@@ -96,6 +97,11 @@ const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedResourceIdRoute = AuthenticatedResourceIdRouteImport.update({
+  id: '/resource/$id',
+  path: '/resource/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDocDocIdRoute = AuthenticatedDocDocIdRouteImport.update({
   id: '/doc/$docId',
   path: '/doc/$docId',
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/collection/$id': typeof AuthenticatedCollectionIdRoute
   '/doc/$docId': typeof AuthenticatedDocDocIdRoute
+  '/resource/$id': typeof AuthenticatedResourceIdRoute
   '/doc/$docId/chat': typeof AuthenticatedDocDocIdChatRoute
 }
 export interface FileRoutesByTo {
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/collection/$id': typeof AuthenticatedCollectionIdRoute
   '/doc/$docId': typeof AuthenticatedDocDocIdRoute
+  '/resource/$id': typeof AuthenticatedResourceIdRoute
   '/doc/$docId/chat': typeof AuthenticatedDocDocIdChatRoute
 }
 export interface FileRoutesById {
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/collection/$id': typeof AuthenticatedCollectionIdRoute
   '/_authenticated/doc/$docId': typeof AuthenticatedDocDocIdRoute
+  '/_authenticated/resource/$id': typeof AuthenticatedResourceIdRoute
   '/_authenticated/doc/$docId_/chat': typeof AuthenticatedDocDocIdChatRoute
 }
 export interface FileRouteTypes {
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/collection/$id'
     | '/doc/$docId'
+    | '/resource/$id'
     | '/doc/$docId/chat'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/collection/$id'
     | '/doc/$docId'
+    | '/resource/$id'
     | '/doc/$docId/chat'
   id:
     | '__root__'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/_authenticated/collection/$id'
     | '/_authenticated/doc/$docId'
+    | '/_authenticated/resource/$id'
     | '/_authenticated/doc/$docId_/chat'
   fileRoutesById: FileRoutesById
 }
@@ -342,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/resource/$id': {
+      id: '/_authenticated/resource/$id'
+      path: '/resource/$id'
+      fullPath: '/resource/$id'
+      preLoaderRoute: typeof AuthenticatedResourceIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/doc/$docId': {
       id: '/_authenticated/doc/$docId'
       path: '/doc/$docId'
@@ -372,6 +391,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProgressRoute: typeof AuthenticatedProgressRoute
   AuthenticatedCollectionIdRoute: typeof AuthenticatedCollectionIdRoute
   AuthenticatedDocDocIdRoute: typeof AuthenticatedDocDocIdRoute
+  AuthenticatedResourceIdRoute: typeof AuthenticatedResourceIdRoute
   AuthenticatedDocDocIdChatRoute: typeof AuthenticatedDocDocIdChatRoute
 }
 
@@ -381,6 +401,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProgressRoute: AuthenticatedProgressRoute,
   AuthenticatedCollectionIdRoute: AuthenticatedCollectionIdRoute,
   AuthenticatedDocDocIdRoute: AuthenticatedDocDocIdRoute,
+  AuthenticatedResourceIdRoute: AuthenticatedResourceIdRoute,
   AuthenticatedDocDocIdChatRoute: AuthenticatedDocDocIdChatRoute,
 }
 

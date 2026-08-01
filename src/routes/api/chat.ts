@@ -76,6 +76,15 @@ export const Route = createFileRoute("/api/chat")({
 - Demande d'explication, de méthode, ou exercice à résoudre : utilise les sections ci-dessous.
 - Dans le doute, choisis la réponse simple. Les sections servent à enseigner, pas à décorer.
 
+QUAND L'ÉLÈVE DEMANDE UNE RESSOURCE (quiz, fiche de révision, cartes mémoire, explication en cartes) :
+- Écris une phrase d'introduction très courte, puis UN SEUL bloc, exactement dans ce format :
+\`\`\`forma
+{"kind":"quiz","title":"...","questions":[{"q":"...","options":["...","..."],"answer":0,"why":"..."}]}
+\`\`\`
+- kind vaut "quiz", "sheet" (fiche de révision, avec le texte dans "body") ou "deck" (cartes mémoire ou explication en cartes, avec "cards":[{"title":"...","text":"..."}]).
+- "answer" est l'index de la bonne option, en partant de 0.
+- N'écris rien après le bloc, et n'utilise aucun titre de section dans ce cas.
+
 RÈGLES DE FORMAT (obligatoires) :
 - Aucun markdown, aucun # ni ##, aucune syntaxe de gras (** ou __), aucune italique.
 - N'utilise jamais le tiret cadratin (—). Utilise une virgule ou un point.
@@ -98,6 +107,15 @@ D) ...
 - A request for a summary: a short paragraph or a list, with NO section titles.
 - A request for an explanation or a method, or an exercise to solve: use the sections below.
 - When in doubt, choose the plain answer. Sections are for teaching, not for decoration.
+
+WHEN THE STUDENT ASKS FOR A RESOURCE (quiz, revision sheet, flashcards, explanation as cards):
+- Write one very short lead-in sentence, then ONE block, exactly in this format:
+\`\`\`forma
+{"kind":"quiz","title":"...","questions":[{"q":"...","options":["...","..."],"answer":0,"why":"..."}]}
+\`\`\`
+- kind is "quiz", "sheet" (revision sheet, text in "body") or "deck" (flashcards or an explanation as cards, with "cards":[{"title":"...","text":"..."}]).
+- "answer" is the index of the correct option, counting from 0.
+- Write nothing after the block, and use no section titles in this case.
 
 FORMAT RULES (mandatory):
 - No markdown. No # or ##. No bold syntax (** or __). No italics.

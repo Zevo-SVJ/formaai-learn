@@ -7,7 +7,7 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { motion, AnimatePresence } from "framer-motion";
 import { getDocument, getMessages } from "@/lib/documents.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { AnswerRenderer } from "@/components/AnswerRenderer";
+import { ResourceHandoff } from "@/components/ResourceHandoff";
 import { Logo } from "@/components/Logo";
 import { QuickActionsBar, useQuickActions } from "@/components/QuickActionsBar";
 import { EASE } from "@/lib/motion";
@@ -252,7 +252,7 @@ function ChatPage() {
                         </div>
                       ) : (
                         <div className="text-[15px] leading-relaxed">
-                          <AnswerRenderer text={text} />
+                          <ResourceHandoff text={text} sourceId={docId} />
                           {isLastAssistant && !isBusy && (
                             <QuickActionsBar onPick={submit} disabled={isBusy} />
                           )}
