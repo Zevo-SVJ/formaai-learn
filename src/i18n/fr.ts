@@ -29,6 +29,20 @@ export const fr: Dict = {
     settings: "Paramètres",
     language: "Langue",
   },
+  /**
+   * What search engines and social cards show for the site.
+   *
+   * The server renders the English values, because the locale is only detected
+   * in the browser: crawlers that do not run scripts, which is every social
+   * crawler, will always read English. The active language is applied to the
+   * head after hydration, for Google's rendered pass and for anyone who shares
+   * from inside the app.
+   */
+  seo: {
+    title: "Forma AI — L'IA qui explique tes cours et exercices",
+    description:
+      "Forma AI aide les étudiants à comprendre leurs cours et exercices avec des explications IA, des réponses étape par étape et des outils pour mieux réviser.",
+  },
   nav: {
     how: "Fonctionnement",
     features: "Fonctionnalités",
@@ -120,7 +134,8 @@ export const fr: Dict = {
     remove: "Retirer des collections",
     open: "Ouvrir la collection",
     tabCards: "Cartes enregistrées",
-    cardsEmpty: "Aucune carte gardée seule pour l'instant. Ouvre une carte et garde-la pour la retrouver ici.",
+    cardsEmpty:
+      "Aucune carte gardée seule pour l'instant. Ouvre une carte et garde-la pour la retrouver ici.",
     allAnalyses: "Toutes tes analyses",
   },
   libraryPage: {

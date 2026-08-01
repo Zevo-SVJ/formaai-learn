@@ -27,6 +27,20 @@ export const en = {
     settings: "Settings",
     language: "Language",
   },
+  /**
+   * What search engines and social cards show for the site.
+   *
+   * The server renders the English values, because the locale is only detected
+   * in the browser: crawlers that do not run scripts, which is every social
+   * crawler, will always read English. The active language is applied to the
+   * head after hydration, for Google's rendered pass and for anyone who shares
+   * from inside the app.
+   */
+  seo: {
+    title: "Forma AI — AI Study Assistant for Students",
+    description:
+      "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
+  },
   nav: {
     how: "How it works",
     features: "Features",

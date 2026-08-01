@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -21,6 +22,7 @@ import "@/i18n";
 import { getLocale } from "@/i18n";
 import { useI18n } from "@/hooks/useI18n";
 import { initAnalytics, track } from "@/lib/analytics";
+import { applySiteMeta } from "@/lib/seo";
 import { ConsentBanner } from "@/components/ConsentBanner";
 
 function NotFoundComponent() {
@@ -99,25 +101,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "google-site-verification",
         content: "2UVgvSV78rkNTjwChAR6q-7CmhiNwTFVey3Bx0tYtWc",
       },
-      { title: "Forma AI — Learn Better with AI" },
+      { title: "Forma AI — AI Study Assistant for Students" },
       {
         name: "description",
         content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
+          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
       },
-      { property: "og:title", content: "Forma AI — Learn Better with AI" },
+      { property: "og:title", content: "Forma AI — AI Study Assistant for Students" },
       {
         property: "og:description",
         content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
+          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Forma AI — Learn Better with AI" },
+      { name: "twitter:title", content: "Forma AI — AI Study Assistant for Students" },
       {
         name: "twitter:description",
         content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
+          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
       },
       {
         property: "og:image",
@@ -174,6 +176,20 @@ function RootComponent() {
   useEffect(() => {
     document.documentElement.setAttribute("lang", getLocale());
   }, []);
+
+  // The same reasoning, applied to the title and description. Only the landing
+  // page gets them: every other route sets a title of its own, and overwriting
+  // those with the site-level one would make the tab say "Forma AI" while the
+  // student is on their library. Depending on the resolved strings rather than
+  // on `t` keeps this to one run per language change.
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { t } = useI18n();
+  const seoTitle = t((d) => d.seo.title);
+  const seoDescription = t((d) => d.seo.description);
+  useEffect(() => {
+    if (pathname !== "/") return;
+    applySiteMeta({ title: seoTitle, description: seoDescription });
+  }, [pathname, seoTitle, seoDescription]);
 
   // Analytics loads after hydration and stays inert unless a measurement id is
   // configured, so it never affects first paint.

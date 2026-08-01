@@ -26,17 +26,17 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Forma AI — Learn Better with AI" },
+      { title: "Forma AI — AI Study Assistant for Students" },
       {
         name: "description",
         content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
+          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
       },
-      { property: "og:title", content: "Forma AI — Learn Better with AI" },
+      { property: "og:title", content: "Forma AI — AI Study Assistant for Students" },
       {
         property: "og:description",
         content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step answers, and personalized learning support.",
+          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
       },
       { property: "og:type", content: "website" },
       // og:url tells crawlers and social platforms which address is the real
