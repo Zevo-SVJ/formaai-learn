@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { HeroActions } from "@/components/HeroActions";
 import { LessonToCards } from "@/components/LessonToCards";
-import { ScanToUnderstanding } from "@/components/ScanToUnderstanding";
 import { GradeToCurve } from "@/components/GradeToCurve";
 import { TheChain } from "@/components/TheChain";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
@@ -152,21 +151,12 @@ function Hero() {
           {t((d) => d.hero.subtitle)}
         </motion.p>
 
-        {/* The claim, demonstrated before it is argued: a lesson going from
-            unreadable to understood, above the fold, with no scroll and no
-            text required. It sits between the promise and the button, which is
-            where a visitor decides whether the promise is worth anything. */}
-        {/* Deliberately not wrapped in an entrance. A fade over the one thing
-            on this page that demonstrates the product is a fade doing the main
-            animation's job, and it makes the sheet's visibility depend on a
-            frame landing - drop it, or load with the tab in the background, and
-            the hero's only proof is invisible. The sheet is simply there; the
-            sweep is the animation. */}
-        <div className="mt-9">
-          <ScanToUnderstanding />
-        </div>
-
-        <div className="mt-9">
+        {/* Nothing between the promise and the button. A demonstration lived
+            here and it cost the headline its air: the title, the subtitle and a
+            whole animated sheet competed above the fold, and the one thing a
+            visitor has to reach - the button - was pushed to the edge of the
+            screen. The lesson-to-cards section does the demonstrating. */}
+        <div className="mt-10 sm:mt-12">
           <HeroActions />
         </div>
         <p className="mt-3 text-[12px] text-muted-foreground">{t((d) => d.hero.ctaHint)}</p>

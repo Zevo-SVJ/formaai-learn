@@ -30,12 +30,20 @@ const PAGE_PAD = 22;
 const TITLE_H = 30;
 const ROW = LINE_H + LINE_GAP;
 
-const LINES = ["l1", "l2", "k1", "l3", "l4", "k2", "l5", "l6", "k3", "l7"] as const;
+/** How long each rule of the drawn page is. Nothing here is written: a page of
+ *  real sentences competes with the caption, and the reader ends up reading a
+ *  lesson instead of watching one being taken apart. */
+const RULES = [92, 74, 86, 96, 68, 80, 90, 62, 84, 76];
 const KEYS = [2, 5, 8]; // the rows that carry the method
 
-const STAGE_H = PAGE_PAD * 2 + TITLE_H + LINES.length * ROW;
+const STAGE_H = PAGE_PAD * 2 + TITLE_H + RULES.length * ROW;
 const CARD_H = 186;
 
+/** How tall the reading band is. */
+const BAND = 70;
+
+/** The sheet arrives before anything is done to it. */
+const ARRIVE: [number, number] = [0, 0.1];
 const READ: [number, number] = [0.14, 0.42];
 const LIFT: [number, number] = [0.5, 0.8];
 
@@ -51,12 +59,12 @@ export function LessonToCards() {
   return (
     <div ref={track} className="relative h-[240vh]">
       <div className="sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden px-5">
-        <div className="relative w-full max-w-[330px]" style={{ height: STAGE_H }} aria-hidden>
+        <Stage progress={scrollYProgress}>
           <Page progress={scrollYProgress} />
           {KEYS.map((row, i) => (
             <Morph key={row} row={row} rank={i} progress={scrollYProgress} />
           ))}
-        </div>
+        </Stage>
         <Caption progress={scrollYProgress} steps={steps} />
       </div>
       <span className="sr-only">{steps.map((s) => `${s.t}. ${s.d}`).join(" ")}</span>
@@ -65,12 +73,42 @@ export function LessonToCards() {
 }
 
 /**
- * The notes. Every row is present so the page reads as a page, but the three
- * that become cards are left as gaps: the moving elements occupy them, and two
- * copies of the same line would be one copy too many.
+ * The sheet arriving, as one object. Everything on it moves together, so the
+ * page and the three rules that leave it can never disagree about where the
+ * page is.
+ */
+function Stage({
+  progress,
+  children,
+}: {
+  progress: MotionValue<number>;
+  children: React.ReactNode;
+}) {
+  const y = useTransform(progress, ARRIVE, [34, 0]);
+  const scale = useTransform(progress, ARRIVE, [0.94, 1]);
+  return (
+    <motion.div
+      // The height is fixed, so the rules and the cards they become are placed
+      // by arithmetic rather than by whatever the browser laid out this frame.
+      style={{ y, scale, height: STAGE_H }}
+      className="relative w-full max-w-[330px]"
+      aria-hidden
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/**
+ * The notes, drawn rather than written. Every row is present so the page reads
+ * as a page, but the three that become cards are left as gaps: the moving
+ * elements occupy them, and two copies of the same rule would be one too many.
+ *
+ * A band of light passes down the page while it is being read. That is the
+ * detection, and it is the reason the three rules light up in order rather than
+ * all at once - something is going through the page, and picking.
  */
 function Page({ progress }: { progress: MotionValue<number> }) {
-  const { t } = useI18n();
   // The page recedes as its content leaves it. It is not removed — it is still
   // there, simply no longer the thing being looked at.
   const opacity = useTransform(progress, LIFT, [1, 0.22]);
@@ -79,25 +117,52 @@ function Page({ progress }: { progress: MotionValue<number> }) {
   return (
     <motion.div
       style={{ opacity, scale }}
-      className="absolute inset-0 rounded-[1.5rem] border border-border bg-card shadow-[var(--shadow-lift)]"
+      className="absolute inset-0 overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-[var(--shadow-lift)]"
     >
       <div style={{ padding: PAGE_PAD }}>
-        <div
-          className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground"
-          style={{ height: TITLE_H }}
-        >
-          {t((d) => d.demo.lesson)}
+        <div style={{ height: TITLE_H }}>
+          <span className="block h-2 w-24 rounded-full bg-foreground/40" />
         </div>
-        {LINES.map((id, i) => (
-          <div key={id} style={{ height: LINE_H, marginBottom: LINE_GAP }}>
+        {RULES.map((w, i) => (
+          <div key={i} style={{ height: LINE_H, marginBottom: LINE_GAP }}>
             {!KEYS.includes(i) && (
-              <p className="truncate text-[11.5px] leading-[21px] text-muted-foreground/60">
-                {t((d) => d.demo[id])}
-              </p>
+              <span
+                className="mt-[7px] block h-1.5 rounded-full bg-border-strong/40"
+                style={{ width: `${w}%` }}
+              />
             )}
           </div>
         ))}
       </div>
+
+      <Scan progress={progress} />
+    </motion.div>
+  );
+}
+
+/**
+ * The band that reads the page.
+ *
+ * It is the reason the three rules light up one after another instead of all at
+ * once: something passes over the sheet and picks as it goes. Clipped by the
+ * page, so it enters and leaves rather than switching on.
+ */
+function Scan({ progress }: { progress: MotionValue<number> }) {
+  const top = useTransform(progress, [READ[0] - 0.06, READ[1] + 0.04], [-70, STAGE_H]);
+  const opacity = useTransform(progress, (v) => (v < READ[0] - 0.06 || v > READ[1] + 0.04 ? 0 : 1));
+  return (
+    <motion.div
+      style={{ top, opacity, height: BAND }}
+      className="pointer-events-none absolute inset-x-0"
+    >
+      <div
+        className="h-full w-full"
+        style={{
+          background:
+            "linear-gradient(180deg, transparent 0%, oklch(0.94 0.05 155 / 0.35) 60%, oklch(0.88 0.08 155 / 0.6) 100%)",
+        }}
+      />
+      <div className="h-px w-full bg-emerald/45" />
     </motion.div>
   );
 }
@@ -126,7 +191,6 @@ function Morph({
   progress: MotionValue<number>;
 }) {
   const { t } = useI18n();
-  const id = LINES[row];
   const meta = META[rank];
 
   // Read in order, so the page is gone through rather than lit up at once. The
@@ -153,6 +217,13 @@ function Morph({
       ? `color-mix(in oklab, var(--color-card) ${Math.min(s * 320, 100)}%, var(--color-emerald-soft))`
       : `color-mix(in oklab, var(--color-emerald-soft) ${w * 100}%, transparent)`;
   });
+  // The rule is one of the crowd until the band finds it. Starting it green
+  // would mean the page arrives with its answer already marked, and there would
+  // be nothing left for the reading to do.
+  const ruleColor = useTransform(
+    wash,
+    (w) => `color-mix(in oklab, var(--color-emerald) ${w * 100}%, var(--color-border-strong))`,
+  );
   const borderColor = useTransform(surface, (s) =>
     s > 0.12 ? "var(--color-border)" : "transparent",
   );
@@ -170,6 +241,7 @@ function Morph({
     Math.min(1, Math.max(0, (v - (liftAt[0] + span * from)) / (span * (to - from))));
   const chrome = useTransform(progress, ramp(0.22, 0.5));
   const asLine = useTransform(progress, (v) => 1 - ramp(0.1, 0.3)(v));
+  const ruleFade = useTransform(asLine, (v) => v * 0.55);
 
   const Icon = sectionIcon(meta.key);
   const tint =
@@ -203,13 +275,14 @@ function Morph({
       }}
       className="absolute overflow-hidden"
     >
-      {/* The line, as it stands on the page. */}
-      <motion.p
-        style={{ opacity: asLine }}
-        className="absolute inset-x-1 top-0 truncate text-[11.5px] font-medium leading-[21px] text-foreground"
-      >
-        {t((d) => d.demo[id])}
-      </motion.p>
+      {/* The rule, as it stands on the page. It carries no words: what the
+          reader has to follow is which rules were picked, not what they said. */}
+      <motion.span
+        // Two things at once: the rule's own translucency, so it sits with the
+        // others on the page, and the hand-over to the card face.
+        style={{ opacity: ruleFade, width: `${RULES[row]}%`, background: ruleColor }}
+        className="absolute left-1 top-[7px] block h-1.5 rounded-full"
+      />
 
       {/* The same line, once it has become a card. */}
       <motion.div style={{ opacity: chrome }} className="flex h-full flex-col p-4">
