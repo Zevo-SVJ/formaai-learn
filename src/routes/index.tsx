@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { HeroActions } from "@/components/HeroActions";
 import { LessonToCards } from "@/components/LessonToCards";
+import { ScanToUnderstanding } from "@/components/ScanToUnderstanding";
 import { TheChain } from "@/components/TheChain";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
@@ -146,6 +147,19 @@ function Hero() {
         >
           {t((d) => d.hero.subtitle)}
         </motion.p>
+
+        {/* The claim, demonstrated before it is argued: a lesson going from
+            unreadable to understood, above the fold, with no scroll and no
+            text required. It sits between the promise and the button, which is
+            where a visitor decides whether the promise is worth anything. */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.16, ease: EASE.out }}
+          className="mt-9"
+        >
+          <ScanToUnderstanding />
+        </motion.div>
 
         <div className="mt-9">
           <HeroActions />
