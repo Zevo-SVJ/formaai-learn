@@ -156,14 +156,15 @@ function Hero() {
             unreadable to understood, above the fold, with no scroll and no
             text required. It sits between the promise and the button, which is
             where a visitor decides whether the promise is worth anything. */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.16, ease: EASE.out }}
-          className="mt-9"
-        >
+        {/* Deliberately not wrapped in an entrance. A fade over the one thing
+            on this page that demonstrates the product is a fade doing the main
+            animation's job, and it makes the sheet's visibility depend on a
+            frame landing - drop it, or load with the tab in the background, and
+            the hero's only proof is invisible. The sheet is simply there; the
+            sweep is the animation. */}
+        <div className="mt-9">
           <ScanToUnderstanding />
-        </motion.div>
+        </div>
 
         <div className="mt-9">
           <HeroActions />

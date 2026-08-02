@@ -57,7 +57,13 @@ const path = (pts: ReadonlyArray<readonly [number, number]>) =>
 const HISTORY = path(PTS.slice(0, -1));
 /** The segment that reaches out to the new grade. */
 const JOIN = path(PTS.slice(-2));
-const AREA = `${path(PTS)} L${LAST[0].toFixed(1)} ${H - P} L${PTS[0][0].toFixed(1)} ${H - P} Z`;
+// The fill is split at the same seam as the line. One area under the history,
+// one wedge under the segment that reaches the new grade - because a fill that
+// already covers the last segment gives away where the curve is going before
+// the grade has landed, which is the one thing this section is withholding.
+const PREV = PTS[PTS.length - 2];
+const AREA = `${path(PTS.slice(0, -1))} L${PREV[0].toFixed(1)} ${H - P} L${PTS[0][0].toFixed(1)} ${H - P} Z`;
+const AREA_JOIN = `M${PREV[0].toFixed(1)} ${PREV[1].toFixed(1)} L${LAST[0].toFixed(1)} ${LAST[1].toFixed(1)} L${LAST[0].toFixed(1)} ${H - P} L${PREV[0].toFixed(1)} ${H - P} Z`;
 
 const RUN_S = 4.2;
 
@@ -154,6 +160,14 @@ export function GradeToCurve() {
                 style={{ scaleY: area, originY: 1, originX: 0 }}
               />
 
+              {/* Grows from the baseline with the segment above it, so the fill
+                  never arrives anywhere the line has not been. */}
+              <motion.path
+                d={AREA_JOIN}
+                fill="url(#gtc-fill)"
+                style={{ scaleY: join, originY: 1, originX: 0 }}
+              />
+
               <motion.path
                 d={HISTORY}
                 fill="none"
@@ -230,9 +244,13 @@ function GradeTile({ p, label }: { p: MotionValue<number>; label: string }) {
   const endT = (LAST[1] / H) * 100;
   const left = useTransform(travel, (v) => `${START_L + v * (endL - START_L)}%`);
   const top = useTransform(travel, (v) => `${START_T + v * (endT - START_T)}%`);
-  const width = useTransform(travel, (v) => 62 - v * 53);
-  const height = useTransform(travel, (v) => 28 - v * 19);
-  const radius = useTransform(travel, (v) => 9 - v * 4.5);
+  // The box holds its size for most of the journey and only closes at the end.
+  // Shrinking from the first frame meant the grade was never legible in
+  // flight - the reader saw a dot move, not a number becoming a point.
+  const shut = useTransform(travel, (v) => glide(ramp(v, 0.66, 1)));
+  const width = useTransform(shut, (v) => 62 - v * 53);
+  const height = useTransform(shut, (v) => 28 - v * 19);
+  const radius = useTransform(shut, (v) => 9 - v * 4.5);
 
   return (
     <motion.div
