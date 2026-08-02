@@ -64,13 +64,24 @@ function Side({
   // result. Only what follows differs.
   const base = { duration: 0.45, ease: EASE.out };
   const CARDS = [
-    { key: "explanation", tone: "emerald" as const, title: t((d) => d.doc.sections.explanation) },
+    {
+      key: "explanation",
+      tone: "emerald" as const,
+      title: t((d) => d.doc.sections.explanation),
+      body: t((d) => d.demo.explanation),
+    },
     {
       key: "common_mistake",
       tone: "warn" as const,
       title: t((d) => d.doc.sections.commonMistakes),
+      body: t((d) => d.demo.mistake),
     },
-    { key: "example", tone: "default" as const, title: t((d) => d.doc.sections.example) },
+    {
+      key: "example",
+      tone: "default" as const,
+      title: t((d) => d.doc.sections.example),
+      body: t((d) => d.demo.example),
+    },
   ];
 
   return (
@@ -111,8 +122,9 @@ function Side({
         transition={{ ...base, delay: 0.05 }}
         className="mb-3 flex flex-col gap-1.5"
       >
-        <span className="h-1.5 w-4/5 rounded-full bg-border-strong/45" />
-        <span className="h-1.5 w-3/5 rounded-full bg-border-strong/45" />
+        <span className="text-[11.5px] leading-snug text-muted-foreground">
+          {t((d) => d.demo.k3)}
+        </span>
       </motion.div>
 
       {/* The same result. Neither tool is wrong; that is not the difference. */}
@@ -139,7 +151,7 @@ function Side({
       <div className="relative mt-3 min-h-[132px] sm:min-h-[152px]">
         {!muted && (
           <div className="absolute inset-0">
-            {CARDS.map(({ key, tone, title }, i) => (
+            {CARDS.map(({ key, tone, title, body }, i) => (
               <motion.div
                 key={key}
                 initial={reduceInitial({ opacity: 0, y: 18, scale: 0.96 })}
@@ -150,11 +162,7 @@ function Side({
               >
                 <div className="h-full rounded-2xl shadow-[var(--shadow-soft)]">
                   <ExplanationCard icon={sectionIcon(key)} title={title} tone={tone} fill>
-                    <div className="flex flex-col gap-1.5 pt-0.5">
-                      <span className="h-1.5 w-full rounded-full bg-border-strong/35" />
-                      <span className="h-1.5 w-10/12 rounded-full bg-border-strong/35" />
-                      <span className="h-1.5 w-2/3 rounded-full bg-border-strong/35" />
-                    </div>
+                    <p className="text-[11.5px] leading-snug text-foreground">{body}</p>
                   </ExplanationCard>
                 </div>
               </motion.div>

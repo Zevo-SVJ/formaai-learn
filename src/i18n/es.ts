@@ -43,6 +43,31 @@ export const es: Dict = {
     description:
       "Forma AI ayuda a los estudiantes a entender sus cursos y ejercicios con explicaciones de IA, soluciones paso a paso y herramientas para estudiar mejor.",
   },
+  /**
+   * The lesson the landing demonstrations actually show.
+   *
+   * They used to draw grey bars. A bar is an illustration of a lesson, not a
+   * lesson, and a demonstration that shows nothing real is a diagram. This is a
+   * short course a student would recognise, so what is watched is the product
+   * working on something rather than a shape standing in for it.
+   */
+  demo: {
+    lesson: "Ecuaciones de primer grado",
+    l1: "Una ecuación de primer grado se escribe ax + b = c.",
+    l2: "La incógnita x aparece una vez, sin potencia.",
+    k1: "Se aísla x pasando b al otro lado.",
+    l3: "Cuidado con el signo al cambiar un término de lado.",
+    l4: "El coeficiente a nunca puede ser cero.",
+    k2: "Después se dividen ambos miembros por a.",
+    l5: "El resultado es la solución de la ecuación.",
+    l6: "Siempre puedes comprobarlo sustituyendo x.",
+    k3: "Ejemplo: 2x + 3 = 11 da x = 4.",
+    l7: "El método es el mismo sean cuales sean a, b y c.",
+    answer: "x = 4",
+    explanation: "Aísla x en un lado y divide por su coeficiente.",
+    mistake: "Olvidar cambiar el signo al pasar un término.",
+    example: "2x + 3 = 11, entonces 2x = 8, entonces x = 4.",
+  },
   nav: {
     how: "Cómo funciona",
     features: "Funciones",

@@ -41,6 +41,31 @@ export const en = {
     description:
       "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
   },
+  /**
+   * The lesson the landing demonstrations actually show.
+   *
+   * They used to draw grey bars. A bar is an illustration of a lesson, not a
+   * lesson, and a demonstration that shows nothing real is a diagram. This is a
+   * short course a student would recognise, so what is watched is the product
+   * working on something rather than a shape standing in for it.
+   */
+  demo: {
+    lesson: "First-degree equations",
+    l1: "A first-degree equation is written ax + b = c.",
+    l2: "The unknown x appears once, with no power.",
+    k1: "Isolate x by moving b to the other side.",
+    l3: "Watch the sign when a term changes side.",
+    l4: "The coefficient a must never be zero.",
+    k2: "Then divide both sides by a.",
+    l5: "What you get is the solution of the equation.",
+    l6: "You can always check by substituting x back.",
+    k3: "Example: 2x + 3 = 11 gives x = 4.",
+    l7: "The method holds whatever a, b and c are.",
+    answer: "x = 4",
+    explanation: "Isolate x on one side, then divide by its coefficient.",
+    mistake: "Forgetting to flip the sign when moving a term across.",
+    example: "2x + 3 = 11, so 2x = 8, so x = 4.",
+  },
   nav: {
     how: "How it works",
     features: "Features",

@@ -43,6 +43,31 @@ export const de: Dict = {
     description:
       "Forma AI hilft Schülern, Unterrichtsstoff und Aufgaben zu verstehen: mit KI-Erklärungen, Schritt-für-Schritt-Lösungen und besseren Lernwerkzeugen.",
   },
+  /**
+   * The lesson the landing demonstrations actually show.
+   *
+   * They used to draw grey bars. A bar is an illustration of a lesson, not a
+   * lesson, and a demonstration that shows nothing real is a diagram. This is a
+   * short course a student would recognise, so what is watched is the product
+   * working on something rather than a shape standing in for it.
+   */
+  demo: {
+    lesson: "Lineare Gleichungen",
+    l1: "Eine lineare Gleichung hat die Form ax + b = c.",
+    l2: "Die Unbekannte x kommt einmal vor, ohne Potenz.",
+    k1: "Man isoliert x, indem man b auf die andere Seite bringt.",
+    l3: "Auf das Vorzeichen achten, wenn ein Term die Seite wechselt.",
+    l4: "Der Koeffizient a darf nie null sein.",
+    k2: "Danach teilt man beide Seiten durch a.",
+    l5: "Das Ergebnis ist die Lösung der Gleichung.",
+    l6: "Man kann immer durch Einsetzen von x prüfen.",
+    k3: "Beispiel: 2x + 3 = 11 ergibt x = 4.",
+    l7: "Die Methode gilt für alle a, b und c.",
+    answer: "x = 4",
+    explanation: "Isoliere x auf einer Seite und teile durch seinen Koeffizienten.",
+    mistake: "Das Vorzeichen vergessen, wenn ein Term die Seite wechselt.",
+    example: "2x + 3 = 11, also 2x = 8, also x = 4.",
+  },
   nav: {
     how: "So funktioniert es",
     features: "Funktionen",

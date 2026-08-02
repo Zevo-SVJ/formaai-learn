@@ -53,9 +53,10 @@ export function LessonToCards() {
   if (reduceMotion) return <StillFrame steps={steps} />;
 
   return (
-    // Three viewports of track for one screen of stage: enough scroll to let
-    // each act breathe, without the page feeling held hostage.
-    <div ref={track} className="relative h-[300vh]">
+    // Just over two viewports of track for one screen of stage. Three was
+    // enough scroll to make one idea feel like a detour; this keeps each act
+    // legible without asking the reader to work for it.
+    <div ref={track} className="relative h-[220vh]">
       <div className="sticky top-0 flex h-dvh flex-col items-center justify-center overflow-hidden">
         <Stage progress={scrollYProgress} />
         <Caption progress={scrollYProgress} steps={steps} />
@@ -88,7 +89,7 @@ function Stage({ progress }: { progress: MotionValue<number> }) {
   const paperRotate = useTransform(progress, ACT.paperIn, [-3.5, -1.2]);
 
   return (
-    <div className="relative flex h-[360px] w-full max-w-[320px] items-center justify-center sm:h-[400px] sm:max-w-[352px]">
+    <div className="relative flex h-[320px] w-full max-w-[320px] items-center justify-center sm:h-[340px] sm:max-w-[352px]">
       <motion.div
         style={{
           y: paperY,
@@ -113,6 +114,7 @@ function Stage({ progress }: { progress: MotionValue<number> }) {
  * point being made is about structure, not content.
  */
 function Paper({ progress }: { progress: MotionValue<number> }) {
+  const { t } = useI18n();
   const scanY = useTransform(progress, ACT.scan, ["-12%", "112%"]);
   const scanOpacity = useTransform(
     progress,
@@ -122,9 +124,18 @@ function Paper({ progress }: { progress: MotionValue<number> }) {
 
   return (
     <div className="relative overflow-hidden rounded-[1.5rem] border border-border bg-card px-6 py-7 shadow-[var(--shadow-lift)]">
-      <div className="flex flex-col gap-3.5">
+      <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        {t((d) => d.demo.lesson)}
+      </div>
+      <div className="flex flex-col gap-1.5">
         {LINES.map((line, i) => (
-          <Line key={i} index={i} width={line.w} keyLine={line.key} progress={progress} />
+          <Line
+            key={i}
+            index={i}
+            text={t((d) => d.demo[line.id])}
+            keyLine={line.key}
+            progress={progress}
+          />
         ))}
       </div>
 
@@ -147,30 +158,47 @@ function Paper({ progress }: { progress: MotionValue<number> }) {
   );
 }
 
-// The sheet: a dozen lines of handwriting, three of which carry the lesson.
-// Those three are the ones that will become cards.
-const LINES: Array<{ w: string; key?: number }> = [
-  { w: "72%" },
-  { w: "100%" },
-  { w: "88%", key: 0 },
-  { w: "94%" },
-  { w: "66%" },
-  { w: "100%", key: 1 },
-  { w: "82%" },
-  { w: "97%" },
-  { w: "58%", key: 2 },
-  { w: "90%" },
-  { w: "74%" },
+// The sheet, as a student would have written it. Three of these lines carry
+// the lesson, and those three are the ones that become cards.
+const LINES: Array<{ id: keyof DemoStrings; key?: number }> = [
+  { id: "l1" },
+  { id: "l2" },
+  { id: "k1", key: 0 },
+  { id: "l3" },
+  { id: "l4" },
+  { id: "k2", key: 1 },
+  { id: "l5" },
+  { id: "l6" },
+  { id: "k3", key: 2 },
+  { id: "l7" },
 ];
+
+type DemoStrings = {
+  lesson: string;
+  l1: string;
+  l2: string;
+  l3: string;
+  l4: string;
+  l5: string;
+  l6: string;
+  l7: string;
+  k1: string;
+  k2: string;
+  k3: string;
+  answer: string;
+  explanation: string;
+  mistake: string;
+  example: string;
+};
 
 function Line({
   index,
-  width,
+  text,
   keyLine,
   progress,
 }: {
   index: number;
-  width: string;
+  text: string;
   keyLine?: number;
   progress: MotionValue<number>;
 }) {
@@ -180,31 +208,34 @@ function Line({
   const isKey = keyLine !== undefined;
   const at = ACT.highlight[0] + (keyLine ?? 0) * 0.06;
   const lit = useTransform(progress, [at, at + 0.05], [0, 1]);
+  // A line that matters gets picked out: it darkens and takes a soft emerald
+  // wash behind it, the way a highlighter would. The others simply stay as
+  // written.
   const bg = useTransform(lit, (v) =>
+    isKey ? `color-mix(in oklab, var(--color-emerald-soft) ${v * 100}%, transparent)` : "",
+  );
+  const color = useTransform(lit, (v) =>
     isKey
-      ? `color-mix(in oklab, var(--color-emerald) ${v * 100}%, var(--color-border-strong))`
+      ? `color-mix(in oklab, var(--color-foreground) ${40 + v * 60}%, var(--color-muted-foreground))`
       : "",
   );
-  const litOpacity = useTransform(lit, [0, 1], [0.45, 1]);
 
   if (!isKey) {
     return (
-      <div
-        className="h-2 rounded-full bg-border-strong/45"
-        style={{ width }}
-        aria-hidden
-        data-line={index}
-      />
+      <p data-line={index} className="text-[11.5px] leading-snug text-muted-foreground/70">
+        {text}
+      </p>
     );
   }
   return (
-    <motion.div
-      aria-hidden
+    <motion.p
       data-line={index}
       data-key-line
-      className="h-2 rounded-full"
-      style={{ width, background: bg, opacity: litOpacity }}
-    />
+      className="-mx-1 rounded px-1 text-[11.5px] font-medium leading-snug"
+      style={{ background: bg, color }}
+    >
+      {text}
+    </motion.p>
   );
 }
 
@@ -216,13 +247,24 @@ function Line({
 function Deck({ progress }: { progress: MotionValue<number> }) {
   const { t } = useI18n();
   const titles = [
-    { key: "explanation", tone: "emerald" as const, title: t((d) => d.doc.sections.explanation) },
+    {
+      key: "explanation",
+      tone: "emerald" as const,
+      title: t((d) => d.doc.sections.explanation),
+      body: t((d) => d.demo.explanation),
+    },
     {
       key: "common_mistake",
       tone: "warn" as const,
       title: t((d) => d.doc.sections.commonMistakes),
+      body: t((d) => d.demo.mistake),
     },
-    { key: "example", tone: "default" as const, title: t((d) => d.doc.sections.example) },
+    {
+      key: "example",
+      tone: "default" as const,
+      title: t((d) => d.doc.sections.example),
+      body: t((d) => d.demo.example),
+    },
   ];
 
   const opacity = useTransform(progress, ACT.cardsIn, [0, 1]);
@@ -248,7 +290,7 @@ function Card({
   advance,
 }: {
   index: number;
-  card: { key: string; tone: "default" | "emerald" | "warn"; title: string };
+  card: { key: string; tone: "default" | "emerald" | "warn"; title: string; body: string };
   progress: MotionValue<number>;
   advance: MotionValue<number>;
 }) {
@@ -279,18 +321,7 @@ function Card({
       <motion.div style={{ y: rise }} className="h-full">
         <div className="h-full rounded-3xl shadow-[var(--shadow-lift)]">
           <ExplanationCard icon={sectionIcon(card.key)} title={card.title} tone={card.tone} fill>
-            {/* A real explanation fills its card. Two short paragraphs of
-                skeleton rather than four lines, so the deck reads as inhabited
-                instead of as an empty frame. */}
-            <div className="flex flex-col gap-2.5 pt-1">
-              {["w-full", "w-11/12", "w-full", "w-4/5"].map((w, k) => (
-                <span key={k} className={`h-2 rounded-full bg-border-strong/40 ${w}`} />
-              ))}
-              <span className="h-1" />
-              {["w-full", "w-10/12", "w-full", "w-3/5"].map((w, k) => (
-                <span key={`b${k}`} className={`h-2 rounded-full bg-border-strong/40 ${w}`} />
-              ))}
-            </div>
+            <p className="text-[14px] leading-relaxed text-foreground">{card.body}</p>
           </ExplanationCard>
         </div>
       </motion.div>
@@ -372,11 +403,9 @@ function StillFrame({ steps }: { steps: Array<{ t: string; d: string }> }) {
             tone="emerald"
             fill
           >
-            <div className="flex flex-col gap-2.5 pt-1">
-              {["w-full", "w-11/12", "w-full", "w-4/5", "w-full", "w-3/5"].map((w, k) => (
-                <span key={k} className={`h-2 rounded-full bg-border-strong/40 ${w}`} />
-              ))}
-            </div>
+            <p className="text-[14px] leading-relaxed text-foreground">
+              {t((d) => d.demo.explanation)}
+            </p>
           </ExplanationCard>
         </div>
       </div>
