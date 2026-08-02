@@ -30,12 +30,23 @@ function ResourcePage() {
   const navigate = useNavigate();
   const resource = useResources().find((r) => r.id === id) ?? null;
 
+  // Leaving goes back where the resource came from. A quiz opened from a
+  // lesson belongs to that lesson's conversation, and dropping the student in
+  // the library instead loses the thread they were in the middle of.
+  const leave = () => {
+    if (resource?.sourceId) {
+      navigate({ to: "/doc/$docId/chat", params: { docId: resource.sourceId } });
+      return;
+    }
+    navigate({ to: "/library" });
+  };
+
   return (
     <div className="min-h-dvh bg-background">
       <AppHeader
         back={
           <button
-            onClick={() => navigate({ to: "/library" })}
+            onClick={leave}
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface hover:border-border-strong"
             aria-label={t((d) => d.common.back)}
           >
@@ -63,7 +74,7 @@ function ResourcePage() {
               <button
                 onClick={() => {
                   removeResource(resource.id);
-                  navigate({ to: "/library" });
+                  leave();
                 }}
                 aria-label={t((d) => d.resources.remove)}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-muted-foreground transition hover:border-border-strong hover:text-foreground"

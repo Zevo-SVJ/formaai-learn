@@ -8,7 +8,6 @@ import { TheChain } from "@/components/TheChain";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
 import { CompareSection } from "@/components/CompareSection";
-import { ProgressFeature } from "@/components/ProgressFeature";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 
 import { SiteFooter } from "@/components/SiteFooter";
@@ -55,7 +54,6 @@ function Landing() {
       <Problem />
       <HowItWorks />
       <CompareSection />
-      <ProgressFeature />
       <MidCTA />
       <ReviewsSection />
       <FAQSection />
