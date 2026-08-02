@@ -228,10 +228,7 @@ export const en = {
   compare: {
     // Two lines for the whole sequence: the movement makes the argument,
     // and these only mark which half is being watched.
-    beats: [
-      "Most tools stop there.",
-      "Forma keeps going.",
-    ],
+    beats: ["Most tools stop there.", "Forma keeps going.", "Long after the answer."],
     eyebrow: "The difference",
     title: "How Forma compares to other tools.",
     subtitle:

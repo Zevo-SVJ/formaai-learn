@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion, type TargetAndTransition } from "framer-motion";
-import { Check, Layers, ListChecks, MessageCircle, TrendingUp } from "lucide-react";
+import { Check, GraduationCap, Layers, ListChecks, TrendingUp } from "lucide-react";
 import { Phone } from "@/components/PhoneFrame";
 import { Logo } from "@/components/Logo";
 import { sectionIcon } from "@/components/AnalysisCards";
@@ -32,6 +32,28 @@ const EXIT: [number, number, number, number] = [0.4, 0, 1, 1];
 
 type SceneName = "other" | "forma";
 
+/**
+ * The beat the camera pulls back on.
+ *
+ * Everything before it is the comparison, on the phone, unchanged. Everything
+ * after is the same phone made small: it is not swapped for another scene,
+ * because the point being made is that all of this grew out of the thing just
+ * watched. A cut here would say "and here is another product".
+ */
+const OPEN_AT = 8;
+
+/**
+ * The pull-back, in numbers.
+ *
+ * The phone is 332 tall in its frame and the stage is 344, so it sits 6 from
+ * the top and its centre is at 172. Scaling happens about that centre, so the
+ * lift is what puts the small phone's centre near the top of the stage and
+ * frees the space underneath.
+ */
+const PHONE_TOP = 6;
+const OPEN_SCALE = 0.44;
+const OPEN_LIFT = -99;
+
 const BEATS: Array<{ scene: SceneName; ms: number }> = [
   { scene: "other", ms: 1200 }, // 0 asked, and answered
   { scene: "other", ms: 1450 }, // 1 and that is the end of it
@@ -40,16 +62,17 @@ const BEATS: Array<{ scene: SceneName; ms: number }> = [
   { scene: "forma", ms: 720 }, // 4 why it works
   { scene: "forma", ms: 720 }, // 5 what people get wrong
   { scene: "forma", ms: 780 }, // 6 one case to try
-  { scene: "forma", ms: 1050 }, // 7 and it lands
-  { scene: "forma", ms: 950 }, // 8 kept, as cards
-  { scene: "forma", ms: 1000 }, // 9 tested on it
-  { scene: "forma", ms: 950 }, // 10 and it is followed over time
-  { scene: "forma", ms: 1500 }, // 11 and it is still there to be asked
-  { scene: "forma", ms: 700 }, // 12 a breath, then round again
+  { scene: "forma", ms: 1150 }, // 7 and it lands
+  { scene: "forma", ms: 880 }, // 8 the camera pulls back
+  { scene: "forma", ms: 820 }, // 9 practised, until it is known
+  { scene: "forma", ms: 820 }, // 10 kept, as something to revise from
+  { scene: "forma", ms: 820 }, // 11 pitched at the student in front of it
+  { scene: "forma", ms: 1600 }, // 12 and carried on, week after week
+  { scene: "forma", ms: 700 }, // 13 a breath, then round again
 ];
 
-/** Which of the two lines is being read. */
-const CAPTION_OF = [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+/** Which of the three lines is being read. */
+const CAPTION_OF = [0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2];
 
 /**
  * How far Forma's thread has been scrolled, per beat.
@@ -85,7 +108,7 @@ export function HandoverStory() {
 
   // Reduced motion is given the end of the second half: the state the section
   // exists to show is the one where everything has been built.
-  const shown = reduceMotion ? 11 : beat;
+  const shown = reduceMotion ? 12 : beat;
   const scene = BEATS[shown].scene;
 
   return (
@@ -101,9 +124,7 @@ export function HandoverStory() {
           </Phone>
         </Scene>
         <Scene show={scene === "forma"} away={AWAY.forma}>
-          <Phone>
-            <FormaScreen beat={shown} />
-          </Phone>
+          <FormaAct beat={shown} />
         </Scene>
       </div>
 
@@ -112,7 +133,7 @@ export function HandoverStory() {
       <Fork beat={shown} />
 
       <div className="relative mt-6 h-8 w-full px-2 text-center">
-        {beats.slice(0, 2).map((line, i) => (
+        {beats.slice(0, 3).map((line, i) => (
           <Caption key={i} text={line} on={CAPTION_OF[shown] === i} />
         ))}
       </div>
@@ -173,7 +194,7 @@ function Scene({
  * on screen has stopped. Nothing says which is better; one of them is simply
  * still going.
  */
-const STOPS = [104, 137, 170, 203, 236, 269];
+const STOPS = [100, 128, 156, 184, 212, 240, 268];
 
 function Fork({ beat }: { beat: number }) {
   const capped = beat >= 1;
@@ -359,6 +380,130 @@ const STEPS = ["answers", "explanation", "common_mistake", "example"] as const;
  * because the argument is accumulation - by the last beat the screen holds four
  * things where the other screen held one, and that difference is the section.
  */
+function FormaAct({ beat }: { beat: number }) {
+  const open = beat >= OPEN_AT;
+
+  return (
+    // Fills the scene rather than being centred by it: the phone and what grows
+    // around it are placed against the stage, so neither moves when the other
+    // changes size.
+    <div className="absolute inset-0">
+      {/* The same phone, moved back rather than replaced. Scaling and lifting one
+          object is what makes everything that follows read as having come out
+          of it; cutting to a new scene would say "and here is another product".
+          Pixels, not percentages: a percentage translate resolves against the
+          element's unscaled height, so it throws a shrunken phone clean off the
+          stage. */}
+      <motion.div
+        className="absolute inset-x-0 z-10 flex justify-center"
+        style={{ top: PHONE_TOP }}
+        initial={false}
+        animate={{ scale: open ? OPEN_SCALE : 1, y: open ? OPEN_LIFT : 0 }}
+        transition={{ type: "spring", stiffness: 150, damping: 24 }}
+      >
+        <Phone>
+          <FormaScreen beat={beat} />
+        </Phone>
+      </motion.div>
+
+      {/* What the lesson becomes once it is understood. They come out from
+          behind the phone, one after another, and none of them says a word. */}
+      <div className="absolute inset-x-0 bottom-0 grid grid-cols-2 gap-2">
+        {CAPABILITIES.map((c, i) => (
+          <Capability key={c.key} spec={c} on={beat >= OPEN_AT + 1 + i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The four things that happen after the explanation.
+ *
+ * Drawn, never labelled: a title on a tile this size is a title nobody reads,
+ * and the section already carries its one line of copy underneath.
+ */
+const CAPABILITIES = [
+  { key: "quiz", icon: ListChecks },
+  { key: "sheet", icon: Layers },
+  { key: "level", icon: GraduationCap },
+  { key: "history", icon: TrendingUp },
+] as const;
+
+type Spec = (typeof CAPABILITIES)[number];
+
+function Capability({ spec, on }: { spec: Spec; on: boolean }) {
+  const Icon = spec.icon;
+  return (
+    <motion.div
+      className="rounded-[14px] border border-border bg-surface p-2.5 shadow-[var(--shadow-soft)]"
+      initial={false}
+      // Up behind the phone when it is not here yet, so its first frame on
+      // screen is an edge coming out rather than a box switching on.
+      animate={{ opacity: on ? 1 : 0, y: on ? 0 : -34, scale: on ? 1 : 0.86 }}
+      transition={{ type: "spring", stiffness: 260, damping: 24 }}
+    >
+      <Icon className="mb-2 h-3.5 w-3.5 text-emerald" />
+      {spec.key === "quiz" && (
+        <div className="space-y-[5px]">
+          <span className="block h-[7px] w-[76%] rounded-full bg-surface-muted" />
+          <motion.span
+            className="block h-[7px] w-[88%] rounded-full"
+            initial={false}
+            animate={{
+              backgroundColor: on ? "var(--color-emerald-soft)" : "var(--color-surface-muted)",
+            }}
+            transition={{ duration: 0.4, delay: on ? 0.45 : 0 }}
+          />
+          <span className="block h-[7px] w-[60%] rounded-full bg-surface-muted" />
+        </div>
+      )}
+      {spec.key === "sheet" && (
+        <div className="space-y-[5px]">
+          {[100, 82, 64].map((w, i) => (
+            <motion.span
+              key={w}
+              className="block h-[5px] rounded-full bg-border-strong/35"
+              initial={false}
+              animate={{ width: on ? `${w}%` : "0%" }}
+              transition={{ duration: 0.34, delay: on ? 0.14 + i * 0.11 : 0, ease: "easeOut" }}
+            />
+          ))}
+        </div>
+      )}
+      {spec.key === "level" && (
+        <div className="space-y-[7px]">
+          {/* The same notion, said shorter or said longer. */}
+          <motion.span
+            className="block h-[5px] rounded-full bg-border-strong/35"
+            initial={false}
+            animate={{ width: on ? "54%" : "54%" }}
+          />
+          <motion.span
+            className="block h-[5px] rounded-full bg-emerald/40"
+            initial={false}
+            animate={{ width: on ? "96%" : "54%" }}
+            transition={{ type: "spring", stiffness: 200, damping: 22, delay: on ? 0.5 : 0 }}
+          />
+        </div>
+      )}
+      {spec.key === "history" && (
+        <div className="flex items-end gap-[5px]">
+          {[9, 14, 12, 19, 24].map((h, i) => (
+            <motion.span
+              key={i}
+              className="w-[7px] rounded-t-[2px] bg-emerald/35"
+              initial={false}
+              animate={{ height: on ? h : 3 }}
+              transition={{ type: "spring", stiffness: 280, damping: 22, delay: on ? i * 0.06 : 0 }}
+            />
+          ))}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
 function FormaScreen({ beat }: { beat: number }) {
   const got = beat >= 7;
 
@@ -372,12 +517,7 @@ function FormaScreen({ beat }: { beat: number }) {
       {/* One thread, longer than the screen. It is scrolled, never swapped:
           what has to be felt is that the conversation has not finished, and a
           screen that replaces its contents says the opposite. */}
-      <motion.div
-        className="px-3 pt-1"
-        initial={false}
-        animate={{ y: -SCROLL_AT[Math.min(beat, SCROLL_AT.length - 1)] }}
-        transition={{ type: "spring", stiffness: 120, damping: 22 }}
-      >
+      <div className="px-3 pt-1">
         <div className="flex justify-end">
           <Question dark={false} />
         </div>
@@ -395,90 +535,7 @@ function FormaScreen({ beat }: { beat: number }) {
             <span className="h-[4px] w-[46%] rounded-full bg-emerald/45" />
           </div>
         </Block>
-
-        {/* Kept, as cards. */}
-        <Block on={beat >= 8}>
-          <div className="relative h-[54px]">
-            {[2, 1, 0].map((i) => (
-              <div
-                key={i}
-                className="absolute inset-x-0 top-0 rounded-[10px] border border-border bg-surface"
-                style={{
-                  height: 38,
-                  transform: `translate(${i * 5}px, ${i * 5}px) scale(${1 - i * 0.03})`,
-                  zIndex: 3 - i,
-                }}
-              >
-                {i === 0 && (
-                  <div className="flex h-full items-center gap-2 px-2">
-                    <Layers className="h-3 w-3 shrink-0 text-muted-foreground" />
-                    <span className="h-[4px] flex-1 rounded-full bg-border-strong/35" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </Block>
-
-        {/* Then asked about it. One option settles green - being right is the
-            only outcome worth animating here. */}
-        <Block on={beat >= 9}>
-          <div className="rounded-[10px] border border-border bg-surface p-2">
-            <div className="mb-2 flex items-center gap-2">
-              <ListChecks className="h-3 w-3 shrink-0 text-muted-foreground" />
-              <span className="h-[4px] w-[62%] rounded-full bg-border-strong/35" />
-            </div>
-            <div className="space-y-[4px]">
-              {[0, 1, 2].map((i) => (
-                <motion.span
-                  key={i}
-                  className="block h-[9px] rounded-full"
-                  initial={false}
-                  animate={{
-                    backgroundColor:
-                      beat >= 10 && i === 1
-                        ? "var(--color-emerald-soft)"
-                        : "var(--color-surface-muted)",
-                    width: i === 1 ? "84%" : i === 0 ? "70%" : "56%",
-                  }}
-                  transition={{ duration: 0.4 }}
-                />
-              ))}
-            </div>
-          </div>
-        </Block>
-
-        {/* And followed, week after week. */}
-        <Block on={beat >= 10}>
-          <div className="flex items-end gap-[5px] rounded-[10px] border border-border bg-surface px-2 py-2">
-            <TrendingUp className="mb-[1px] h-3 w-3 shrink-0 text-emerald" />
-            {[10, 16, 13, 22, 28, 34].map((h, i) => (
-              <motion.span
-                key={i}
-                className="w-[7px] rounded-t-[2px] bg-emerald/35"
-                initial={false}
-                animate={{ height: beat >= 10 ? h : 3 }}
-                transition={{ type: "spring", stiffness: 260, damping: 22, delay: i * 0.05 }}
-              />
-            ))}
-          </div>
-        </Block>
-
-        {/* And still there, waiting to be asked again. */}
-        <Block on={beat >= 11}>
-          <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface py-[5px] pl-2.5 pr-[5px]">
-            <MessageCircle className="h-3 w-3 shrink-0 text-muted-foreground" />
-            <span className="h-[4px] w-[30%] rounded-full bg-border-strong/30" />
-            <motion.span
-              className="h-[9px] w-[1.5px] rounded-full bg-emerald"
-              initial={false}
-              animate={{ opacity: beat >= 11 ? [1, 1, 0, 0, 1] : 0 }}
-              transition={{ duration: 1.1, repeat: Infinity, times: [0, 0.45, 0.5, 0.95, 1] }}
-            />
-            <span className="ml-auto h-[17px] w-[17px] shrink-0 rounded-full bg-emerald/20" />
-          </div>
-        </Block>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -232,10 +232,7 @@ export const de: Dict = {
   compare: {
     // Two lines for the whole sequence: the movement makes the argument,
     // and these only mark which half is being watched.
-    beats: [
-      "Andere hören hier auf.",
-      "Forma macht weiter.",
-    ],
+    beats: ["Andere hören hier auf.", "Forma macht weiter.", "Lange nach der Antwort."],
     eyebrow: "Der Unterschied",
     title: "Forma im Vergleich zu anderen Tools.",
     subtitle:
