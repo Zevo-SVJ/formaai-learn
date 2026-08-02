@@ -254,9 +254,10 @@ export const fr: Dict = {
     title: "Avoir la réponse ne veut pas dire comprendre.",
     subtitle: "Les autres IA font le travail à ta place. Forma t'apprend à le faire.",
     items: [
-      "Tu ouvres ton cours. Rien ne rentre.",
-      "Tu demandes à une IA. Elle te donne la réponse, pas l'idée.",
-      "Le contrôle arrive. Tu n'as toujours pas compris.",
+      "Tu relis. Rien ne reste.",
+      "La réponse arrive. L'idée, non.",
+      "Et le contrôle avance.",
+      "Comprendre, c'était avant.",
     ],
   },
   how: {

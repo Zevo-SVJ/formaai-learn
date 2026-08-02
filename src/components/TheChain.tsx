@@ -1,226 +1,272 @@
-import { useEffect, useRef } from "react";
-import {
-  animate,
-  motion,
-  useInView,
-  useMotionValue,
-  useReducedMotion,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion, useReducedMotion, type TargetAndTransition } from "framer-motion";
 import { CalendarDays } from "lucide-react";
-import { glide, ramp } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 /**
- * The problem, told as a sequence of shots.
+ * The problem, played out.
  *
- * Earlier versions stacked the story in one frame: a page, an answer laid over
- * it, a date below. Everything shared the same space, so nothing ever really
- * happened - the frame just accumulated. It read as a diagram of the problem
- * rather than the problem occurring.
+ * The version before this ran the story as a filmstrip: five shots in a row and
+ * a camera panning across them. Every scene therefore left the same way and
+ * arrived the same way, which is the definition of a slideshow - the movement
+ * belonged to the camera, not to anything in the story.
  *
- * This is a filmstrip. Five shots sit side by side and the strip slides; one
- * shot at a time is on screen, and each is pushed out by the next. Nothing
- * overlaps because nothing shares a cell, nothing fades because everything
- * arrives and leaves by moving, and the answer disappearing is not an effect -
- * it is simply carried off screen when the strip moves on.
+ * So there is no camera now. Each scene is an object with its own way of
+ * arriving and leaving: the lesson drops away tilting, the chat rises, doubt
+ * blooms from the point the answer left, the countdown swells, the grade falls
+ * from above and settles. Beats are scripted with their own dwell rather than
+ * ticked off a linear clock, which is what lets the ending accelerate.
  *
- * The lesson is drawn rather than written: rules, a sketch, an equation made of
- * shapes. A visitor should not have to read a word of it to know it is a
- * lesson, and any real sentence there would be a sentence competing with the
- * caption underneath.
+ * That acceleration is the whole third act. The test does not arrive as an
+ * icon: one object stays on screen and tightens - the ring closes, the number
+ * falls, the colour turns, and each beat is shorter than the last. Pressure is
+ * made of rhythm here, not of symbols.
  */
 
-const SHOTS = 5;
-const RUN_S = 11;
-const STAGE_H = 236;
+/**
+ * Departures accelerate away. `EASE.out` would have a scene drift off slowly,
+ * which reads as reluctance; a scene that is finished should get out of the way.
+ */
+const EXIT: [number, number, number, number] = [0.4, 0, 1, 1];
 
-/** Each shot holds, then hands over. The hold is most of the beat. */
-const HOLD = 0.62;
+type SceneName = "lesson" | "chat" | "clock" | "grade";
+
+/** Every beat, and how long it holds. The countdown's shrink is deliberate. */
+const BEATS: Array<{ scene: SceneName; ms: number }> = [
+  { scene: "lesson", ms: 2000 }, // 0 the lesson, being read
+  { scene: "chat", ms: 1000 }, // 1 the question, already sent
+  { scene: "chat", ms: 1250 }, // 2 the answer lands
+  { scene: "chat", ms: 950 }, // 3 it is taken away, and doubt takes its place
+  { scene: "clock", ms: 950 }, // 4 the test, still far off
+  { scene: "clock", ms: 720 }, // 5 closer
+  { scene: "clock", ms: 540 }, // 6 closer
+  { scene: "clock", ms: 400 }, // 7 tomorrow
+  { scene: "clock", ms: 800 }, // 8 today. everything stops.
+  { scene: "grade", ms: 1900 }, // 9 the grade
+  { scene: "grade", ms: 600 }, // 10 a breath, then round again
+];
+
+/** Which line is being read, per beat. */
+const CAPTION_OF = [0, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3];
+
+const STAGE_H = 236;
 
 export function TheChain() {
   const { raw } = useI18n();
   const reduceMotion = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { margin: "-100px" });
   const items = raw((d) => d.problem.items) as string[];
-  const p = useMotionValue(0);
+  const [beat, setBeat] = useState(0);
 
   useEffect(() => {
-    if (reduceMotion) {
-      p.set(0.1);
-      return;
-    }
-    if (!inView) return;
-    // From the top on every entry: the first shot is what makes the other four
-    // mean anything.
-    p.set(0);
-    const c = animate(p, 1, { duration: RUN_S, ease: "linear", repeat: Infinity });
-    return () => c.stop();
-  }, [inView, reduceMotion, p]);
+    if (reduceMotion) return;
+    const id = window.setTimeout(() => setBeat((b) => (b + 1) % BEATS.length), BEATS[beat].ms);
+    return () => window.clearTimeout(id);
+  }, [beat, reduceMotion]);
 
-  // Where the strip is, in shots. Whole numbers are a shot at rest; the
-  // fractional part is the hand-over to the next one.
-  const pos = useTransform(p, (v) => {
-    const at = Math.min(v, 0.9999) * SHOTS;
-    const i = Math.floor(at);
-    return i + glide(ramp(at - i, HOLD, 1));
-  });
-  // The track is one shot wide - the other four overflow it - so a percentage
-  // here is a percentage of a single shot, and one whole shot is 100%. Dividing
-  // by the shot count would be right for a track as wide as the strip, which
-  // this deliberately is not: sizing the track to its contents would make each
-  // cell's width depend on the track's, and the cells are what define it.
-  const x = useTransform(pos, (v) => `${-v * 100}%`);
+  // Reduced motion is given the first beat and left there: a story told in
+  // stills is still a story, and none of the others makes sense alone.
+  const shown = reduceMotion ? 0 : beat;
+  const scene = BEATS[shown].scene;
 
   return (
-    <div ref={ref} className="mx-auto flex max-w-md flex-col items-center">
-      {/* The window the strip runs behind. Its edges are what make a shot
-          leave rather than vanish. */}
+    <div className="mx-auto flex max-w-md flex-col items-center">
       <div
         className="relative w-full max-w-[300px] overflow-hidden"
         style={{ height: STAGE_H }}
         aria-hidden
       >
-        <motion.div style={{ x }} className="flex h-full">
-          <Shot>
-            <Lesson />
-          </Shot>
-          <Shot>
-            <Chat p={p} />
-          </Shot>
-          <Shot>
-            <Puzzled />
-          </Shot>
-          <Shot>
-            <ExamDate />
-          </Shot>
-          <Shot>
-            <BadGrade />
-          </Shot>
-        </motion.div>
+        <Scene show={scene === "lesson"} away={AWAY.lesson}>
+          <Lesson />
+        </Scene>
+        <Scene show={scene === "chat"} away={AWAY.chat}>
+          <Chat beat={shown} />
+        </Scene>
+        <Scene show={scene === "clock"} away={AWAY.clock}>
+          <Countdown beat={shown} />
+        </Scene>
+        <Scene show={scene === "grade"} away={AWAY.grade}>
+          <Grade />
+        </Scene>
       </div>
 
       <div className="relative mt-8 h-12 w-full px-2 text-center">
-        {items.slice(0, 3).map((line, i) => (
-          <Caption key={i} index={i} text={line} pos={pos} />
+        {items.slice(0, 4).map((line, i) => (
+          <Caption key={i} text={line} on={CAPTION_OF[shown] === i} />
         ))}
       </div>
+
+      <p className="sr-only">{items.join(" ")}</p>
     </div>
   );
 }
 
-/** One cell of the strip: exactly the width of the window, never sharing. */
-function Shot({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex h-full w-full shrink-0 items-center justify-center px-1">{children}</div>
-  );
-}
-
-/* ------------------------------------------------------------------ shots */
-
-/** A bar of "writing". Length is the only thing that varies. */
-function Rule({ w, dark = false }: { w: number; dark?: boolean }) {
-  return (
-    <span
-      className={`block h-1.5 rounded-full ${dark ? "bg-foreground/35" : "bg-border-strong/40"}`}
-      style={{ width: `${w}%` }}
-    />
-  );
-}
+/**
+ * Where each scene rests when it is not on screen.
+ *
+ * This is the whole character of a transition. A scene that arrives from below
+ * and one that blooms from a point are two different events, and giving every
+ * scene the same pose is exactly what made the filmstrip feel mechanical.
+ */
+const AWAY: Record<SceneName, TargetAndTransition> = {
+  // Put down and pushed aside.
+  lesson: { opacity: 0, y: 46, scale: 0.9, rotate: -5 },
+  // Comes up the way a conversation does.
+  chat: { opacity: 0, y: 60, scale: 0.95, rotate: 0 },
+  // Swells into place, and shrinks back out of it.
+  clock: { opacity: 0, y: 0, scale: 0.7, rotate: 0 },
+  // Falls in from above, and is lifted back out.
+  grade: { opacity: 0, y: -44, scale: 1.12, rotate: 0 },
+};
 
 /**
- * The lesson, drawn: a heading, some rules, a sketch and an equation built from
- * shapes. No sentence appears, so nothing here competes with the caption.
+ * One scene at a time.
+ *
+ * The outgoing scene is fully gone before the incoming one starts, so two
+ * screens are never laid over each other. Arrival is a spring - it is the
+ * thing being watched, and it should settle rather than stop dead. Departure is
+ * quicker and eased out: nothing is gained by dwelling on an exit.
+ */
+function Scene({
+  show,
+  away,
+  children,
+}: {
+  show: boolean;
+  away: TargetAndTransition;
+  children: React.ReactNode;
+}) {
+  return (
+    <motion.div
+      className="absolute inset-0 flex items-center justify-center px-1"
+      initial={false}
+      animate={show ? { opacity: 1, y: 0, scale: 1, rotate: 0 } : away}
+      transition={
+        show
+          ? { type: "spring", stiffness: 210, damping: 26, delay: 0.3 }
+          : { duration: 0.28, ease: EXIT }
+      }
+      style={{ pointerEvents: "none" }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* --------------------------------------------------------------- the shots */
+
+const INK = "var(--color-border-strong)";
+
+/**
+ * The lesson, abstracted.
+ *
+ * Not a page of writing with the words taken out - that only ever looks like a
+ * page waiting to load. It is the *structure* of a lesson: a margin, a heading,
+ * a couple of rules, one worked expression and one figure, with air around
+ * them. Enough to be recognised in a glance, and nothing to read.
  */
 function Lesson() {
   return (
-    <div className="w-full rounded-[1.25rem] border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
-      <span className="mb-4 block h-2 w-20 rounded-full bg-foreground/45" />
-      <div className="flex flex-col gap-2.5">
-        <Rule w={96} />
-        <Rule w={78} />
-      </div>
+    <div className="w-full rounded-[1.5rem] border border-border bg-card px-5 py-6 shadow-[var(--shadow-soft)]">
+      <svg viewBox="0 0 236 150" className="w-full" role="presentation">
+        {/* The margin. One vertical line is what makes a surface a page. */}
+        <line x1="22" y1="4" x2="22" y2="146" stroke={INK} strokeWidth="1" opacity="0.35" />
 
-      <div className="mt-4 flex items-end gap-4">
-        {/* A sketch: axes and a line going up. */}
-        <svg viewBox="0 0 68 46" className="h-[46px] w-[68px] shrink-0">
+        {/* A heading, then two rules. Short: a lesson is not a paragraph. */}
+        <rect
+          x="40"
+          y="8"
+          width="78"
+          height="6"
+          rx="3"
+          fill="var(--color-foreground)"
+          opacity="0.3"
+        />
+        <rect x="40" y="30" width="164" height="3.5" rx="1.75" fill={INK} opacity="0.3" />
+        <rect x="40" y="42" width="112" height="3.5" rx="1.75" fill={INK} opacity="0.3" />
+
+        {/* One expression, built from shapes: two terms, an operator, a result. */}
+        <g transform="translate(40 62)">
+          <rect width="30" height="17" rx="5" fill={INK} opacity="0.32" />
+          <rect x="38" y="7" width="12" height="3" rx="1.5" fill={INK} opacity="0.45" />
+          <rect x="58" width="17" height="17" rx="5" fill={INK} opacity="0.32" />
+          <rect x="83" y="5" width="13" height="2.5" rx="1.25" fill={INK} opacity="0.45" />
+          <rect x="83" y="11" width="13" height="2.5" rx="1.25" fill={INK} opacity="0.45" />
+          <rect x="104" width="24" height="17" rx="5" fill="var(--color-emerald)" opacity="0.28" />
+        </g>
+
+        {/* One figure. A right angle is read as geometry before it is read at all. */}
+        <g transform="translate(40 96)">
           <path
-            d="M4 2 V42 H66"
+            d="M2 46 L2 6 L52 46 Z"
             fill="none"
-            stroke="var(--color-border-strong)"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M8 34 L24 28 L40 30 L60 12"
-            fill="none"
-            stroke="var(--color-emerald)"
+            stroke={INK}
             strokeWidth="2"
-            strokeLinecap="round"
             strokeLinejoin="round"
-            opacity="0.55"
+            opacity="0.4"
           />
-        </svg>
+          <path d="M2 36 h10 v10" fill="none" stroke={INK} strokeWidth="1.5" opacity="0.55" />
+        </g>
 
-        {/* An equation, as shapes: two terms, a sign, a result. */}
-        <div className="flex min-w-0 flex-1 items-center gap-1.5">
-          <span className="h-4 w-7 rounded-md bg-border-strong/45" />
-          <span className="h-[2px] w-2 rounded bg-foreground/30" />
-          <span className="h-4 w-4 rounded-md bg-border-strong/45" />
-          <span className="flex h-3 w-3 flex-col justify-between">
-            <span className="h-[2px] w-full rounded bg-foreground/30" />
-            <span className="h-[2px] w-full rounded bg-foreground/30" />
-          </span>
-          <span className="h-4 w-6 rounded-md bg-border-strong/45" />
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-col gap-2.5">
-        <Rule w={88} />
-        <Rule w={62} />
-      </div>
+        {/* Two more rules, set beside the figure so the page keeps its column. */}
+        <rect x="118" y="104" width="86" height="3.5" rx="1.75" fill={INK} opacity="0.3" />
+        <rect x="118" y="116" width="58" height="3.5" rx="1.75" fill={INK} opacity="0.3" />
+      </svg>
     </div>
   );
 }
 
 /**
- * The other tool. A window, the question already asked, and the answer sliding
- * up into it from below - the way a reply actually arrives in a chat, and the
- * one motion in this shot that is not the strip itself.
+ * The other tool, and what it leaves behind.
+ *
+ * The answer rises into the window the way a reply actually lands, and is then
+ * pulled back out - and the doubt grows from exactly the place it vacated,
+ * rather than arriving as a symbol of its own. That is the point of the beat:
+ * the question mark is what the answer left.
  */
-function Chat({ p }: { p: MotionValue<number> }) {
-  // This shot owns the second beat of five. The reply lands once the strip has
-  // settled on it, so the arrival is never competing with the hand-over.
-  const rise = useTransform(p, (v) => {
-    const at = v * SHOTS - 1;
-    return glide(ramp(at, 0.12, 0.42));
-  });
-  const y = useTransform(rise, (v) => 54 - v * 54);
+function Chat({ beat }: { beat: number }) {
+  const landed = beat >= 2;
+  const gone = beat >= 3;
 
   return (
-    <div className="w-full overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-[var(--shadow-soft)]">
-      <div className="flex items-center gap-1.5 border-b border-border px-4 py-2.5">
-        <span className="h-2 w-2 rounded-full bg-border-strong/60" />
-        <span className="h-2 w-2 rounded-full bg-border-strong/40" />
-        <span className="h-2 w-2 rounded-full bg-border-strong/25" />
-        <span className="ml-1.5 h-1.5 w-16 rounded-full bg-border-strong/35" />
+    <div className="w-full overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-[var(--shadow-soft)]">
+      <div className="flex items-center gap-1.5 border-b border-border px-4 py-3">
+        <span className="h-2 w-2 rounded-full bg-border-strong/55" />
+        <span className="h-2 w-2 rounded-full bg-border-strong/35" />
+        <span className="h-2 w-2 rounded-full bg-border-strong/20" />
+        <span className="ml-1.5 h-1.5 w-14 rounded-full bg-border-strong/30" />
       </div>
 
       <div className="flex flex-col gap-3 p-4">
-        {/* The question, already sent. */}
         <div className="flex justify-end">
-          <span className="flex w-[62%] flex-col gap-1.5 rounded-2xl rounded-br-md bg-surface-muted px-3 py-2.5">
-            <Rule w={100} />
-            <Rule w={64} />
+          <span className="flex w-[58%] flex-col gap-1.5 rounded-2xl rounded-br-md bg-surface-muted px-3 py-2.5">
+            <span className="h-1.5 w-full rounded-full bg-border-strong/35" />
+            <span className="h-1.5 w-2/3 rounded-full bg-border-strong/35" />
           </span>
         </div>
 
-        {/* The reply, arriving. */}
-        <div className="h-[46px] overflow-hidden">
-          <motion.div style={{ y }} className="flex justify-start">
+        <div className="relative h-[52px] overflow-hidden">
+          {/* The answer. In from below, out the same way. */}
+          <motion.div
+            className="absolute inset-x-0 top-0 flex justify-start"
+            initial={false}
+            animate={{ y: landed && !gone ? 0 : 56, opacity: landed && !gone ? 1 : 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
+          >
             <span className="rounded-2xl rounded-bl-md border border-border bg-surface px-4 py-2.5 text-[17px] font-bold tracking-tight text-foreground">
               x = 4
+            </span>
+          </motion.div>
+
+          {/* What is left in its place. */}
+          <motion.div
+            className="absolute inset-x-0 top-0 flex justify-start"
+            initial={false}
+            animate={{ scale: gone ? 1 : 0.4, opacity: gone ? 1 : 0 }}
+            transition={{ type: "spring", stiffness: 240, damping: 20, delay: gone ? 0.12 : 0 }}
+            style={{ originX: 0.18, originY: 0.5 }}
+          >
+            <span className="flex h-[46px] w-[46px] items-center justify-center rounded-2xl border border-border bg-surface text-[22px] font-bold text-muted-foreground">
+              ?
             </span>
           </motion.div>
         </div>
@@ -229,54 +275,106 @@ function Chat({ p }: { p: MotionValue<number> }) {
   );
 }
 
-/** What is left once the answer has been carried off: nothing to hold on to. */
-function Puzzled() {
+/**
+ * The test, closing in.
+ *
+ * One object for five beats. The ring closes, the number falls, the colour
+ * turns and the whole thing tightens - and because each beat is shorter than
+ * the one before, the pressure is felt in the rhythm rather than announced by
+ * an icon. The last beat holds: the moment the clock runs out is the only
+ * still one in the act.
+ */
+const DAYS = [9, 5, 2, 1, 0];
+const R = 52;
+const C = 2 * Math.PI * R;
+
+function Countdown({ beat }: { beat: number }) {
+  const step = Math.min(Math.max(beat - 4, 0), DAYS.length - 1);
+  const days = DAYS[step];
+  const closed = 1 - days / DAYS[0];
+  const hot = step / (DAYS.length - 1);
+
+  // Neutral while it is far off, amber as it nears, red on the day.
+  const stroke =
+    hot < 0.34
+      ? "var(--color-border-strong)"
+      : hot < 0.8
+        ? "var(--color-amber-500, oklch(0.75 0.16 70))"
+        : "var(--color-red-500, oklch(0.63 0.22 25))";
+  const ink = hot < 0.34 ? "text-muted-foreground" : hot < 0.8 ? "text-amber-600" : "text-red-600";
+
   return (
-    <div className="flex h-[150px] w-full items-center justify-center">
-      <span className="flex h-[104px] w-[104px] items-center justify-center rounded-full border border-border bg-card text-[46px] font-bold text-muted-foreground/70 shadow-[var(--shadow-soft)]">
-        ?
+    <motion.div
+      className="relative flex h-[150px] w-[150px] items-center justify-center"
+      initial={false}
+      // It draws itself in a little tighter each time, then flinches on the day.
+      animate={{ scale: step === DAYS.length - 1 ? 1.06 : 1 - step * 0.015 }}
+      transition={{ type: "spring", stiffness: 320, damping: 18 }}
+    >
+      <svg viewBox="0 0 130 130" className="absolute inset-0 h-full w-full -rotate-90">
+        <circle cx="65" cy="65" r={R} fill="none" stroke="var(--color-border)" strokeWidth="5" />
+        <motion.circle
+          cx="65"
+          cy="65"
+          r={R}
+          fill="none"
+          stroke={stroke}
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeDasharray={C}
+          initial={false}
+          animate={{ strokeDashoffset: C * (1 - closed) }}
+          transition={{ type: "spring", stiffness: 120, damping: 22 }}
+        />
+      </svg>
+
+      <div className="flex flex-col items-center gap-1">
+        <CalendarDays className={`h-4 w-4 ${ink}`} />
+        {/* An odometer, not a cross-fade. The digit is pushed up out of a slot
+            by the next one - a counter that dissolves reads as a label being
+            swapped, and what has to be felt here is something being spent. */}
+        <span className="block h-[42px] overflow-hidden">
+          <motion.span
+            key={days}
+            className={`block text-[40px] font-bold leading-[42px] tracking-tight ${ink}`}
+            initial={{ y: 42 }}
+            animate={{ y: 0 }}
+            transition={{ type: "spring", stiffness: 420, damping: 30 }}
+          >
+            {days}
+          </motion.span>
+        </span>
+      </div>
+    </motion.div>
+  );
+}
+
+/** And what the answer was worth, when it was needed. */
+function Grade() {
+  return (
+    <div className="relative flex flex-col items-center">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-10 rounded-full opacity-70 blur-2xl"
+        style={{ background: "oklch(0.63 0.22 25 / 0.16)" }}
+      />
+      <span className="relative text-[68px] font-bold leading-none tracking-[-0.04em] text-red-600">
+        6
       </span>
+      <span className="relative mt-2 text-[15px] font-semibold text-muted-foreground">/ 20</span>
     </div>
   );
 }
 
-/** The date arrives whatever anyone did with the lesson. */
-function ExamDate() {
-  const { locale } = useI18n();
-  const label = new Intl.DateTimeFormat(locale, { day: "numeric", month: "long" }).format(
-    new Date(Date.now() + 9 * 86_400_000),
-  );
-  return (
-    <span className="inline-flex items-center gap-2.5 rounded-2xl border border-red-500/35 bg-red-500/10 px-5 py-3.5 text-[15px] font-bold text-red-600">
-      <CalendarDays className="h-4.5 w-4.5 shrink-0" />
-      {label}
-    </span>
-  );
-}
-
-/** And the result of having had the answer without the lesson. */
-function BadGrade() {
-  return (
-    <div className="flex flex-col items-center gap-2">
-      <span className="text-[52px] font-bold leading-none tracking-tight text-red-600">6</span>
-      <span className="text-[15px] font-semibold text-muted-foreground">/ 20</span>
-    </div>
-  );
-}
-
-/* --------------------------------------------------------------- captions */
-
-/** Three lines over five shots. They cut rather than fade: a caption that
- *  arrives with a flourish competes with the thing it is captioning. */
-const CAPTION_OF = [0, 1, 2, 2, 2];
-
-function Caption({ index, text, pos }: { index: number; text: string; pos: MotionValue<number> }) {
-  const opacity = useTransform(pos, (v) => (CAPTION_OF[Math.round(v)] === index ? 1 : 0));
-
+/** The lines cut rather than fade: one that arrives with a flourish competes
+ *  with the thing it is there to accompany. */
+function Caption({ text, on }: { text: string; on: boolean }) {
   return (
     <motion.p
-      style={{ opacity }}
       className="absolute inset-x-0 top-0 text-[15px] leading-snug text-foreground"
+      initial={false}
+      animate={{ opacity: on ? 1 : 0 }}
+      transition={{ duration: 0.001 }}
     >
       {text}
     </motion.p>

@@ -252,9 +252,10 @@ export const en = {
     title: "Answers are not the same as understanding.",
     subtitle: "Other AIs do the work for you. Forma teaches you to do it.",
     items: [
-      "You open your lesson. Nothing goes in.",
-      "You ask an AI. It gives you the answer, not the idea.",
-      "The test arrives. You still have not understood.",
+      "You read it again. Nothing stays.",
+      "The answer arrives. The idea does not.",
+      "And the test keeps coming.",
+      "Too late to learn it now.",
     ],
   },
   how: {

@@ -257,9 +257,10 @@ export const de: Dict = {
     subtitle:
       "Andere KIs erledigen die Arbeit für dich. Forma bringt dir bei, sie selbst zu machen.",
     items: [
-      "Du schlägst dein Heft auf. Nichts bleibt hängen.",
-      "Du fragst eine KI. Sie gibt dir die Antwort, nicht den Gedanken.",
-      "Die Klassenarbeit kommt. Verstanden hast du es immer noch nicht.",
+      "Du liest es nochmal. Nichts bleibt.",
+      "Die Antwort kommt. Der Gedanke nicht.",
+      "Und die Klassenarbeit rückt näher.",
+      "Zu spät, um es zu verstehen.",
     ],
   },
   how: {

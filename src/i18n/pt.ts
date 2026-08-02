@@ -253,9 +253,10 @@ export const pt: Dict = {
     title: "Ter a resposta não é perceber.",
     subtitle: "As outras IA fazem o trabalho por ti. A Forma ensina-te a fazê-lo.",
     items: [
-      "Abres a tua lição. Não entra nada.",
-      "Perguntas a uma IA. Dá-te a resposta, não a ideia.",
-      "Chega o teste. Continuas sem perceber.",
+      "Voltas a ler. Não fica nada.",
+      "A resposta chega. A ideia não.",
+      "E o teste aproxima-se.",
+      "Tarde demais para perceber.",
     ],
   },
   how: {
