@@ -1,7 +1,11 @@
 // The official Forma logo, bundled by Vite so it resolves in every
 // environment. The remote asset URL in forma-logo.asset.json only serves
 // from Lovable's host, so it 404s in local dev and on other deploys.
-import logoUrl from "@/assets/forma-logo.jpeg";
+//
+// 96px, because the largest this is ever drawn is 28 CSS pixels and the build
+// preloads it: the original was a 658px, 28KB source fetched eagerly on every
+// page to be painted into a 28px box. Same picture, a tenth of the bytes.
+import logoUrl from "@/assets/forma-mark.jpg";
 
 export function Logo({
   size = 28,

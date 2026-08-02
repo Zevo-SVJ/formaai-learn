@@ -16,6 +16,7 @@ import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { absoluteUrl } from "@/lib/site";
 import { loadAccount } from "@/lib/account";
+import { landingSchema } from "@/lib/schema";
 import {
   Accordion,
   AccordionContent,
@@ -35,6 +36,15 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: absoluteUrl("/") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/") }],
+    // Everything the page already says, in the form a crawler can read. It is
+    // server-rendered, which is the only form that counts: Google's first pass
+    // does not run scripts.
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(landingSchema()),
+      },
+    ],
   }),
   component: Landing,
 });

@@ -120,8 +120,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.jpg", type: "image/x-icon" },
-      { rel: "apple-touch-icon", href: "/favicon.jpg" },
+      // The type has to match the file. It claimed image/x-icon for a JPEG,
+      // which some crawlers and older browsers take at face value and then
+      // fail to decode.
+      { rel: "icon", href: "/favicon.jpg", type: "image/jpeg" },
+      { rel: "icon", href: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { rel: "icon", href: "/icon-512.png", type: "image/png", sizes: "512x512" },
+      // iOS ignores the manifest for the home-screen icon and reads this.
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
