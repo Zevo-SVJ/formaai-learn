@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as CookiesRouteImport } from './routes/cookies'
@@ -36,6 +37,11 @@ const TermsRoute = TermsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/cookies': typeof CookiesRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/cookies': typeof CookiesRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/cookies': typeof CookiesRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/onboarding'
     | '/privacy'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/terms'
     | '/home'
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/onboarding'
     | '/privacy'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/terms'
     | '/home'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/cookies'
     | '/onboarding'
     | '/privacy'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/home'
@@ -249,6 +261,7 @@ export interface RootRouteChildren {
   CookiesRoute: typeof CookiesRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -268,6 +281,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -417,6 +437,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookiesRoute: CookiesRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   ApiChatRoute: ApiChatRoute,

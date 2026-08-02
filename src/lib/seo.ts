@@ -1,3 +1,13 @@
+// Imported rather than dropped in public/, and that is the whole fix for the
+// caching problem. Vite emits an imported asset with a hash of its contents in
+// the filename, so the day this picture changes its URL changes with it and
+// every platform sees an address it has never fetched. A file in public/ keeps
+// one address for ever, which is why /og.png went stale everywhere: the
+// platforms were not misbehaving, they were being told nothing had changed.
+//
+// It also lands under /assets/, which the build already serves as immutable -
+// safe to cache for a year precisely because the URL is content-addressed.
+import ogImage from "@/assets/og.png";
 import { absoluteUrl } from "@/lib/site";
 
 /**
@@ -31,8 +41,13 @@ export const SOCIAL_TITLE = "Understand every lesson. Not just the answer.";
 export const SOCIAL_DESCRIPTION =
   "Upload a lesson, a worksheet or a photo of your notes. Forma explains it in words that make sense, then turns it into cards and quizzes to revise from.";
 
-/** 1200x630, rendered from the landing's own type, colour and product UI. */
-export const OG_IMAGE = absoluteUrl("/og.png");
+/**
+ * 1200x630, rendered from the landing's own type, colour and product UI.
+ *
+ * Replacing the picture is the whole update: rebuild, and the hash, the URL and
+ * every tag below follow. There is no version number to remember to bump.
+ */
+export const OG_IMAGE = absoluteUrl(ogImage);
 export const OG_IMAGE_ALT =
   "Forma AI: understand every lesson, not just the answer. A phone showing a lesson turned into cards, a quiz and progress over time.";
 
