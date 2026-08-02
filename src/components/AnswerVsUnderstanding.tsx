@@ -9,6 +9,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { Check } from "lucide-react";
+import { glide, ramp, settle } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { Logo } from "@/components/Logo";
 import { sectionIcon } from "@/components/AnalysisCards";
@@ -51,13 +52,6 @@ const ANSWER_H = 42;
 const STRIP_H = 34;
 const STRIP_GAP = 6;
 
-/** Clamped ramp between two points of the run. */
-const ramp = (v: number, from: number, to: number) =>
-  Math.min(1, Math.max(0, (v - from) / (to - from)));
-
-/** Everything moving here eases out; nothing in this section should arrive at speed. */
-const ease = (v: number) => 1 - Math.pow(1 - v, 3);
-
 export function AnswerVsUnderstanding() {
   const { t } = useI18n();
   const ref = useRef<HTMLDivElement>(null);
@@ -79,7 +73,7 @@ export function AnswerVsUnderstanding() {
     return () => c.stop();
   }, [inView, p, reduceMotion]);
 
-  const drop = useTransform(p, (v) => ease(ramp(v, 0, 0.18)));
+  const drop = useTransform(p, (v) => settle(ramp(v, 0, 0.18)));
 
   return (
     <div ref={ref} className="mx-auto max-w-3xl">
@@ -113,7 +107,7 @@ export function AnswerVsUnderstanding() {
 function Question({ drop }: { drop: MotionValue<number> }) {
   const { t } = useI18n();
   const y = useTransform(drop, (v) => -22 + v * 22);
-  const opacity = useTransform(drop, (v) => v);
+  const opacity = useTransform(drop, (v) => Math.min(1, v));
 
   return (
     <motion.div
@@ -147,7 +141,7 @@ function Column({
 
   // The half of the question that came here: it travels down and settles into
   // the answer slot, widening as it goes. Same element, start to finish.
-  const travel = useTransform(p, (v) => ease(ramp(v, 0.2, 0.46)));
+  const travel = useTransform(p, (v) => settle(ramp(v, 0.2, 0.46)));
   const tokenY = useTransform(travel, (v) => TOKEN_TOP + v * (ANSWER_TOP - TOKEN_TOP));
   // Wide enough from the start to keep what is riding behind it out of sight:
   // occlusion only reads as occlusion if the cover is bigger than the covered.
@@ -157,12 +151,14 @@ function Column({
 
   // The answer's own text only belongs to it once it has stopped being the
   // question, so it is uncovered by the tile settling rather than faded on.
-  const settled = useTransform(p, (v) => ease(ramp(v, 0.4, 0.52)));
+  const settled = useTransform(p, (v) => glide(ramp(v, 0.4, 0.52)));
 
   // The left column is stopped: a rule is drawn under its answer, edge to edge.
   // The right column is not, and its explanation pushes out from behind.
-  const close = useTransform(p, (v) => ease(ramp(v, 0.56, 0.78)));
-  const dim = useTransform(p, (v) => 1 - ease(ramp(v, 0.6, 0.9)) * 0.55);
+  // A rule being drawn, not an object landing: it must stop exactly at the
+  // column's edge.
+  const close = useTransform(p, (v) => glide(ramp(v, 0.56, 0.78)));
+  const dim = useTransform(p, (v) => 1 - glide(ramp(v, 0.6, 0.9)) * 0.55);
 
   return (
     <motion.div
@@ -283,8 +279,8 @@ function Strip({
   // keeps it hidden: a strip parked where the answer will land is a strip the
   // reader sees before anything has covered it.
   const y = useTransform(p, (v) => {
-    const carried = TOKEN_TOP + ease(ramp(v, 0.2, 0.46)) * (ANSWER_TOP - TOKEN_TOP);
-    const out = ease(ramp(v, start, start + 0.2));
+    const carried = TOKEN_TOP + settle(ramp(v, 0.2, 0.46)) * (ANSWER_TOP - TOKEN_TOP);
+    const out = settle(ramp(v, start, start + 0.2));
     return carried + out * (ANSWER_H + 12 + index * (STRIP_H + STRIP_GAP));
   });
   const Icon = sectionIcon(meta.key);

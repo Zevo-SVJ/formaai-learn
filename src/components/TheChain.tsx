@@ -9,6 +9,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { CalendarDays } from "lucide-react";
+import { glide, ramp, settle } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 /**
@@ -35,16 +36,12 @@ import { useI18n } from "@/hooks/useI18n";
  * is being watched.
  */
 
-const RUN_S = 7.4;
+const RUN_S = 6;
 const PAD = 18;
 const ROW = 22;
 const LINES = ["l1", "l2", "k1", "l3", "l4"] as const;
 const PAGE_H = PAD * 2 + LINES.length * ROW;
 const STAGE_H = PAGE_H + 86;
-
-const ramp = (v: number, from: number, to: number) =>
-  Math.min(1, Math.max(0, (v - from) / (to - from)));
-const ease = (v: number) => 1 - Math.pow(1 - v, 3);
 
 /** Which caption is being watched. The beats are the sequence's own phases. */
 const BEATS: Array<[number, number]> = [
@@ -134,8 +131,8 @@ function Answer({ p }: { p: MotionValue<number> }) {
   const hidden = PAGE_H + 8;
 
   const y = useTransform(p, (v) => {
-    const inn = ease(ramp(v, 0.18, 0.36));
-    const out = ease(ramp(v, 0.76, 0.92));
+    const inn = settle(ramp(v, 0.18, 0.36));
+    const out = glide(ramp(v, 0.76, 0.92));
     return hidden + inn * (rest - hidden) - out * (rest - hidden);
   });
 
@@ -177,8 +174,8 @@ function DueDate({ p }: { p: MotionValue<number> }) {
   // In from the right and back out the same way. It is clipped by the stage,
   // so it is offstage rather than invisible.
   const x = useTransform(p, (v) => {
-    const inn = ease(ramp(v, 0.46, 0.62));
-    const out = ease(ramp(v, 0.82, 0.94));
+    const inn = settle(ramp(v, 0.46, 0.62));
+    const out = glide(ramp(v, 0.82, 0.94));
     // Wide enough to clear the stage: the pill is centred, so half the stage
     // plus its own half-width is the least that puts it properly offstage.
     const OFF = 260;

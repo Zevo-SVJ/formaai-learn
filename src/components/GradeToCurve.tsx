@@ -9,6 +9,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { glide, ramp, settle } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 
 /**
@@ -60,10 +61,6 @@ const AREA = `${path(PTS)} L${LAST[0].toFixed(1)} ${H - P} L${PTS[0][0].toFixed(
 
 const RUN_S = 4.2;
 
-const ramp = (v: number, from: number, to: number) =>
-  Math.min(1, Math.max(0, (v - from) / (to - from)));
-const ease = (v: number) => 1 - Math.pow(1 - v, 3);
-
 export function GradeToCurve() {
   const { t, raw, locale } = useI18n();
   const reduceMotion = useReducedMotion();
@@ -95,10 +92,10 @@ export function GradeToCurve() {
   // The history draws, then waits. The gap between it finishing and the grade
   // arriving is deliberate: an unfinished curve is what makes the arrival read
   // as an arrival rather than as more decoration.
-  const history = useTransform(p, (v) => ease(ramp(v, 0.04, 0.34)));
-  const area = useTransform(p, (v) => ease(ramp(v, 0.26, 0.5)));
-  const join = useTransform(p, (v) => ease(ramp(v, 0.66, 0.82)));
-  const dot = useTransform(p, (v) => ease(ramp(v, 0.58, 0.68)));
+  const history = useTransform(p, (v) => glide(ramp(v, 0.04, 0.34)));
+  const area = useTransform(p, (v) => glide(ramp(v, 0.26, 0.5)));
+  const join = useTransform(p, (v) => glide(ramp(v, 0.66, 0.82)));
+  const dot = useTransform(p, (v) => glide(ramp(v, 0.58, 0.68)));
   // A round line cap on a path of zero length is still painted, so an
   // undrawn curve leaves a dot sitting at its origin. These cut the paths in
   // at the instant their draw starts - a step, not a fade.
@@ -221,7 +218,7 @@ export function GradeToCurve() {
  * number that was there.
  */
 function GradeTile({ p, label }: { p: MotionValue<number>; label: string }) {
-  const travel = useTransform(p, (v) => ease(ramp(v, 0.42, 0.64)));
+  const travel = useTransform(p, (v) => settle(ramp(v, 0.42, 0.64)));
 
   // Positioned in percentages of the plot box, so it lands on the point at any
   // rendered size - the SVG scales, and nothing here is measured at runtime.
@@ -283,7 +280,7 @@ function Point({
 function Average({ p, format }: { p: MotionValue<number>; format: (n: number) => string }) {
   const from = 12.4;
   const to = 14.2;
-  const count = useTransform(p, (v) => from + ease(ramp(v, 0.68, 0.94)) * (to - from));
+  const count = useTransform(p, (v) => from + glide(ramp(v, 0.68, 0.94)) * (to - from));
   // Seeded from the value rather than from `from`: "change" only fires on a
   // change, so a clock that is already at its end - reduced motion, or a
   // remount after the run - would otherwise be stuck showing the old average
@@ -314,7 +311,7 @@ function SubjectRow({
   format: (n: number) => string;
 }) {
   const start = 0.72 + index * 0.06;
-  const grow = useTransform(p, (v) => ease(ramp(v, start, start + 0.2)) * (value / MAX));
+  const grow = useTransform(p, (v) => glide(ramp(v, start, start + 0.2)) * (value / MAX));
 
   return (
     <div className="flex items-center gap-3">
