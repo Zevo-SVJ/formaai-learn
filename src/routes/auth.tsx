@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { cachedAccount } from "@/lib/account";
+import { loadAccount } from "@/lib/account";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ArrowLeft, Eye, EyeOff, Ticket } from "lucide-react";
@@ -44,13 +44,16 @@ function Auth() {
   const navigate = useNavigate();
   const { t } = useI18n();
 
-  // If onboarding completed, default to signup; otherwise sign in.
+  // Sign in unless told otherwise. Onboarding sends people here with
+  // ?mode=signup, which is the one case that wants the other form; everybody
+  // else arriving at this screen is coming back, and guessing otherwise from
+  // local state is how a returning student was shown a sign-up page for an
+  // account they already had.
   const initialMode: "signup" | "signin" = (() => {
     try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("mode") === "signup") return "signup";
-      if (params.get("mode") === "signin") return "signin";
-      return cachedAccount().stage === "visitor" ? "signin" : "signup";
+      return new URLSearchParams(window.location.search).get("mode") === "signup"
+        ? "signup"
+        : "signin";
     } catch {
       return "signin";
     }
@@ -70,14 +73,11 @@ function Auth() {
       .getUser()
       .then(({ data }) => {
         if (!data.user) return;
-        const onboarded = (() => {
-          try {
-            return cachedAccount().stage !== "visitor";
-          } catch {
-            return true;
-          }
-        })();
-        navigate({ to: onboarded ? "/home" : "/onboarding" });
+        // Asked, not guessed. Only an account that has just been created and
+        // owes setup goes to setup; anyone already signed in goes to the app.
+        void loadAccount().then(({ stage }) => {
+          navigate({ to: stage === "onboarding" ? "/onboarding" : "/home" });
+        });
       })
       // Leaving this rejection unhandled would strand the visitor on a sign-in
       // form that never reacts. Staying put is the right fallback: the form

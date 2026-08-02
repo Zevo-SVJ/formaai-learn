@@ -20,9 +20,11 @@ import { supabase } from "@/integrations/supabase/client";
  * whether a setup screen is shown; forging it only lets someone skip questions
  * they were free to skip anyway.
  *
- * localStorage stays, but only as a mirror - it makes the first paint after a
- * reload correct instead of blank, and is overwritten by the account's answer
- * the moment that arrives.
+ * localStorage keeps a copy, but nothing routes on it. A stored guess is what
+ * caused the outage this module now guards against: the landing wrote
+ * "visitor" into it on every visit, and the screens that read it synchronously
+ * believed that about people who were signed in. It exists so a legacy install
+ * and a rollback stay coherent, and for nothing else.
  */
 
 export type Stage =
@@ -70,21 +72,21 @@ function writeMirror(a: Account) {
   }
 }
 
-/** The last answer this browser saw. Right often enough to render with, and
- *  never used to decide anything the server has since answered. */
-export function cachedAccount(): Account {
-  if (typeof window === "undefined") return { stage: "visitor", userId: null, answers: {} };
-  const m = readMirror();
-  if (m) return m;
-  // Somebody who onboarded before this existed. Believe the old key rather
-  // than send them round again, and let the server correct it in a moment.
-  const legacy = window.localStorage.getItem(LEGACY_DONE) === "1";
-  return { stage: legacy ? "ready" : "visitor", userId: null, answers: {} };
-}
-
 /** What onboarding writes onto the auth user. */
 const DONE_AT = "forma_onboarded_at";
 const ANSWERS = "forma_onboarding_answers";
+
+/**
+ * How new an account has to be for "no completion marker" to mean "has not been
+ * through setup" rather than "predates the marker".
+ *
+ * This is the whole safety of the thing. The marker was introduced today, so no
+ * account that existed before it carries one, and treating its absence as
+ * "never onboarded" reclassified every existing student as brand new and sent
+ * them all back through setup. Absence only means something on an account
+ * young enough to have been created after the marker existed.
+ */
+const NEW_ACCOUNT_MS = 15 * 60_000;
 
 /**
  * Asks the account itself.
@@ -96,10 +98,12 @@ const ANSWERS = "forma_onboarding_answers";
 export async function loadAccount(): Promise<Account> {
   let meta: Record<string, unknown> | null = null;
   let userId: string | null = null;
+  let createdAt: string | null = null;
   try {
     const { data, error } = await supabase.auth.getUser();
     if (!error && data.user) {
       userId = data.user.id;
+      createdAt = data.user.created_at ?? null;
       meta = (data.user.user_metadata ?? {}) as Record<string, unknown>;
     }
   } catch {
@@ -113,11 +117,35 @@ export async function loadAccount(): Promise<Account> {
     return out;
   }
 
-  const out: Account = {
-    stage: meta?.[DONE_AT] ? "ready" : "onboarding",
-    userId,
-    answers: (meta?.[ANSWERS] as Record<string, unknown>) ?? {},
-  };
+  const answers = (meta?.[ANSWERS] as Record<string, unknown>) ?? {};
+
+  // Settled, and nothing else needs asking.
+  if (meta?.[DONE_AT]) {
+    const out: Account = { stage: "ready", userId, answers };
+    writeMirror(out);
+    return out;
+  }
+
+  // No marker. The default is "ready", deliberately: being sent to the app when
+  // setup was owed costs a student some personalisation, being sent to setup
+  // when it was not owed locks them out of an account they already have. Only
+  // an account created moments ago - which is to say, one that has just signed
+  // up - is treated as still owing it.
+  const bornAt = createdAt ? Date.parse(createdAt) : 0;
+  const isNew = bornAt > 0 && Date.now() - bornAt < NEW_ACCOUNT_MS;
+
+  if (isNew) {
+    const out: Account = { stage: "onboarding", userId, answers };
+    writeMirror(out);
+    return out;
+  }
+
+  // An established account with no marker predates it. Write one, so this is
+  // decided from the account itself from now on rather than from its age.
+  void supabase.auth.updateUser({ data: { [DONE_AT]: new Date().toISOString() } }).catch(() => {
+    // The mirror still carries it; the next sign-in will try again.
+  });
+  const out: Account = { stage: "ready", userId, answers };
   writeMirror(out);
   return out;
 }
@@ -153,7 +181,8 @@ export async function flushPendingOnboarding(): Promise<boolean> {
   }
   if (!pending) return false;
 
-  await completeOnboarding(answers);
+  const written = await completeOnboarding(answers);
+  if (!written) return false;
   try {
     window.localStorage.removeItem(PENDING);
   } catch {
@@ -180,13 +209,14 @@ export function markOnboardingPending(answers: Record<string, unknown>) {
  * the student still gets through - being shown onboarding twice is a bad day,
  * being stuck in it is a lost account.
  */
-export async function completeOnboarding(answers: Record<string, unknown>) {
+export async function completeOnboarding(answers: Record<string, unknown>): Promise<boolean> {
   const { data } = await supabase.auth.getUser();
   const userId = data.user?.id ?? null;
   writeMirror({ stage: userId ? "ready" : "visitor", userId, answers });
 
-  if (!userId) return;
+  if (!userId) return false;
   await supabase.auth.updateUser({
     data: { [DONE_AT]: new Date().toISOString(), [ANSWERS]: answers },
   });
+  return true;
 }

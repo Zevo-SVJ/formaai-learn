@@ -17,7 +17,12 @@ import {
 } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { CardsTour } from "@/components/CardsTour";
-import { loadAccount, markOnboardingPending, saveOnboardingAnswers } from "@/lib/account";
+import {
+  flushPendingOnboarding,
+  loadAccount,
+  markOnboardingPending,
+  saveOnboardingAnswers,
+} from "@/lib/account";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -72,11 +77,18 @@ function Onboarding() {
   };
 
   const finish = () => {
-    // Held until there is an account to attach it to. Sign-up is the next
-    // screen, and the first SIGNED_IN after it writes this to the profile.
-    markOnboardingPending(answers as Record<string, unknown>);
     track("onboarding_completed");
-    navigate({ to: "/auth", search: { mode: "signup" } as never });
+    // Held for the usual case, where onboarding runs before there is an account
+    // and sign-up is the next screen.
+    markOnboardingPending(answers as Record<string, unknown>);
+
+    // But it can also be reached with a session already in hand - somebody who
+    // signed up straight from the auth screen and was sent here to finish
+    // setting up. Sending them to sign up would bounce them back here from a
+    // screen that redirects anyone already signed in, and round again.
+    void flushPendingOnboarding().then((written) => {
+      navigate(written ? { to: "/home" } : { to: "/auth", search: { mode: "signup" } as never });
+    });
   };
 
   const totalSteps = 8; // Q1, insight1, Q2, Q3, insight2, Q4, loading, cards

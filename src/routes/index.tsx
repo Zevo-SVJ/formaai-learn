@@ -49,6 +49,7 @@ function Landing() {
   useEffect(() => {
     void loadAccount().then(({ stage }) => {
       if (stage === "ready") navigate({ to: "/home", replace: true });
+      else if (stage === "onboarding") navigate({ to: "/onboarding", replace: true });
     });
   }, [navigate]);
 

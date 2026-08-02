@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { cachedAccount } from "@/lib/account";
+import { loadAccount } from "@/lib/account";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AnimatePresence, motion } from "framer-motion";
@@ -135,14 +135,17 @@ function Home() {
     ? t((d) => d.home.greet[g.key], { name: capitalize(greetName), count: g.count ?? 0 })
     : t((d) => d.home.greetAnon[g.key], { count: g.count ?? 0 });
 
+  // Setup is offered once, to an account that has just been created and has not
+  // been through it. Everything else stays here.
+  //
+  // This asks the account and waits for the answer. It used to read the local
+  // mirror synchronously, which is a guess made before anyone has been asked -
+  // and since the landing writes "visitor" into that mirror on every visit,
+  // the guess was wrong for exactly the people who must never see setup again.
   useEffect(() => {
-    // If user hasn't done onboarding, take them through it once.
-    try {
-      const done = cachedAccount().stage === "ready" ? "1" : null;
-      if (!done) navigate({ to: "/onboarding" });
-    } catch {
-      // ignore
-    }
+    void loadAccount().then(({ stage }) => {
+      if (stage === "onboarding") navigate({ to: "/onboarding", replace: true });
+    });
   }, [navigate]);
 
   const favorites = useMemo(() => (data ?? []).filter((d) => d.favorite).slice(0, 4), [data]);
