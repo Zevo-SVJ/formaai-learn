@@ -122,6 +122,7 @@ export const it: Dict = {
     remove: "Elimina",
     otherDecks: "Mazzi di questa lezione",
     analysisDeck: "Dall'analisi",
+    regenerate: "Un altro quiz?",
   },
   collections: {
     title: "Raccolte di analisi",
@@ -554,12 +555,19 @@ export const it: Dict = {
       quiz: "Crea un quiz",
       method: "Mostrami il metodo",
       summary: "Riassumi",
+      difficulty: {
+        pick: "Che livello?",
+        easy: "Facile",
+        medium: "Medio",
+        hard: "Difficile",
+        expert: "Esperto",
+      },
       prompts: {
         simpler:
           "Spiega la tua ultima risposta in modo più semplice, per chi è alle prime armi con l'argomento.",
         example: "Fai un esempio concreto e svolto che illustri la tua ultima risposta.",
         revision: "Crea una scheda di ripasso chiara a partire dalla tua ultima risposta.",
-        quiz: "Crea un quiz di 3 domande sulla tua ultima risposta. Fanne una alla volta e aspetta la mia risposta.",
+        quiz: "Genera un quiz di livello {{level}} con {{count}} domande sulla tua ultima risposta. Adatta la complessità e la profondità delle spiegazioni a quel livello. Falle una alla volta e aspetta la mia risposta ogni volta.",
       },
     },
     sections: {

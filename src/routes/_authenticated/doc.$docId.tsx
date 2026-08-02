@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { getDocument, getSignedFileUrl, analyzeDocument } from "@/lib/documents.functions";
 import { Logo } from "@/components/Logo";
 import { AnalysisCeremony } from "@/components/AnalysisCeremony";
-import { AnswersPanel } from "@/components/AnswersPanel";
 import { useI18n } from "@/hooks/useI18n";
 import { classifyError } from "@/lib/error-message";
 import {
@@ -190,9 +189,6 @@ function DocPage() {
 
         {showResults && doc && (
           <div className="space-y-5">
-            {doc.explanation?.answers && doc.explanation.answers.length > 0 && (
-              <AnswersPanel answers={doc.explanation.answers} />
-            )}
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
               <DocumentViewer doc={doc} fileUrl={fileUrl} />
               <ExplanationPanel doc={doc} />
@@ -260,11 +256,27 @@ function ExplanationPanel({ doc }: { doc: Doc }) {
   // cards, the reader and the two ways to keep them all live in AnalysisCards,
   // so a saved collection replays exactly this experience rather than a copy of
   // it that has to be kept in step.
+  // Every answer as one card, in the order the analysis produced them. Keeping
+  // them inside the deck rather than above it means the whole lesson is read
+  // the same way: one card at a time, swipe for the next. The label and its
+  // question stay attached to the answer, so a card still stands alone.
+  const answersText = (exp.answers ?? [])
+    .map((a, i) =>
+      [`${a.label || i + 1}. ${a.question}`.trim(), a.answer].filter(Boolean).join("\n"),
+    )
+    .join("\n\n");
+
   const sections: Section[] = [
+    answersText && {
+      key: "answers",
+      title: t((d) => d.doc.sections.answer),
+      tone: "emerald" as const,
+      text: answersText,
+    },
     exp.explanation && {
       key: "explanation",
       title: t((d) => d.doc.sections.explanation),
-      tone: "emerald" as const,
+      tone: answersText ? ("default" as const) : ("emerald" as const),
       text: exp.explanation,
     },
     exp.why && {
@@ -314,6 +326,7 @@ function ExplanationPanel({ doc }: { doc: Doc }) {
       <Link
         to="/doc/$docId/chat"
         params={{ docId: doc.id }}
+        search={{ quiz: undefined }}
         onClick={() => track("tutor_opened")}
         className="group flex items-center gap-4 rounded-3xl border border-emerald/25 bg-card p-5 shadow-[var(--shadow-soft)] transition hover:border-emerald/40 hover:shadow-[var(--shadow-lift)]"
       >

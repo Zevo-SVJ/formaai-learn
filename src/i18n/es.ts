@@ -122,6 +122,7 @@ export const es: Dict = {
     remove: "Eliminar",
     otherDecks: "Mazos de esta lección",
     analysisDeck: "Del análisis",
+    regenerate: "¿Otro cuestionario?",
   },
   collections: {
     title: "Colecciones de análisis",
@@ -548,12 +549,19 @@ export const es: Dict = {
       quiz: "Hazme un test",
       method: "Enséñame el método",
       summary: "Resúmelo",
+      difficulty: {
+        pick: "¿Qué nivel?",
+        easy: "Fácil",
+        medium: "Medio",
+        hard: "Difícil",
+        expert: "Experto",
+      },
       prompts: {
         simpler:
           "Explica tu última respuesta de forma más sencilla, para alguien que empieza con el tema.",
         example: "Pon un ejemplo concreto y resuelto que ilustre tu última respuesta.",
         revision: "Crea una ficha de repaso clara a partir de tu última respuesta.",
-        quiz: "Hazme un test de 3 preguntas sobre tu última respuesta. Una cada vez y espera mi respuesta.",
+        quiz: "Genera un cuestionario de nivel {{level}} con {{count}} preguntas sobre tu última respuesta. Ajusta la complejidad y la profundidad de las explicaciones a ese nivel. Hazlas una a una y espera mi respuesta cada vez.",
       },
     },
     sections: {

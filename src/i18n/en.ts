@@ -120,6 +120,7 @@ export const en = {
     remove: "Delete",
     otherDecks: "Decks for this lesson",
     analysisDeck: "From the analysis",
+    regenerate: "Another quiz?",
   },
   collections: {
     title: "Analysis collections",
@@ -547,11 +548,18 @@ export const en = {
       quiz: "Generate a quiz",
       method: "Show the method",
       summary: "Summarise",
+      difficulty: {
+        pick: "Which level?",
+        easy: "Easy",
+        medium: "Medium",
+        hard: "Hard",
+        expert: "Expert",
+      },
       prompts: {
         simpler: "Explain your last answer in a simpler way, for someone new to the topic.",
         example: "Give a concrete, worked example that illustrates your last answer.",
         revision: "Create a clean revision sheet from your last answer.",
-        quiz: "Generate a 3-question quiz focused on your last answer. Ask one at a time and wait for my answer.",
+        quiz: "Generate a {{level}} quiz with {{count}} questions on your last answer. Match the complexity and the depth of the explanations to that level. Ask them one at a time and wait for my answer each time.",
       },
     },
     sections: {

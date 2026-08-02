@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
+  CheckCircle2,
   GraduationCap,
   Lightbulb,
   AlertTriangle,
@@ -35,6 +36,7 @@ export type Section = {
  * key and looks the icon back up.
  */
 const SECTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  answers: CheckCircle2,
   explanation: GraduationCap,
   why: Lightbulb,
   common_mistake: AlertTriangle,

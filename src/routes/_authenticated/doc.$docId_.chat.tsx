@@ -9,7 +9,7 @@ import { getDocument, getMessages } from "@/lib/documents.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { ResourceHandoff } from "@/components/ResourceHandoff";
 import { Logo } from "@/components/Logo";
-import { QuickActionsBar, useQuickActions } from "@/components/QuickActionsBar";
+import { QuickActionsBar, useQuickActions, QUIZ_LEVELS } from "@/components/QuickActionsBar";
 import { EASE } from "@/lib/motion";
 import { pickGreeting } from "@/lib/greeting";
 import { useI18n } from "@/hooks/useI18n";
@@ -20,6 +20,11 @@ import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/doc/$docId_/chat")({
   component: ChatPage,
+  // `?quiz=<level>` lets the end of a quiz ask for the next one without the
+  // student having to walk back and find the button again.
+  validateSearch: (s: Record<string, unknown>) => ({
+    quiz: typeof s.quiz === "string" ? s.quiz : undefined,
+  }),
 });
 
 type DocLite = {
@@ -130,6 +135,30 @@ function ChatPage() {
 
   const [input, setInput] = useState("");
   const quickActions = useQuickActions();
+
+  // Arriving with a level asked for means a quiz was just finished and another
+  // was wanted. It is sent once, and the parameter is dropped from the URL so
+  // going back or refreshing does not silently start a third one.
+  const { quiz: quizLevel } = Route.useSearch();
+  const quizRequested = useRef(false);
+  useEffect(() => {
+    if (!quizLevel || quizRequested.current || isBusy) return;
+    quizRequested.current = true;
+    const level = QUIZ_LEVELS.find((l) => l.id === quizLevel) ?? QUIZ_LEVELS[1];
+    void submit(
+      t((d) => d.doc.quickActions.prompts.quiz, {
+        level: t((d) => d.doc.quickActions.difficulty[level.id]),
+        count: level.count,
+      }),
+    );
+    navigate({
+      to: "/doc/$docId/chat",
+      params: { docId },
+      search: { quiz: undefined },
+      replace: true,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fires once, on arrival
+  }, [quizLevel, isBusy]);
 
   const submit = async (text: string) => {
     const clean = text.trim();

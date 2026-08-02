@@ -122,6 +122,7 @@ export const fr: Dict = {
     remove: "Supprimer",
     otherDecks: "Decks de cette leçon",
     analysisDeck: "Issu de l'analyse",
+    regenerate: "Un autre quiz ?",
   },
   collections: {
     title: "Collections d'analyses",
@@ -549,12 +550,19 @@ export const fr: Dict = {
       quiz: "Fais-moi un quiz",
       method: "Montre la méthode",
       summary: "Résume",
+      difficulty: {
+        pick: "Quel niveau ?",
+        easy: "Facile",
+        medium: "Moyen",
+        hard: "Difficile",
+        expert: "Expert",
+      },
       prompts: {
         simpler:
           "Réexplique-moi ta dernière réponse plus simplement, comme à quelqu'un qui découvre le sujet.",
         example: "Donne un exemple concret et détaillé qui illustre ta dernière réponse.",
         revision: "Crée-moi une fiche de révision claire à partir de ta dernière réponse.",
-        quiz: "Génère un quiz de 3 questions ciblées sur ta dernière réponse. Pose-les une par une et attends ma réponse à chaque fois.",
+        quiz: "Génère un quiz de niveau {{level}} avec {{count}} questions ciblées sur ta dernière réponse. Adapte la complexité et la profondeur des explications à ce niveau. Pose les questions une par une et attends ma réponse à chaque fois.",
       },
     },
     sections: {

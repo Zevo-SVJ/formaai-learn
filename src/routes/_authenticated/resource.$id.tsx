@@ -8,6 +8,7 @@ import { ExplanationDeck } from "@/components/ExplanationDeck";
 import { ExplanationCard, sectionIcon } from "@/components/AnalysisCards";
 import { CardDetail, type DetailCard } from "@/components/CardDetail";
 import { useResources } from "@/hooks/useResources";
+import { QUIZ_LEVELS } from "@/components/QuickActionsBar";
 import { removeResource, type QuizQuestion, type Resource } from "@/lib/resources";
 import { useI18n } from "@/hooks/useI18n";
 import { EASE } from "@/lib/motion";
@@ -35,7 +36,11 @@ function ResourcePage() {
   // the library instead loses the thread they were in the middle of.
   const leave = () => {
     if (resource?.sourceId) {
-      navigate({ to: "/doc/$docId/chat", params: { docId: resource.sourceId } });
+      navigate({
+        to: "/doc/$docId/chat",
+        params: { docId: resource.sourceId },
+        search: { quiz: undefined },
+      });
       return;
     }
     navigate({ to: "/library" });
@@ -84,7 +89,19 @@ function ResourcePage() {
             </div>
 
             {resource.kind === "quiz" ? (
-              <Quiz questions={resource.questions ?? []} />
+              <Quiz
+                questions={resource.questions ?? []}
+                onRegenerate={
+                  resource.sourceId
+                    ? (level) =>
+                        navigate({
+                          to: "/doc/$docId/chat",
+                          params: { docId: resource.sourceId as string },
+                          search: { quiz: level },
+                        })
+                    : undefined
+                }
+              />
             ) : resource.kind === "sheet" ? (
               <Sheet body={resource.body ?? ""} />
             ) : (
@@ -105,7 +122,14 @@ function ResourcePage() {
  * form to fill in, and hiding the reason would make it a score rather than
  * something learned.
  */
-function Quiz({ questions }: { questions: QuizQuestion[] }) {
+function Quiz({
+  questions,
+  onRegenerate,
+}: {
+  questions: QuizQuestion[];
+  /** Absent when the quiz has no lesson to go back to. */
+  onRegenerate?: (level: string) => void;
+}) {
   const { t } = useI18n();
   const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
@@ -138,6 +162,25 @@ function Quiz({ questions }: { questions: QuizQuestion[] }) {
           <RotateCcw className="h-3.5 w-3.5" />
           {t((d) => d.resources.again)}
         </button>
+
+        {onRegenerate && (
+          <div className="mt-7 border-t border-border pt-5">
+            <div className="text-[12.5px] font-medium text-muted-foreground">
+              {t((d) => d.resources.regenerate)}
+            </div>
+            <div className="mt-2.5 flex flex-wrap justify-center gap-1.5">
+              {QUIZ_LEVELS.map((level) => (
+                <button
+                  key={level.id}
+                  onClick={() => onRegenerate(level.id)}
+                  className="inline-flex items-center rounded-full border border-border bg-surface px-3 py-1.5 text-[12px] font-semibold text-foreground transition hover:border-emerald/40 hover:bg-emerald-soft hover:text-emerald"
+                >
+                  {t((d) => d.doc.quickActions.difficulty[level.id])}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
