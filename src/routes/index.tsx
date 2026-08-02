@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
@@ -24,16 +24,6 @@ import {
 } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/")({
-  // The landing exists to explain Forma to somebody who does not have it. A
-  // student who is signed in and set up is sent to their own screen instead -
-  // on any device, because the account is what is asked, not this browser.
-  // Nothing happens during SSR, where there is no session to read: crawlers
-  // and signed-out visitors get the page exactly as before.
-  beforeLoad: async () => {
-    if (typeof window === "undefined") return;
-    const { stage } = await loadAccount();
-    if (stage === "ready") throw redirect({ to: "/home" });
-  },
   head: () => ({
     meta: [
       // The homepage's identity is the site's identity, so the title, the
@@ -50,6 +40,18 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  // Asked from the component, not from beforeLoad. This route is server
+  // rendered, so beforeLoad runs on the server - where there is no session -
+  // and is not run again on the client for the first page load. A guard placed
+  // there would only ever fire on an in-app navigation to "/", which is the one
+  // case that barely matters.
+  const navigate = useNavigate();
+  useEffect(() => {
+    void loadAccount().then(({ stage }) => {
+      if (stage === "ready") navigate({ to: "/home", replace: true });
+    });
+  }, [navigate]);
+
   return (
     <div className="min-h-dvh bg-background">
       <Header />

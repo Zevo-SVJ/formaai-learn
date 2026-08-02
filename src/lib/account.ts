@@ -1,5 +1,4 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Json } from "@/integrations/supabase/types";
 
 /**
  * Who the person in front of the app is, and how far they have got.
@@ -9,9 +8,21 @@ import type { Json } from "@/integrations/supabase/types";
  * the landing, walked through onboarding again and asked to create an account
  * they already had.
  *
- * The account is the truth now. localStorage stays, but only as a mirror - it
- * makes the first paint after a reload correct instead of blank, and it is
- * overwritten by the server's answer the moment that arrives.
+ * The account is the truth now, and it is kept on the auth user rather than in
+ * a table of our own. That is a deliberate choice: a profiles table would need
+ * a migration applied to production before any of this worked, and a feature
+ * that only works after somebody remembers to run a command is a feature that
+ * is broken on the day it ships. User metadata travels with the session, needs
+ * no schema, and is already returned by the call that establishes who is
+ * signed in - so reading it costs nothing extra.
+ *
+ * It is user-writable, which would matter if it guarded anything. It guards
+ * whether a setup screen is shown; forging it only lets someone skip questions
+ * they were free to skip anyway.
+ *
+ * localStorage stays, but only as a mirror - it makes the first paint after a
+ * reload correct instead of blank, and is overwritten by the account's answer
+ * the moment that arrives.
  */
 
 export type Stage =
@@ -71,19 +82,26 @@ export function cachedAccount(): Account {
   return { stage: legacy ? "ready" : "visitor", userId: null, answers: {} };
 }
 
+/** What onboarding writes onto the auth user. */
+const DONE_AT = "forma_onboarded_at";
+const ANSWERS = "forma_onboarding_answers";
+
 /**
  * Asks the account itself.
  *
- * A missing profiles table is treated as "not onboarded yet" rather than as an
- * error: the migration ships with this code but is applied separately, and for
- * the window between the two the app has to keep working. Anyone who onboarded
- * on this browser is still recognised from the mirror in that window.
+ * One call, the same one the route guard already makes: the session carries the
+ * metadata, so knowing who is here and knowing how far they got is a single
+ * round trip rather than two.
  */
 export async function loadAccount(): Promise<Account> {
+  let meta: Record<string, unknown> | null = null;
   let userId: string | null = null;
   try {
     const { data, error } = await supabase.auth.getUser();
-    if (!error) userId = data.user?.id ?? null;
+    if (!error && data.user) {
+      userId = data.user.id;
+      meta = (data.user.user_metadata ?? {}) as Record<string, unknown>;
+    }
   } catch {
     // A Web Locks timeout, most likely. Treated as signed out, same as the
     // route guard does.
@@ -95,29 +113,10 @@ export async function loadAccount(): Promise<Account> {
     return out;
   }
 
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("onboarded_at, onboarding_answers")
-    .eq("user_id", userId)
-    .maybeSingle();
-
-  if (error) {
-    // Fall back to what this browser remembers, so a signed-in student is not
-    // thrown back into onboarding because a query failed.
-    const cached = cachedAccount();
-    const out: Account = {
-      stage: cached.stage === "ready" ? "ready" : "onboarding",
-      userId,
-      answers: cached.answers,
-    };
-    writeMirror(out);
-    return out;
-  }
-
   const out: Account = {
-    stage: data?.onboarded_at ? "ready" : "onboarding",
+    stage: meta?.[DONE_AT] ? "ready" : "onboarding",
     userId,
-    answers: (data?.onboarding_answers as Record<string, unknown>) ?? {},
+    answers: (meta?.[ANSWERS] as Record<string, unknown>) ?? {},
   };
   writeMirror(out);
   return out;
@@ -131,11 +130,8 @@ export async function saveOnboardingAnswers(answers: Record<string, unknown>) {
     // ignore
   }
   const { data } = await supabase.auth.getUser();
-  const userId = data.user?.id;
-  if (!userId) return;
-  await supabase
-    .from("profiles")
-    .upsert({ user_id: userId, onboarding_answers: answers as Json }, { onConflict: "user_id" });
+  if (!data.user) return;
+  await supabase.auth.updateUser({ data: { [ANSWERS]: answers } });
 }
 
 /**
@@ -190,12 +186,7 @@ export async function completeOnboarding(answers: Record<string, unknown>) {
   writeMirror({ stage: userId ? "ready" : "visitor", userId, answers });
 
   if (!userId) return;
-  await supabase.from("profiles").upsert(
-    {
-      user_id: userId,
-      onboarded_at: new Date().toISOString(),
-      onboarding_answers: answers as Json,
-    },
-    { onConflict: "user_id" },
-  );
+  await supabase.auth.updateUser({
+    data: { [DONE_AT]: new Date().toISOString(), [ANSWERS]: answers },
+  });
 }

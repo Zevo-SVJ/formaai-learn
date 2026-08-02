@@ -148,30 +148,6 @@ export type Database = {
           },
         ];
       };
-      profiles: {
-        Row: {
-          created_at: string;
-          onboarded_at: string | null;
-          onboarding_answers: Json;
-          updated_at: string;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          onboarded_at?: string | null;
-          onboarding_answers?: Json;
-          updated_at?: string;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          onboarded_at?: string | null;
-          onboarding_answers?: Json;
-          updated_at?: string;
-          user_id?: string;
-        };
-        Relationships: [];
-      };
       referral_profiles: {
         Row: {
           code: string;

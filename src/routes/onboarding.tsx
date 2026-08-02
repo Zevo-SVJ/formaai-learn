@@ -1,4 +1,4 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
@@ -20,13 +20,6 @@ import { CardsTour } from "@/components/CardsTour";
 import { loadAccount, markOnboardingPending, saveOnboardingAnswers } from "@/lib/account";
 
 export const Route = createFileRoute("/onboarding")({
-  // Somebody who has already been through this does not see it again, on any
-  // device. The account is asked, not this browser.
-  beforeLoad: async () => {
-    if (typeof window === "undefined") return;
-    const { stage } = await loadAccount();
-    if (stage === "ready") throw redirect({ to: "/home" });
-  },
   head: () => ({
     meta: [
       { title: "Get started — Forma AI" },
@@ -53,13 +46,21 @@ function Onboarding() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({ subjects: [] });
 
-  // Whatever the account already had, so a resumed onboarding opens on the
-  // answers already given rather than on empty fields.
+  // One ask, two answers: whether this person is already set up - in which case
+  // they never see this screen again, on any device - and what they had already
+  // told us, so a resumed onboarding opens on those answers rather than on
+  // empty fields. Done here rather than in beforeLoad because this route is
+  // server rendered, and beforeLoad does not run again on the client for a
+  // first page load.
   useEffect(() => {
-    void loadAccount().then(({ answers: saved }) => {
+    void loadAccount().then(({ stage, answers: saved }) => {
+      if (stage === "ready") {
+        navigate({ to: "/home", replace: true });
+        return;
+      }
       if (saved && Object.keys(saved).length) setAnswers(saved as Answers);
     });
-  }, []);
+  }, [navigate]);
 
   // Kept on the account as it is filled in, not only at the end: leaving
   // halfway through and coming back on another device should resume rather
