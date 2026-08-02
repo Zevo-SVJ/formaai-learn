@@ -23,6 +23,7 @@ import { getLocale } from "@/i18n";
 import { useI18n } from "@/hooks/useI18n";
 import { initAnalytics, track } from "@/lib/analytics";
 import { applySiteMeta, socialMeta } from "@/lib/seo";
+import { flushPendingOnboarding } from "@/lib/account";
 import { ConsentBanner } from "@/components/ConsentBanner";
 
 function NotFoundComponent() {
@@ -211,6 +212,13 @@ function RootComponent() {
           track("account_created");
         });
 
+        // Onboarding runs before sign-up, so this is the first moment its
+        // answers have an owner. Until it lands, the only record is in this
+        // browser - which is the whole problem being fixed.
+        void flushPendingOnboarding().then((wrote) => {
+          if (wrote) queryClient.invalidateQueries({ queryKey: ["account"] });
+        });
+
         const code = takePendingReferral();
         if (code) {
           Promise.resolve(redeem({ data: { code } }))
@@ -220,6 +228,7 @@ function RootComponent() {
       }
 
       router.invalidate();
+      queryClient.invalidateQueries({ queryKey: ["account"] });
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
     return () => data.subscription.unsubscribe();

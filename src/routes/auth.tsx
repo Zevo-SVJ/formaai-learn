@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { cachedAccount } from "@/lib/account";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ArrowLeft, Eye, EyeOff, Ticket } from "lucide-react";
@@ -49,7 +50,7 @@ function Auth() {
       const params = new URLSearchParams(window.location.search);
       if (params.get("mode") === "signup") return "signup";
       if (params.get("mode") === "signin") return "signin";
-      return window.localStorage.getItem("forma:onboarded") === "1" ? "signup" : "signin";
+      return cachedAccount().stage === "visitor" ? "signin" : "signup";
     } catch {
       return "signin";
     }
@@ -71,7 +72,7 @@ function Auth() {
         if (!data.user) return;
         const onboarded = (() => {
           try {
-            return window.localStorage.getItem("forma:onboarded") === "1";
+            return cachedAccount().stage !== "visitor";
           } catch {
             return true;
           }

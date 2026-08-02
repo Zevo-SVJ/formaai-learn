@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
@@ -17,8 +17,16 @@ import {
 } from "lucide-react";
 import { track } from "@/lib/analytics";
 import { CardsTour } from "@/components/CardsTour";
+import { loadAccount, markOnboardingPending, saveOnboardingAnswers } from "@/lib/account";
 
 export const Route = createFileRoute("/onboarding")({
+  // Somebody who has already been through this does not see it again, on any
+  // device. The account is asked, not this browser.
+  beforeLoad: async () => {
+    if (typeof window === "undefined") return;
+    const { stage } = await loadAccount();
+    if (stage === "ready") throw redirect({ to: "/home" });
+  },
   head: () => ({
     meta: [
       { title: "Get started — Forma AI" },
@@ -36,9 +44,6 @@ type Answers = {
   subjects: string[];
 };
 
-const STORAGE_KEY = "forma:onboarded";
-const ANSWERS_KEY = "forma:onboardingAnswers";
-
 function Onboarding() {
   const navigate = useNavigate();
   // A short reassuring bridge from the analysis to the questions. It makes
@@ -48,32 +53,28 @@ function Onboarding() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({ subjects: [] });
 
+  // Whatever the account already had, so a resumed onboarding opens on the
+  // answers already given rather than on empty fields.
   useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(ANSWERS_KEY);
-      if (saved) setAnswers(JSON.parse(saved));
-    } catch {
-      // ignore
-    }
+    void loadAccount().then(({ answers: saved }) => {
+      if (saved && Object.keys(saved).length) setAnswers(saved as Answers);
+    });
   }, []);
 
+  // Kept on the account as it is filled in, not only at the end: leaving
+  // halfway through and coming back on another device should resume rather
+  // than restart. Nobody is signed in yet during the first run, so this is a
+  // no-op then and the answers travel in the mirror until sign-up.
   const persist = (next: Answers) => {
     setAnswers(next);
-    try {
-      window.localStorage.setItem(ANSWERS_KEY, JSON.stringify(next));
-    } catch {
-      // ignore
-    }
+    void saveOnboardingAnswers(next as Record<string, unknown>);
   };
 
   const finish = () => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, "1");
-      track("onboarding_completed");
-    } catch {
-      // ignore
-    }
-    // Authentication happens at the very end of onboarding.
+    // Held until there is an account to attach it to. Sign-up is the next
+    // screen, and the first SIGNED_IN after it writes this to the profile.
+    markOnboardingPending(answers as Record<string, unknown>);
+    track("onboarding_completed");
     navigate({ to: "/auth", search: { mode: "signup" } as never });
   };
 

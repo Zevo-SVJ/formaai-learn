@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
@@ -15,6 +15,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
 import { absoluteUrl } from "@/lib/site";
+import { loadAccount } from "@/lib/account";
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +24,16 @@ import {
 } from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/")({
+  // The landing exists to explain Forma to somebody who does not have it. A
+  // student who is signed in and set up is sent to their own screen instead -
+  // on any device, because the account is what is asked, not this browser.
+  // Nothing happens during SSR, where there is no session to read: crawlers
+  // and signed-out visitors get the page exactly as before.
+  beforeLoad: async () => {
+    if (typeof window === "undefined") return;
+    const { stage } = await loadAccount();
+    if (stage === "ready") throw redirect({ to: "/home" });
+  },
   head: () => ({
     meta: [
       // The homepage's identity is the site's identity, so the title, the

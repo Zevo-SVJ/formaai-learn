@@ -4,6 +4,7 @@ import type { User } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { loadAccount } from "@/lib/account";
 import { analyzeDocument } from "@/lib/documents.functions";
 import { useI18n } from "@/hooks/useI18n";
 import { classifyError } from "@/lib/error-message";
@@ -45,6 +46,16 @@ export function useLessonUpload() {
         // into onboarding, which personalizes the tutor first; sign-up happens
         // at the end of onboarding. The onboarding route opens on a short intro
         // screen that explains why the questions exist.
+        navigate({ to: "/onboarding" });
+        return;
+      }
+
+      // Signed in but never finished setting up - which is a real state, since
+      // sign-up can happen from the auth screen without passing through
+      // onboarding at all. Send them to finish rather than analyse a lesson for
+      // a tutor that has not been told anything about them.
+      const { stage } = await loadAccount();
+      if (stage === "onboarding") {
         navigate({ to: "/onboarding" });
         return;
       }

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { cachedAccount } from "@/lib/account";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AnimatePresence, motion } from "framer-motion";
@@ -137,7 +138,7 @@ function Home() {
   useEffect(() => {
     // If user hasn't done onboarding, take them through it once.
     try {
-      const done = window.localStorage.getItem("forma:onboarded");
+      const done = cachedAccount().stage === "ready" ? "1" : null;
       if (!done) navigate({ to: "/onboarding" });
     } catch {
       // ignore
