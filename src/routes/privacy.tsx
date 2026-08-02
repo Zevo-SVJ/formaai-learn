@@ -12,6 +12,10 @@ export const Route = createFileRoute("/privacy")({
     meta: [
       { title: "Privacy Policy — Forma AI" },
       { name: "description", content: "How Forma AI handles your data." },
+      // The same address the canonical names, for the readers that
+      // never look at a canonical: a share carrying ?fbclid or a utm tag
+      // is otherwise cached by the platform as its own page.
+      { property: "og:url", content: absoluteUrl("/privacy") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/privacy") }],
   }),

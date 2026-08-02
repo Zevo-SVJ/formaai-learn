@@ -22,7 +22,7 @@ import "@/i18n";
 import { getLocale } from "@/i18n";
 import { useI18n } from "@/hooks/useI18n";
 import { initAnalytics, track } from "@/lib/analytics";
-import { applySiteMeta } from "@/lib/seo";
+import { applySiteMeta, socialMeta } from "@/lib/seo";
 import { ConsentBanner } from "@/components/ConsentBanner";
 
 function NotFoundComponent() {
@@ -107,30 +107,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
       },
-      { property: "og:title", content: "Forma AI — AI Study Assistant for Students" },
-      {
-        property: "og:description",
-        content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Forma AI — AI Study Assistant for Students" },
-      {
-        name: "twitter:description",
-        content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f3f813f2-97bb-4b5b-841e-23e5fcd7d875/id-preview-23442503--ff20e900-72ee-46ea-af34-54249137d40e.lovable.app-1784588761722.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/f3f813f2-97bb-4b5b-841e-23e5fcd7d875/id-preview-23442503--ff20e900-72ee-46ea-af34-54249137d40e.lovable.app-1784588761722.png",
-      },
+
+      // Everything a link preview needs, from the one module that declares it.
+      ...socialMeta(),
+
+      // Google may show a full-width thumbnail rather than a favicon, which is
+      // what makes Discover and image-rich results possible at all.
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1" },
+      { name: "application-name", content: "Forma AI" },
+      { name: "apple-mobile-web-app-title", content: "Forma" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

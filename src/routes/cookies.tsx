@@ -12,6 +12,10 @@ export const Route = createFileRoute("/cookies")({
     meta: [
       { title: "Cookie Policy — Forma AI" },
       { name: "description", content: "Cookie policy for Forma AI." },
+      // The same address the canonical names, for the readers that
+      // never look at a canonical: a share carrying ?fbclid or a utm tag
+      // is otherwise cached by the platform as its own page.
+      { property: "og:url", content: absoluteUrl("/cookies") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/cookies") }],
   }),

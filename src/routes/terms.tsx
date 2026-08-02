@@ -12,6 +12,10 @@ export const Route = createFileRoute("/terms")({
     meta: [
       { title: "Terms of Service — Forma AI" },
       { name: "description", content: "Terms of Service for Forma AI." },
+      // The same address the canonical names, for the readers that
+      // never look at a canonical: a share carrying ?fbclid or a utm tag
+      // is otherwise cached by the platform as its own page.
+      { property: "og:url", content: absoluteUrl("/terms") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/terms") }],
   }),

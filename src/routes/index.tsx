@@ -25,19 +25,10 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Forma AI — AI Study Assistant for Students" },
-      {
-        name: "description",
-        content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
-      },
-      { property: "og:title", content: "Forma AI — AI Study Assistant for Students" },
-      {
-        property: "og:description",
-        content:
-          "Forma AI helps students understand courses and exercises with AI-powered explanations, step-by-step solutions, and smarter study tools.",
-      },
-      { property: "og:type", content: "website" },
+      // The homepage's identity is the site's identity, so the title, the
+      // description and the whole social block come from the root. Only the
+      // address is specific to this page.
+      //
       // og:url tells crawlers and social platforms which address is the real
       // one, so shares from a preview host still resolve to production.
       { property: "og:url", content: absoluteUrl("/") },

@@ -14,6 +14,10 @@ export const Route = createFileRoute("/contact")({
     meta: [
       { title: "Contact — Forma AI" },
       { name: "description", content: "Get in touch with the Forma AI team." },
+      // The same address the canonical names, for the readers that
+      // never look at a canonical: a share carrying ?fbclid or a utm tag
+      // is otherwise cached by the platform as its own page.
+      { property: "og:url", content: absoluteUrl("/contact") },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/contact") }],
   }),
