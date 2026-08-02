@@ -5,6 +5,7 @@ import { Logo } from "@/components/Logo";
 import { HeroActions } from "@/components/HeroActions";
 import { LessonToCards } from "@/components/LessonToCards";
 import { ScanToUnderstanding } from "@/components/ScanToUnderstanding";
+import { GradeToCurve } from "@/components/GradeToCurve";
 import { TheChain } from "@/components/TheChain";
 import { SubjectCarousels } from "@/components/SubjectCarousels";
 import { SocialProof } from "@/components/SocialProof";
@@ -55,6 +56,9 @@ function Landing() {
       <Problem />
       <HowItWorks />
       <CompareSection />
+      {/* Grades come after the comparison: the visitor has to want Forma before
+          being told it also follows the term. */}
+      <GradeToCurve />
       <MidCTA />
       <ReviewsSection />
       <FAQSection />
