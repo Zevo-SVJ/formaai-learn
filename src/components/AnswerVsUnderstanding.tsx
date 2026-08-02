@@ -95,13 +95,13 @@ export function AnswerVsUnderstanding() {
         className="relative mt-4 grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 sm:gap-5"
         aria-hidden
       >
-          <Column
-            p={p}
-            side="other"
-            label={t((d) => d.compare.otherTitle)}
-            badge={t((d) => d.compare.typical)}
-          />
-          <Column p={p} side="forma" label={null} badge={t((d) => d.compare.recommended)} />
+        <Column
+          p={p}
+          side="other"
+          label={t((d) => d.compare.otherTitle)}
+          badge={t((d) => d.compare.typical)}
+        />
+        <Column p={p} side="forma" label={null} badge={t((d) => d.compare.recommended)} />
       </div>
 
       <p className="sr-only">{t((d) => d.compare.subtitle)}</p>
@@ -219,7 +219,9 @@ function Column({
           style={{ opacity: settled }}
           className="flex h-full items-center justify-center gap-1.5 px-2"
         >
-          <Check className={`h-3.5 w-3.5 shrink-0 ${other ? "text-muted-foreground" : "text-emerald"}`} />
+          <Check
+            className={`h-3.5 w-3.5 shrink-0 ${other ? "text-muted-foreground" : "text-emerald"}`}
+          />
           <span
             className={`truncate text-[12.5px] font-bold ${other ? "text-muted-foreground" : "text-emerald"}`}
           >
