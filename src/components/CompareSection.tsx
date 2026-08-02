@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { EASE } from "@/lib/motion";
 import { useI18n } from "@/hooks/useI18n";
-import { AnswerVsUnderstanding } from "@/components/AnswerVsUnderstanding";
+import { HandoverStory } from "@/components/HandoverStory";
 
 export function CompareSection() {
   const { t, raw } = useI18n();
@@ -23,11 +23,12 @@ export function CompareSection() {
           </p>
         </div>
 
-        {/* What each tool does with the same question, watched side by side.
-            The five lines that used to claim "explains step by step" and "made
-            to teach, not to solve" are gone: this is them. */}
+        {/* One question, asked twice. The other tool answers and stops; Forma
+            keeps building until it lands. The five lines that used to claim
+            "explains step by step" and "made to teach, not to solve" are gone:
+            this is them. */}
         <div className="mt-12">
-          <AnswerVsUnderstanding />
+          <HandoverStory />
         </div>
 
         {/* Only what a demonstration cannot show survives in words: that Forma

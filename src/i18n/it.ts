@@ -228,6 +228,12 @@ export const it: Dict = {
     subjects: ["Matematica", "Fisica", "Storia"],
   },
   compare: {
+    // Two lines for the whole sequence: the movement makes the argument,
+    // and these only mark which half is being watched.
+    beats: [
+      "Gli altri si fermano lì.",
+      "Forma continua.",
+    ],
     eyebrow: "La differenza",
     title: "Forma a confronto con gli altri strumenti.",
     subtitle:

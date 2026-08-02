@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { motion, useReducedMotion, type TargetAndTransition } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView, useReducedMotion, type TargetAndTransition } from "framer-motion";
 import { CalendarDays } from "lucide-react";
+import { Phone } from "@/components/PhoneFrame";
 import { useI18n } from "@/hooks/useI18n";
 
 /**
@@ -63,12 +64,23 @@ export function TheChain() {
   const reduceMotion = useReducedMotion();
   const items = raw((d) => d.problem.items) as string[];
   const [beat, setBeat] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  // Half of it has to be on screen, not merely touching the fold. A story of
+  // twelve beats that starts as the section's first pixel appears is already
+  // three beats in by the time it is being looked at.
+  const inView = useInView(ref, { amount: 0.5 });
+
+  // Rewound the moment it leaves. Nothing is gained by keeping a story running
+  // for nobody, and coming back to it half-told is the whole complaint.
+  useEffect(() => {
+    if (!inView) setBeat(0);
+  }, [inView]);
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || !inView) return;
     const id = window.setTimeout(() => setBeat((b) => (b + 1) % BEATS.length), BEATS[beat].ms);
     return () => window.clearTimeout(id);
-  }, [beat, reduceMotion]);
+  }, [beat, inView, reduceMotion]);
 
   // Reduced motion is given the first beat and left there: a story told in
   // stills is still a story, and none of the others makes sense alone.
@@ -76,7 +88,7 @@ export function TheChain() {
   const scene = BEATS[shown].scene;
 
   return (
-    <div className="mx-auto flex max-w-md flex-col items-center">
+    <div ref={ref} className="mx-auto flex max-w-md flex-col items-center">
       <div
         className="relative w-full max-w-[300px] overflow-hidden"
         style={{ height: STAGE_H }}
@@ -151,46 +163,6 @@ function Scene({
     >
       {children}
     </motion.div>
-  );
-}
-
-/* ------------------------------------------------------------------ device */
-
-const SCREEN_W = 158;
-const SCREEN_H = 316;
-
-/**
- * The device both screens live in.
- *
- * Portrait, with the bezel and the top pill that make a rectangle read as a
- * phone rather than as a card. Identical for the lesson and the assistant,
- * which is what puts them in one world.
- */
-function Phone({ dark = false, children }: { dark?: boolean; children: React.ReactNode }) {
-  return (
-    <div
-      className={[
-        "relative rounded-[28px] border p-[7px] shadow-[var(--shadow-lift)]",
-        dark ? "border-neutral-700/70 bg-neutral-800" : "border-border-strong/40 bg-surface-muted",
-      ].join(" ")}
-    >
-      <div
-        className={[
-          "relative overflow-hidden rounded-[22px]",
-          dark ? "bg-neutral-900" : "bg-card",
-        ].join(" ")}
-        style={{ width: SCREEN_W, height: SCREEN_H }}
-      >
-        {/* The pill. Small, and it does most of the recognising. */}
-        <span
-          className={[
-            "absolute left-1/2 top-[7px] z-10 h-[5px] w-[38px] -translate-x-1/2 rounded-full",
-            dark ? "bg-neutral-700" : "bg-border-strong/45",
-          ].join(" ")}
-        />
-        {children}
-      </div>
-    </div>
   );
 }
 

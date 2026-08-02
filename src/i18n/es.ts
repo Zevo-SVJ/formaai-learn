@@ -228,6 +228,12 @@ export const es: Dict = {
     subjects: ["Matemáticas", "Física", "Historia"],
   },
   compare: {
+    // Two lines for the whole sequence: the movement makes the argument,
+    // and these only mark which half is being watched.
+    beats: [
+      "Los demás se paran ahí.",
+      "Forma sigue.",
+    ],
     eyebrow: "La diferencia",
     title: "Forma frente a otras herramientas.",
     subtitle:
