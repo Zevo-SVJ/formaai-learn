@@ -20,42 +20,60 @@ curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\n' \
 
 So a shareable link has to be a published deployment of its own.
 
-## Getting the link
+## What was tried, and where each route ends
 
-Three steps, and two of them need something only the machine's owner has. This
-was run to the point of failure rather than guessed, so the order below is the
-order that actually works.
+Run rather than reasoned about. Every line below is a command that was executed.
 
-**1. Repair the npm cache — once, and it needs your password.**
-
-Nothing can be installed on this machine until this is done; `npx` and
-`npm install` both fail with `EACCES` on root-owned files in `~/.npm`:
+**The npm cache is not a blocker.** `~/.npm` on this machine holds root-owned
+files, so `npx` and `npm install` die with `EACCES`. It does not need a
+password to work around - npm takes a cache directory, and a project-local one
+is writable:
 
 ```bash
-sudo chown -R 501:20 ~/.npm
+npm_config_cache=node_modules/.cache/npm npx --yes wrangler@latest --version   # 4.118.0
 ```
 
-**2. Deploy.**
+**A Cloudflare account is not strictly needed to authenticate.** `wrangler
+deploy --temporary` runs on a throwaway account and prints a claim URL. It
+authenticates, and it uploaded all 79 assets.
 
-The build already produces a Cloudflare Worker. This ships it under a different
-worker name, which is what keeps it away from production: a different name is a
-different Worker, with its own URL and its own lifecycle. Nothing about
-`zevo-svj-formaai-learn` — the production Worker — is read or written.
+**But it cannot host this app.** A temporary or free account caps a Worker at
+1 MiB. Forma's server bundle is about 5 MiB - TanStack Router, recharts,
+framer-motion, the AI SDK and Supabase auth are the five largest pieces, and
+none of them is optional:
+
+```
+✘ Your Worker exceeded the size limit of 1 MiB.
+  Please upgrade to a paid plan to deploy Workers up to 10 MiB.
+```
+
+Production works because Lovable's Cloudflare account is on a paid plan. So the
+deployment needs an account with that plan - there is no way around the limit
+that does not mean shipping less than the whole app.
+
+## Deploying it
 
 ```bash
 npm run preview:deploy
 ```
 
-**3. Sign in to Cloudflare** when the browser opens. The URL printed at the end
-is the one to send:
+One command, and it needs a Cloudflare login on an account with the Workers
+paid plan. It ships the same build under the worker name `forma-preview`: a
+different name is a different Worker, with its own URL and its own lifecycle,
+so `zevo-svj-formaai-learn` - production - is neither read nor written.
+
+The URL it prints is the one to send:
 
 ```
-https://forma-preview.<your-subdomain>.workers.dev
+https://forma-preview.<subdomain>.workers.dev
 ```
 
 The subdomain is fixed per Cloudflare account, so from the second deploy onward
-the address never changes — the same link keeps working as the preview is
-updated.
+the address never changes and the same link keeps working.
+
+The compatibility date is pinned to 2026-08-01 on purpose: the generated config
+uses the build date, and Cloudflare rejects a date it considers to be in the
+future.
 
 ## What testers get
 

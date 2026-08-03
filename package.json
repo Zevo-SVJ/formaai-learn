@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preview:deploy": "vite build && npx --yes wrangler@latest deploy --config .output/server/wrangler.json --name forma-preview --compatibility-date 2026-08-03"
+    "preview:deploy": "vite build && npm_config_cache=node_modules/.cache/npm npx --yes wrangler@latest deploy --config .output/server/wrangler.json --name forma-preview --compatibility-date 2026-08-01"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.7",
