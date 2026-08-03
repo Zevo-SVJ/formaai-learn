@@ -51,7 +51,29 @@ Production works because Lovable's Cloudflare account is on a paid plan. So the
 deployment needs an account with that plan - there is no way around the limit
 that does not mean shipping less than the whole app.
 
-## Deploying it
+## Right now, for a live session: a tunnel
+
+No account, no deploy, no waiting. It puts the running dev server on a public
+address:
+
+```bash
+npm run preview:tunnel
+```
+
+It prints an `https://….trycloudflare.com` URL that anyone can open — the whole
+app, sign-up included. `vite.config.ts` allows that domain by suffix, because
+the hostname is different on every tunnel.
+
+The trade is honest: the link lives only while the dev server and the tunnel are
+running on this machine. Close the terminal, or let the Mac sleep, and it stops
+answering. It is right for a testing session with people you can talk to, and
+wrong for a link you send and forget.
+
+Checked before recommending it: the dev server refuses `.env` and `.git` with
+403, so nothing secret is reachable. Source files are served, as on any dev
+server — the same code the client bundle already ships.
+
+## For a link that survives: deploying it
 
 ```bash
 npm run preview:deploy
