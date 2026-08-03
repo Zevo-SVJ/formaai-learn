@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, isProductionHost } from "@/lib/site";
 
 /**
  * robots.txt, served rather than shipped as a static file.
@@ -20,7 +20,20 @@ const PRIVATE = ["/auth", "/library", "/doc/", "/onboarding"];
 export const Route = createFileRoute("/robots.txt")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        // A preview or branch deployment says the opposite of production: stay
+        // out entirely. It is the same site at a different address, and a
+        // second crawlable copy is the one thing this file exists to prevent.
+        if (!isProductionHost(request.headers.get("host"))) {
+          return new Response(["User-agent: *", "Disallow: /", ""].join("\n"), {
+            headers: {
+              "Content-Type": "text/plain; charset=utf-8",
+              "Cache-Control": "no-store",
+              "X-Robots-Tag": "noindex, nofollow",
+            },
+          });
+        }
+
         const body = [
           "User-agent: *",
           "Allow: /",

@@ -27,5 +27,25 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${clean}`;
 }
 
+/**
+ * Is this request being served from the address Google knows about?
+ *
+ * Everything else - a preview build, a branch deployment, a tester link - is a
+ * second copy of the same site. Left alone it would be crawlable, and a second
+ * crawlable copy competes with production for the same queries. Anything that
+ * is not the production host is treated as a preview, which is the safe way
+ * round: a new preview host is protected the day it appears, without anybody
+ * remembering to add it to a list.
+ */
+export function isProductionHost(host: string | null | undefined): boolean {
+  if (!host) return false;
+  try {
+    const bare = host.split(":")[0].toLowerCase();
+    return bare === new URL(SITE_URL).hostname.toLowerCase();
+  } catch {
+    return false;
+  }
+}
+
 /** Every publicly indexable route. The sitemap is generated from this list. */
 export const PUBLIC_ROUTES = ["/", "/terms", "/privacy", "/cookies", "/contact"] as const;
