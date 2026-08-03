@@ -20,23 +20,42 @@ curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}\n' \
 
 So a shareable link has to be a published deployment of its own.
 
-## The one command
+## Getting the link
 
-The build already produces a Cloudflare Worker. This deploys it under a
-different worker name, which is what keeps it away from production: a different
-name is a different Worker, with its own URL and its own lifecycle. Nothing
-about `zevo-svj-formaai-learn` — the production Worker — is read or written.
+Three steps, and two of them need something only the machine's owner has. This
+was run to the point of failure rather than guessed, so the order below is the
+order that actually works.
+
+**1. Repair the npm cache — once, and it needs your password.**
+
+Nothing can be installed on this machine until this is done; `npx` and
+`npm install` both fail with `EACCES` on root-owned files in `~/.npm`:
+
+```bash
+sudo chown -R 501:20 ~/.npm
+```
+
+**2. Deploy.**
+
+The build already produces a Cloudflare Worker. This ships it under a different
+worker name, which is what keeps it away from production: a different name is a
+different Worker, with its own URL and its own lifecycle. Nothing about
+`zevo-svj-formaai-learn` — the production Worker — is read or written.
 
 ```bash
 npm run preview:deploy
 ```
 
-The first run asks for a Cloudflare login in the browser. The URL it prints at
-the end is the one to send:
+**3. Sign in to Cloudflare** when the browser opens. The URL printed at the end
+is the one to send:
 
 ```
 https://forma-preview.<your-subdomain>.workers.dev
 ```
+
+The subdomain is fixed per Cloudflare account, so from the second deploy onward
+the address never changes — the same link keeps working as the preview is
+updated.
 
 ## What testers get
 
