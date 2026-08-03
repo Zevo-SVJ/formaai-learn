@@ -147,7 +147,10 @@ function Hero() {
         <div className="mb-6 flex justify-center">
           <SocialProof />
         </div>
+        {/* data-anim-in: the noscript rule in the shell uncovers this if the
+            bundle never runs. It changes nothing when it does. */}
         <motion.h1
+          data-anim-in
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, ease: EASE.out }}
@@ -158,6 +161,7 @@ function Hero() {
           <span className="text-muted-foreground">{t((d) => d.hero.title2)}</span>
         </motion.h1>
         <motion.p
+          data-anim-in
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1, ease: EASE.out }}

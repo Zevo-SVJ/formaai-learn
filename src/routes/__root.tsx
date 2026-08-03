@@ -148,6 +148,22 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/*
+          The headline animates in, which means framer renders it with
+          opacity:0 in the server HTML and raises it after hydration. Google
+          runs scripts and sees the finished state, but nothing else is
+          guaranteed to: a crawler that only parses HTML, a reader mode, a
+          failed or blocked bundle, and the page's most important line of text
+          is invisible.
+
+          A noscript stylesheet is the one mechanism that fixes exactly that
+          case and no other. It is inert whenever scripts run, so the animation
+          is untouched frame for frame; when they do not, `!important` beats the
+          inline style framer left behind and the text is simply there.
+        */}
+        <noscript>
+          <style>{`[data-anim-in]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
       </head>
       <body>
         {children}

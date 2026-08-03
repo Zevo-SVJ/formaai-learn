@@ -41,6 +41,14 @@ export function landingSchema() {
         height: 512,
       },
       description: SOCIAL_DESCRIPTION,
+      // A real page, not an invented address or phone number. Nothing here
+      // claims a channel Forma does not actually answer on.
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer support",
+        url: absoluteUrl("/contact"),
+        availableLanguage: ["en", "fr", "es", "de", "pt", "it"],
+      },
     },
     {
       "@type": "WebSite",
@@ -95,6 +103,10 @@ export function landingSchema() {
       "@type": "FAQPage",
       "@id": `${SITE_URL}/#faq`,
       isPartOf: { "@id": SITE_ID },
+      // Ties the questions to the page they are actually printed on, which is
+      // what lets Google check the markup against what a visitor sees.
+      mainEntityOfPage: { "@id": `${SITE_URL}/#webpage` },
+      inLanguage: "en",
       mainEntity: en.faq.items.map((item) => ({
         "@type": "Question",
         name: item.q,
@@ -105,4 +117,3 @@ export function landingSchema() {
 
   return { "@context": "https://schema.org", "@graph": graph };
 }
-
