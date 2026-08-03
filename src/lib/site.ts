@@ -1,15 +1,30 @@
 // The one place the production origin is declared.
 //
-// Canonical URLs, og:url and the sitemap all have to agree on a single absolute
-// origin, otherwise Google sees several versions of the same page. If Forma
-// moves to a custom domain, change this value (or set VITE_SITE_URL) and every
-// one of those follows.
-const FALLBACK_ORIGIN = "https://getforma-ai.lovable.app";
+// Canonical URLs, og:url, the sitemap, robots.txt, the JSON-LD graph and the
+// social image all have to agree on a single absolute origin, or Google sees
+// several versions of the same page.
+//
+// It is configuration, not code. Moving host - or buying a domain - is setting
+// VITE_SITE_URL and rebuilding; nothing in src/ needs editing, which is the
+// whole point of this file existing.
+const FALLBACK_ORIGIN = "https://getforma-ai.vercel.app";
 
 function readEnvOrigin(): string | null {
   try {
-    const v = import.meta.env?.VITE_SITE_URL;
-    return typeof v === "string" && v.startsWith("http") ? v : null;
+    // Set deliberately. This is the one to change for a custom domain, and it
+    // beats everything below.
+    const explicit = import.meta.env?.VITE_SITE_URL;
+    if (typeof explicit === "string" && explicit.startsWith("http")) return explicit;
+
+    // Vercel knows its own stable production domain and hands it to the build.
+    // Reading it means a fresh deployment is correct before anybody has set a
+    // variable, rather than silently canonicalising to the wrong host.
+    const vercel = import.meta.env?.VITE_VERCEL_PROJECT_PRODUCTION_URL;
+    if (typeof vercel === "string" && vercel.length > 0) {
+      return vercel.startsWith("http") ? vercel : `https://${vercel}`;
+    }
+
+    return null;
   } catch {
     return null;
   }

@@ -39,3 +39,6 @@ dist-ssr
 # accident. Server secrets belong in the deployment environment, never here.
 .env.*
 !.env.example
+
+# Vercel build output (Nitro emits this when VERCEL is set)
+.vercel
