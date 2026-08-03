@@ -4,12 +4,13 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
     "build": "vite build",
     "build:dev": "vite build --mode development",
-    "preview": "vite preview",
+    "dev": "vite dev",
+    "format": "prettier --write .",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "preview": "vite preview",
+    "preview:deploy": "vite build && npx --yes wrangler@latest deploy --config .output/server/wrangler.json --name forma-preview --compatibility-date 2026-08-03"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.7",
