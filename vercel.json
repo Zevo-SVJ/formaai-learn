@@ -3,5 +3,15 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install",
   "framework": null,
-  "regions": ["cdg1"]
+  "regions": ["cdg1"],
+  "rewrites": [
+    {
+      "source": "/api/chat",
+      "destination": "https://getforma-ai.lovable.app/api/chat"
+    },
+    {
+      "source": "/_serverFn/:fn*",
+      "destination": "https://getforma-ai.lovable.app/_serverFn/:fn*"
+    }
+  ]
 }
