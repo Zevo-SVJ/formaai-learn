@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ArrowLeft, Eye, EyeOff, Ticket } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+
 import { storePendingReferral } from "@/lib/pending-referral";
 import { toast } from "sonner";
 import { EASE } from "@/lib/motion";
@@ -90,16 +90,18 @@ function Auth() {
     // Park the code before leaving the page: on a published site OAuth is a
     // full-page redirect, so nothing after this call runs.
     if (mode === "signup" && referral.trim()) storePendingReferral(referral);
-    const res = await lovable.auth.signInWithOAuth(p, {
-      redirect_uri: window.location.origin + "/auth",
-    });
-    if (res.error) {
-      toast.error(t((d) => d.errors[classifyError(res.error)]));
-      setLoadingOAuth(null);
-      return;
-    }
-    if (res.redirected) return;
-    navigate({ to: "/home" });
+    const { error } = await supabase.auth.signInWithOAuth({
+  provider: p,
+  options: {
+    redirectTo: window.location.origin + "/auth",
+  },
+});
+
+if (error) {
+  toast.error(t((d) => d.errors[classifyError(error)]));
+  setLoadingOAuth(null);
+  return;
+}
   };
 
   const submit = async (e: React.FormEvent) => {
