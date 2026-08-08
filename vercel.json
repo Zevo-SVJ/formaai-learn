@@ -12,6 +12,11 @@
     {
       "source": "/_serverFn/:fn*",
       "destination": "https://getforma-ai.lovable.app/_serverFn/:fn*"
+    },
+    {
+      "source": "/~oauth/:path*",
+      "destination": "https://getforma-ai.lovable.app/~oauth/:path*"
     }
   ]
 }
+
