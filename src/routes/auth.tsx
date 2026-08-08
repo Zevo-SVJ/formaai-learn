@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, ArrowLeft, Eye, EyeOff, Ticket } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
+
 
 import { storePendingReferral } from "@/lib/pending-referral";
 import { toast } from "sonner";
@@ -87,22 +89,34 @@ function Auth() {
 
   const oauth = async (p: "google" | "apple") => {
     setLoadingOAuth(p);
-    // Park the code before leaving the page: on a published site OAuth is a
-    // full-page redirect, so nothing after this call runs.
+    // Park the code before leaving the page: OAuth can be a full-page
+    // redirect, so nothing after this call runs.
     if (mode === "signup" && referral.trim()) storePendingReferral(referral);
-    const { error } = await supabase.auth.signInWithOAuth({
-  provider: p,
-  options: {
-    redirectTo: window.location.origin + "/auth",
-  },
-});
 
-if (error) {
-  toast.error(t((d) => d.errors[classifyError(error)]));
-  setLoadingOAuth(null);
-  return;
-}
+    // Google and Apple are brokered by Lovable, not by Supabase's own provider
+    // config: no client secret is stored in the Supabase project, so calling
+    // supabase.auth.signInWithOAuth() directly answers
+    // "Unsupported provider: missing OAuth secret". The broker exchanges the
+    // tokens and this wrapper hands them to supabase.auth.setSession().
+    const result = await lovable.auth.signInWithOAuth(p, {
+      // Public, same-origin. The auth screen itself redirects an existing
+      // session onward to /home or /onboarding once it hydrates.
+      redirect_uri: window.location.origin + "/auth",
+    });
+
+    if (result.redirected) return; // Leaving the page; nothing else runs.
+
+    if (result.error) {
+      toast.error(t((d) => d.errors[classifyError(result.error)]));
+      setLoadingOAuth(null);
+      return;
+    }
+
+    // Popup flow: the session is already set, so route as the effect above would.
+    const { stage } = await loadAccount();
+    navigate({ to: stage === "onboarding" ? "/onboarding" : "/home" });
   };
+
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
