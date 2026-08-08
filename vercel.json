@@ -12,6 +12,12 @@
     {
       "source": "/_serverFn/:fn*",
       "destination": "https://getforma-ai.lovable.app/_serverFn/:fn*"
+    },
+    {
+      "comment": "Google/Apple sign-in is brokered by Lovable. The broker lives behind /~oauth on the Lovable deployment, so the Vercel origin has to forward it or the sign-in redirect 404s.",
+      "source": "/~oauth/:path*",
+      "destination": "https://getforma-ai.lovable.app/~oauth/:path*"
     }
   ]
 }
+
