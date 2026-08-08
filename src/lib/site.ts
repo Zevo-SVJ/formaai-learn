@@ -7,7 +7,7 @@
 // It is configuration, not code. Moving host - or buying a domain - is setting
 // VITE_SITE_URL and rebuilding; nothing in src/ needs editing, which is the
 // whole point of this file existing.
-const FALLBACK_ORIGIN = "https://getforma-ai.vercel.app";
+const FALLBACK_ORIGIN = "https://getforma-ai.lovable.app";
 
 function readEnvOrigin(): string | null {
   try {
